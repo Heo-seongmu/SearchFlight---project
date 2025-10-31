@@ -48,7 +48,7 @@ public class HotelController {
             e.printStackTrace(); // 콘솔에 에러 출력
             model.addAttribute("errorMessage", "호텔 목록을 조회하는 중 오류가 발생했습니다.");
             model.addAttribute("hotelList", Collections.emptyList()); // 오류 발생 시 빈 리스트 전달
-        }
+        }ㄴㄴ
         
         return "hotelList";
     }
