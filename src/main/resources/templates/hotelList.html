@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>규아의 여행 - 호텔 목록</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+.moana_gnb {
+	background-color: #5ac4c9; /* 첫 번째 이미지의 하늘색 배경 */
+	color: #fff; /* 기본 글자색 흰색 */
+	padding: 10px 0; /* 상하 패딩 */
+}
+
+.gnb_container {
+	max-width: 1200px; /* 적절한 최대 너비 설정 (G마켓 스타일) */
+	margin: 0 auto; /* 가운데 정렬 */
+	display: flex; /* 내부 요소들을 가로로 정렬하기 위해 flexbox 사용 */
+	align-items: center; /* 세로 중앙 정렬 */
+	justify-content: space-between; /* 요소들 간의 공간 배분 */
+	padding: 0 20px; /* 좌우 패딩 */
+}
+
+.moana_gnb h1 {
+	margin: 0;
+	display: flex;
+	align-items: center;
+}
+
+.moana_gnb h1 img {
+	height: 32px;
+	vertical-align: middle;
+}
+
+/* GNB 메뉴 탭 */
+.list__tab {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	gap: 20px;
+}
+
+.list__tab .list-item a {
+	color: #fff;
+	text-decoration: none;
+	font-weight: bold;
+	padding: 5px 0;
+	position: relative;
+	transition: color 0.3s ease;
+}
+
+.list__tab .list-item a:hover, .list__tab .list-item a.link__tab--active
+	{
+	color: #eee;
+}
+
+/* GNB 활성 탭 밑줄 (예: '항공' 탭이 현재 페이지일 때) */
+.list__tab .list-item a.link__tab--active::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: -5px;
+	width: 100%;
+	height: 2px;
+	background-color: #fff;
+}
+
+/* GNB 우측 링크 (예약내역, 로그인) */
+.link-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.link__booking-history {
+	background-color: transparent;
+	border: 1px solid #fff;
+	color: #fff;
+	padding: 8px 15px;
+	border-radius: 20px;
+	text-decoration: none;
+	font-size: 14px;
+	transition: background-color 0.3s ease, color 0.3s ease;
+	white-space: nowrap;
+}
+
+.link__booking-history:hover {
+	background-color: #fff;
+	color: #5ac4c9;
+}
+
+/* GNB 로고 영역 */
+.box__inner {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+/* 페이지 전체 여백 제거 (헤더가 화면 상단에 붙도록) */
+body {
+	margin: 0;
+	background-color: #f8f9fa; /* 3. 배경색 추가 (항공권 페이지와 통일) */
+}
+
+/* [ ⭐ 추가 ] 클릭 가능한 호텔 카드에 커서 스타일 적용 */
+.hotel-card-clickable:hover {
+	border-color: #5ac4c9; /* 호버 시 테두리 색상 변경 */
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+}
+
+/* ⭐ [수정] 고정 별 5개 표시용 CSS */
+.five-stars {
+	color: #fdcc0d; /* 별표(채워진) 색상 */
+	font-size: 1.1rem;
+}
+</style>
+</head>
+<body>
+	<div class="moana_gnb" role="complementary">
+		<div class="gnb_container">
+			<div class="box__inner">
+				<h1>
+					<a href="/" title="규아의 여행"> <img
+						src="https://pics.gmarket.co.kr/pc/single/kr/vertical/common/logo_g-travel.png"
+						alt="규아의 여행">
+					</a>
+				</h1>
+			</div>
+
+			<ul class="list__tab">
+				<li class="list-item"><a class="link__tab" href="/">항공</a></li>
+				<li class="list-item"><a class="link__tab" href="/chat">추천챗</a></li>
+			</ul>
+
+			<div class="link-container">
+				<a href="/revList" class="link__booking-history sp_sd--after"
+					th:if="${session.loginUser != null}">나의 예약내역</a> <a
+					th:if="${session.loginUser == null}"
+					class="link__booking-history sp_sd--after" href="member/login">로그인</a>
+				<a th:if="${session.loginUser != null}"
+					th:text="${session.loginUser.UserName}"
+					class="link__booking-history sp_sd--after">허성무</a> <a
+					th:if="${session.loginUser != null}"
+					class="link__booking-history sp_sd--after" href="member/logout">로그웃</a>
+			</div>
+		</div>
+	</div>
+
+	<main class="container py-5">
+		<h2 class="mb-4 fw-bold">✈️ 근처 호텔 목록</h2>
+
+		<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+			<span th:text="${errorMessage}">오류 메시지</span>
+		</div>
+
+		<div
+			th:if="${#strings.isEmpty(errorMessage) and #lists.isEmpty(hotelList)}"
+			class="alert alert-info" role="alert">
+			<span
+				th:text="'도착지(' + ${param.destination} + ') 근처 10KM 이내의 호텔 정보를 찾을 수 없습니다.'">
+				호텔 정보가 없습니다. </span>
+		</div>
+
+		<div class="row g-3">
+			<div class="col-12 col-md-6" th:each="hotel : ${hotelList}">
+
+				<div class="card h-100 hotel-card-clickable"
+					th:if="${hotel.geoCode != null}"
+					th:data-hotel-id="${hotel.hotelId}"
+					th:data-hotel-name="${hotel.koreanName}"
+					th:data-hotel-lat="${hotel.geoCode.latitude}"
+					th:data-hotel-lng="${hotel.geoCode.longitude}"
+					data-bs-toggle="modal" data-bs-target="#hotelMapModal"
+					style="cursor: pointer;">
+
+					<div class="card-body">
+						<h5 class="card-title fw-bold" th:text="${hotel.koreanName}">호텔
+							이름</h5>
+
+						<div class="mb-2 five-stars">
+							<i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i
+								class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i
+								class="bi bi-star-fill"></i>
+						</div>
+
+						<p class="card-text mb-2">
+							<small class="text-muted" th:text="'ID: ' + ${hotel.hotelId}">ID:
+								ZZNCENVX</small>
+						</p>
+						<span class="badge bg-primary"
+							th:text="'약 ' + ${hotel.distance.value} + ' ' + ${hotel.distance.unit}">
+							0.92 KM </span>
+
+						<div class="mt-2 text-muted" style="font-size: 0.8rem;"
+							th:if="${hotel.geoCode != null}">
+							(위도: <span th:text="${hotel.geoCode.latitude}"></span>, 경도: <span
+								th:text="${hotel.geoCode.longitude}"></span>)
+						</div>
+					</div>
+				</div>
+
+				<div class="card h-100" th:if="${hotel.geoCode == null}">
+					<div class="card-body">
+						<h5 class="card-title fw-bold" th:text="${hotel.koreanName}">호텔
+							이름</h5>
+
+						<div class="mb-2 five-stars">
+							<i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i
+								class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i
+								class="bi bi-star-fill"></i>
+						</div>
+
+						<p class="card-text mb-2">
+							<small class="text-muted" th:text="'ID: ' + ${hotel.hotelId}">ID:
+								ZZNCENVX</small>
+						</p>
+						<span class="badge bg-primary"
+							th:text="'약 ' + ${hotel.distance.value} + ' ' + ${hotel.distance.unit}">
+							0.92 KM </span>
+						<div class="mt-2 text-muted" style="font-size: 0.8rem;">(위치
+							정보 없음)</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</main>
+
+	<div class="modal fade" id="hotelMapModal" tabindex="-1"
+		aria-labelledby="hotelMapModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="hotelMapModalLabel">호텔 위치</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-8">
+							<div id="map-canvas" style="height: 400px; width: 100%;"></div>
+
+							<div id="map-info" class="mt-3 p-3 bg-light rounded">
+								<p class="mb-0">경로 정보를 불러오는 중입니다...</p>
+							</div>
+						</div>
+
+						<div class="col-md-4">
+							<h6 class="mb-3">🏨 다른 주변 호텔</h6>
+							<div id="modal-hotel-list" class="list-group list-group-flush"
+								style="max-height: 400px; overflow-y: auto;">
+
+								<div th:each="otherHotel : ${hotelList}">
+									<a href="#"
+										class="list-group-item list-group-item-action py-2 modal-hotel-item"
+										th:data-hotel-id="${otherHotel.hotelId}"
+										th:data-hotel-name="${otherHotel.koreanName}"
+										th:data-hotel-lat="${otherHotel.geoCode?.latitude}"
+										th:data-hotel-lng="${otherHotel.geoCode?.longitude}"
+										onclick="selectOtherHotel(this); return false;">
+
+										<h6 class="mb-1" th:text="${otherHotel.koreanName}">다른 호텔
+											이름</h6>
+
+										<div class="mb-1 five-stars" style="font-size: 0.9rem;">
+											<i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i>
+											<i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i>
+											<i class="bi bi-star-fill"></i>
+										</div> <small class="text-muted"
+										th:if="${otherHotel.distance != null}"
+										th:text="'약 ' + ${otherHotel.distance.value} + ' ' + ${otherHotel.distance.unit}">0.92
+											KM</small> <small class="text-muted"
+										th:if="${otherHotel.geoCode == null}">(위치정보 없음)</small>
+									</a>
+								</div>
+
+								<div th:if="${#lists.isEmpty(hotelList)}"
+									class="text-muted text-center py-3">주변 호텔이 없습니다.</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+    // 1. 전역 변수로 선언
+    let map;
+    const airportIataCode = "[[${param.destination}]]";
+    const hotelMapModal = document.getElementById('hotelMapModal');
+    const mapCanvas = document.getElementById('map-canvas');
+    const mapInfoEl = document.getElementById('map-info');
+    
+    let airportMarker = null;
+    let hotelMarker = null;
+    let currentPolyline = null; // 카카오 경로 표시용
+    let airportLocationCache = null;
+    let airportPlaceIdCache = null; 
+    
+    // [ ⭐ 추가 ] Google 경로 탐색용 전역 변수
+    let directionsService;
+    let directionsRenderer;
+
+    
+    /**
+     * Google Maps API가 로드된 후 실행될 콜백 함수
+     */
+    function initMap() {
+        
+        // 3. 모달 이벤트 리스너
+        hotelMapModal.addEventListener('show.bs.modal', async function (event) {
+            const card = event.relatedTarget;
+            const hotelId = card.dataset.hotelId;
+            const hotelName = card.dataset.hotelName;
+            const hotelLat = parseFloat(card.dataset.hotelLat);
+            const hotelLng = parseFloat(card.dataset.hotelLng);
+            
+            if (isNaN(hotelLat) || isNaN(hotelLng)) {
+                console.warn("위치 정보가 없는 호텔입니다.", hotelId);
+                return; 
+            }
+            
+            const hotelLocation = { lat: hotelLat, lng: hotelLng };
+
+            document.getElementById('hotelMapModalLabel').textContent = hotelName;
+            mapInfoEl.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                    <span>'${airportIataCode}' 공항 위치를 찾는 중...</span>
+                </div>`;
+
+            const allHotelItems = document.querySelectorAll('.modal-hotel-item');
+            allHotelItems.forEach(item => {
+                item.style.display = (item.dataset.hotelId === hotelId) ? 'none' : 'block';
+            });
+
+            map = new google.maps.Map(mapCanvas, {
+                center: hotelLocation,
+                zoom: 11,
+                mapId: 'YOUR_MAP_ID' 
+            });
+
+            // [ ⭐ 추가 ] Directions Service 및 Renderer 초기화
+            // (맵이 생성된 직후 초기화)
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,                // 렌더러를 지도에 연결
+                suppressMarkers: true,   // 기본 A, B 마커 숨김 (저희 커스텀 마커 사용)
+                preserveViewport: true   // fitBounds를 수동으로 제어하기 위함
+            });
+
+            // 4. 공항 위치 찾기 (캐시 활용)
+            try {
+                if (airportLocationCache == null) {
+                    console.log("===== [JS Debug] 구글 Places API로 공항 위치 최초 검색...");
+                    const request = {
+                        textQuery: `${airportIataCode} Airport`,
+                        fields: ['displayName', 'location', 'id'],
+                    };
+                    const { places } = await google.maps.places.Place.searchByText(request);
+
+                    if (places && places.length > 0) {
+                        airportLocationCache = places[0].location; 
+                        airportPlaceIdCache = places[0].id;
+                    } else {
+                        throw new Error("Places API가 공항 정보를 찾지 못했습니다.");
+                    }
+                }
+
+                // 5. [ ⭐ 수정 ] Google 경로 우선 탐색
+                mapInfoEl.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                        <span>Google 경로 계산 중...</span>
+                    </div>`;
+                
+                // Google 우선 탐색 함수 호출
+                calculateAndDisplayRoute(airportLocationCache, hotelLocation);
+                
+            } catch (error) {
+                // (Places API 검색 실패 시 - 호텔 마커만 표시)
+                console.error("Places API 검색 실패:", error);
+                mapInfoEl.innerHTML = `<span class="text-danger">'${airportIataCode}' 공항 위치를 찾는 데 실패했습니다.</span>`;
+                clearMapElements(); 
+                hotelMarker = new google.maps.marker.AdvancedMarkerElement({
+                    position: hotelLocation,
+                    map: map,
+                    title: "도착 호텔"
+                });
+                map.setCenter(hotelLocation);
+                map.setZoom(14);
+            }
+        }); // 'show.bs.modal' 리스너 끝
+        
+        hotelMapModal.addEventListener('hidden.bs.modal', function () {
+            mapCanvas.innerHTML = ''; 
+            mapInfoEl.innerHTML = '<p class="mb-0">경로 정보를 불러오는 중입니다...</p>';
+            clearMapElements();
+            const allHotelItems = document.querySelectorAll('.modal-hotel-item');
+            allHotelItems.forEach(item => {
+                item.style.display = 'block';
+            });
+        }); // 'hidden.bs.modal' 리스너 끝
+
+    } // initMap() 함수 끝
+    
+    
+    /**
+     * [ ⭐ 수정 ] 마커, 경로(Polyline), Google 경로(Renderer)를 모두 지우는 헬퍼 함수
+     */
+    function clearMapElements() {
+        if (airportMarker) {
+            airportMarker.map = null; 
+            airportMarker = null;     
+        }
+        if (hotelMarker) {
+            hotelMarker.map = null; 
+            hotelMarker = null;     
+        }
+        if (currentPolyline) { // 카카오 Polyline
+            currentPolyline.setMap(null);
+            currentPolyline = null;
+        }
+        if (directionsRenderer) { // Google Directions
+            directionsRenderer.setDirections(null);
+        }
+    }
+
+
+    /**
+     * [ ⭐ 핵심 수정 ⭐ ]
+     * Google Directions API로 경로를 우선 탐색하고,
+     * 실패 시 (예: 한국 등) 카카오 API로 대체(Fallback) 탐색합니다.
+     */
+    function calculateAndDisplayRoute(googleAirportLocation, googleHotelLocation) {
+        
+        clearMapElements(); // 지도 요소 초기화
+        
+        const googleRouteRequest = {
+            origin: googleAirportLocation,
+            destination: googleHotelLocation,
+            travelMode: 'DRIVING'
+        };
+
+        // 1. Google Directions API 우선 시도
+        directionsService.route(googleRouteRequest, async (result, status) => {
+            
+            if (status === 'OK') {
+                // --- 1-1. Google 경로 탐색 성공 ---
+                console.log("===== [JS Debug] Google Directions API 경로 탐색 성공 =====");
+                
+                // Google 렌더러로 경로 표시
+                directionsRenderer.setDirections(result);
+
+                const route = result.routes[0].legs[0];
+                const distanceText = route.distance.text;
+                const durationText = route.duration.text;
+
+                mapInfoEl.innerHTML = `
+                    <h6 class="mb-2">✈️ 공항에서 호텔까지 (Google Maps 기준)</h6>
+                    <p class="mb-1"><strong>예상 거리:</strong> ${distanceText}</p>
+                    <p class="mb-0"><strong>예상 소요 시간:</strong> ${durationText} (차량 기준)</p>
+                `;
+
+                // 커스텀 A, B 마커 생성
+                const airportPin = new google.maps.marker.PinElement({ glyph: "A", background: "#4285F4", borderColor: "#000" });
+                airportMarker = new google.maps.marker.AdvancedMarkerElement({
+                    position: googleAirportLocation,
+                    map: map,
+                    title: "출발 공항",
+                    content: airportPin.element
+                });
+
+                const hotelPin = new google.maps.marker.PinElement({ glyph: "B", background: "#FBBC05", borderColor: "#000" });
+                hotelMarker = new google.maps.marker.AdvancedMarkerElement({
+                    position: googleHotelLocation,
+                    map: map,
+                    title: "도착 호텔",
+                    content: hotelPin.element
+                });
+                
+                // Google 경로에 맞춰 뷰 조정
+                map.fitBounds(result.routes[0].bounds);
+
+            } else {
+                // --- 1-2. Google 경로 탐색 실패 -> 카카오 API로 Fallback ---
+                console.warn(`===== [JS Debug] Google Directions API 실패 (Status: ${status}). Kakao API로 대체합니다. =====`);
+                mapInfoEl.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                        <span>Google 경로 실패. Kakao 경로 계산 중...</span>
+                    </div>`;
+
+                // 2. 카카오 API 대체 시도 (기존 로직)
+                const params = new URLSearchParams({
+                    originLat: googleAirportLocation.lat(), 
+                    originLng: googleAirportLocation.lng(),
+                    destLat: googleHotelLocation.lat,
+                    destLng: googleHotelLocation.lng
+                });
+
+                try {
+                    const response = await fetch(`/api/kakao-directions?${params.toString()}`);
+
+                    if (response.status === 200) { // 200 OK (카카오 경로 찾음)
+                        const route = await response.json(); 
+
+                        const googlePath = route.path.map(coord => ({
+                            lat: coord[1], // 카카오는 [lng, lat] 순서
+                            lng: coord[0]
+                        }));
+
+                        // 카카오 경로는 Polyline으로 직접 그림
+                        currentPolyline = new google.maps.Polyline({
+                            path: googlePath,
+                            geodesic: true,
+                            strokeColor: '#FF0000', // 빨간색
+                            strokeOpacity: 0.8,
+                            strokeWeight: 5
+                        });
+                        currentPolyline.setMap(map);
+
+                        const distanceKm = (route.distance / 1000).toFixed(1); 
+                        const durationMin = Math.round(route.duration / 60);   
+                        
+                        mapInfoEl.innerHTML = `
+                            <h6 class="mb-2">✈️ 공항에서 호텔까지 (Kakao Map 기준)</h6>
+                            <p class="mb-1"><strong>예상 거리:</strong> ${distanceKm} km</p>
+                            <p class="mb-0"><strong>예상 소요 시간:</strong> ${durationMin} 분 (차량 기준)</p>
+                        `;
+                        
+                        const bounds = new google.maps.LatLngBounds();
+                        bounds.extend(googleAirportLocation);
+                        bounds.extend(googleHotelLocation);
+                        map.fitBounds(bounds);
+
+                        // 커스텀 A, B 마커 생성
+                        const airportPin = new google.maps.marker.PinElement({ glyph: "A", background: "#4285F4", borderColor: "#000" });
+                        airportMarker = new google.maps.marker.AdvancedMarkerElement({
+                            position: googleAirportLocation,
+                            map: map,
+                            title: "출발 공항",
+                            content: airportPin.element
+                        });
+
+                        const hotelPin = new google.maps.marker.PinElement({ glyph: "B", background: "#FBBC05", borderColor: "#000" });
+                        hotelMarker = new google.maps.marker.AdvancedMarkerElement({
+                            position: googleHotelLocation,
+                            map: map,
+                            title: "도착 호텔",
+                            content: hotelPin.element
+                        });
+
+                    } else {
+                        // (카카오 경로 탐색 실패. 예: 204 No Content)
+                        throw new Error("카카오 API가 경로를 찾지 못했습니다. (ZERO_RESULTS)");
+                    }
+                } catch (error) {
+                    // --- 3. Google, Kakao 모두 실패 ---
+                    // (fetch 실패 또는 카카오 API가 경로를 못찾은 경우 - 마커만 표시)
+                    console.error('Kakao/Spring Directions request failed:', error.message);
+                    mapInfoEl.innerHTML = `<span class="text-danger">Google/Kakao 경로 계산에 모두 실패했습니다.</span>
+                                         <p class="mb-0 mt-2 text-muted" style="font-size: 0.9rem;">공항(A)과 호텔(B)의 위치를 지도에 표시합니다.</p>`;
+                    
+                    const airportPin = new google.maps.marker.PinElement({ glyph: "A" });
+                    airportMarker = new google.maps.marker.AdvancedMarkerElement({
+                        position: googleAirportLocation,
+                        map: map,
+                        title: "출발 공항",
+                        content: airportPin.element
+                    });
+
+                    const hotelPin = new google.maps.marker.PinElement({ glyph: "B" });
+                    hotelMarker = new google.maps.marker.AdvancedMarkerElement({
+                        position: googleHotelLocation,
+                        map: map,
+                        title: "도착 호텔",
+                        content: hotelPin.element
+                    });
+
+                    const bounds = new google.maps.LatLngBounds();
+                    bounds.extend(googleAirportLocation);
+                    bounds.extend(googleHotelLocation);
+                    map.fitBounds(bounds);
+                }
+            }
+        });
+    }
+
+	/**
+	 * 모달 내부의 다른 호텔을 클릭했을 때 호출될 함수
+	 */
+	async function selectOtherHotel(element) {
+		const hotelId = element.dataset.hotelId;
+		const hotelName = element.dataset.hotelName;
+		const hotelLat = parseFloat(element.dataset.hotelLat);
+		const hotelLng = parseFloat(element.dataset.hotelLng);
+
+		if (isNaN(hotelLat) || isNaN(hotelLng)) {
+			console.warn("위치 정보가 없는 호텔입니다.");
+			return;
+		}
+		
+		const hotelLocation = { lat: hotelLat, lng: hotelLng };
+
+		document.getElementById('hotelMapModalLabel').textContent = hotelName;
+
+		const allHotelItems = document.querySelectorAll('.modal-hotel-item');
+		allHotelItems.forEach(item => {
+			item.style.display = (item.dataset.hotelId === hotelId) ? 'none' : 'block';
+		});
+
+		mapInfoEl.innerHTML = `
+			<div class="d-flex align-items-center">
+				<div class="spinner-border spinner-border-sm me-2" role="status"></div>
+				<span>Google 경로 계산 중...</span>
+			</div>`;
+
+        if (airportLocationCache) {
+            // [ ⭐ 수정 없음 ]
+            // 이 함수는 수정된 calculateAndDisplayRoute를 호출하므로
+            // 자동으로 Google 우선 로직이 적용됩니다.
+            calculateAndDisplayRoute(airportLocationCache, hotelLocation);
+        } else {
+            console.error("공항 위치 캐시가 없습니다.");
+            mapInfoEl.innerHTML = `<span class="text-danger">'${airportIataCode}' 공항 위치 정보가 없습니다.</span>`;
+            
+            clearMapElements();
+            hotelMarker = new google.maps.marker.AdvancedMarkerElement({
+                position: hotelLocation,
+                map: map,
+                title: "도착 호텔"
+            });
+            map.setCenter(hotelLocation);
+            map.setZoom(14);
+        }
+	}
+</script>
+
+	<script async
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOFhdNInfEDqaOCDqGvty5-Igh-a2y8eE&callback=initMap&libraries=places,directions,marker">
+	</script>
+</body>
+</html>

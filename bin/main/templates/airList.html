@@ -1,0 +1,1490 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>규아의 여행 - 항공권 선택</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link
+	href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800"
+	rel="stylesheet">
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<style type="text/css">
+/* 기본 레이아웃 및 색상 */
+.moana_gnb {
+	background-color: #5ac4c9; /* 첫 번째 이미지의 하늘색 배경 */
+	color: #fff; /* 기본 글자색 흰색 */
+	padding: 10px 0; /* 상하 패딩 */
+}
+
+.gnb_container {
+	max-width: 1200px; /* 적절한 최대 너비 설정 (G마켓 스타일) */
+	margin: 0 auto; /* 가운데 정렬 */
+	display: flex; /* 내부 요소들을 가로로 정렬하기 위해 flexbox 사용 */
+	align-items: center; /* 세로 중앙 정렬 */
+	justify-content: space-between; /* 요소들 간의 공간 배분 */
+	padding: 0 20px; /* 좌우 패딩 */
+}
+
+.moana_gnb h1 {
+	margin: 0;
+	display: flex;
+	align-items: center;
+}
+
+.moana_gnb h1 img {
+	height: 32px;
+	vertical-align: middle;
+}
+
+.list__tab {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	gap: 20px;
+}
+
+.list__tab .list-item a {
+	color: #fff;
+	text-decoration: none;
+	font-weight: bold;
+	padding: 5px 0;
+	position: relative;
+	transition: color 0.3s ease;
+}
+
+.list__tab .list-item a:hover, .list__tab .list-item a.link__tab--active
+	{
+	color: #eee;
+}
+
+.list__tab .list-item a.link__tab--active::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: -5px;
+	width: 100%;
+	height: 2px;
+	background-color: #fff;
+}
+
+.link-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.link__booking-history {
+	background-color: transparent;
+	border: 1px solid #fff;
+	color: #fff;
+	padding: 8px 15px;
+	border-radius: 20px;
+	text-decoration: none;
+	font-size: 14px;
+	transition: background-color 0.3s ease, color 0.3s ease;
+	white-space: nowrap;
+}
+
+.link__booking-history:hover {
+	background-color: #fff;
+	color: #5ac4c9;
+}
+
+.box__inner {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+body {
+	margin: 0;
+}
+
+body {
+	background-color: #f8f9fa; /* 전체 페이지 배경색을 연한 회색으로 설정 */
+}
+
+/* 왼쪽 필터 카드 버튼 스타일 */
+.filter-card-button {
+	text-align: left;
+	width: 100%;
+	border: 1px solid #dee2e6;
+	border-radius: 0.375rem;
+	background-color: #fff;
+	padding: 1.25rem;
+	transition: box-shadow .15s ease-in-out;
+}
+
+.filter-card-button:hover {
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* 각 항공편 카드 버튼 스타일 */
+.flight-card-button {
+	text-align: left;
+	border-width: 1px;
+	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.flight-card-button:hover {
+	border-color: #5ac4c9;
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.flight-card-button .card-body {
+	padding: 1.5rem;
+}
+
+.airline-logo {
+	width: 20px;
+	height: 20px;
+	object-fit: contain;
+	margin-right: 8px;
+}
+
+.price-display {
+	font-size: 1.5rem;
+	font-weight: 700;
+	letter-spacing: -1px;
+}
+
+.special-tag {
+	color: #d91f29;
+	font-size: 0.8rem;
+	font-weight: bold;
+}
+
+.nol-card {
+	background-image: linear-gradient(to right, #6d42ba, #c95193);
+	color: white;
+	border: none;
+}
+
+.nol-card .nol-logo {
+	font-weight: bold;
+	font-style: italic;
+	border: 2px solid white;
+	padding: 2px 8px;
+	border-radius: 4px;
+	display: inline-block;
+}
+
+.flight-search-form .form-label {
+	display: block;
+	font-size: 0.875rem;
+	color: #6c757d; /* 연한 회색 글씨 */
+	margin-bottom: 0.3rem;
+}
+
+/* 탭 메뉴 (왕복, 편도) */
+.flight-search-form .nav-tabs {
+	border-bottom: 1px solid #dee2e6;
+}
+
+.flight-search-form .nav-tabs .nav-link-label {
+	padding: 0.5rem 0.8rem;
+	cursor: pointer;
+	border-bottom: 3px solid transparent;
+	color: #6c757d;
+	margin-bottom: -1px; /* 아래 테두리와 겹치게 함 */
+}
+
+.flight-search-form input[type="radio"]:checked+.nav-link-label {
+	border-color: #0d6efd; /* 파란색 */
+	color: #0d6efd;
+	font-weight: 500;
+}
+
+/* 출발지, 도착지, 날짜, 탑승객 버튼 공통 스타일 (input처럼 보이게) */
+.flight-search-form .form-control-like-button {
+	display: block;
+	width: 100%;
+	padding: 0.6rem 0.9rem;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #212529;
+	background-color: #fff;
+	border: 1px solid #ced4da;
+	border-radius: 0.375rem;
+	text-align: left;
+	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.flight-search-form .form-control-like-button:hover {
+	border-color: #86b7fe; /* 포커스 시 파란색 테두리 */
+}
+
+/* 출발지, 도착지 버튼 전용 스타일 */
+#modalDepartureBtn, #modalArrivalBtn {
+	text-align: center;
+	font-weight: bold;
+	font-size: 1.25rem;
+}
+
+/* 검색하기 버튼 */
+.flight-search-form .btn-submit {
+	padding-top: 0.8rem;
+	padding-bottom: 0.8rem;
+	font-size: 1.1rem;
+	font-weight: bold;
+}
+
+.swap-button {
+	border: 1px solid #ddd;
+	border-radius: 50%;
+	width: 32px;
+	height: 32px;
+	min-width: 32px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 16px;
+	color: #555;
+	flex-grow: 0;
+}
+
+.modal-overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4); /* 배경을 약간 어둡게 수정 */
+	justify-content: center;
+	align-items: center;
+	z-index: 1060; /* 부트스트랩 모달 위로 오도록 z-index 조정 */
+}
+
+.modal-overlay .modal-content {
+	background-color: white;
+	padding: 24px;
+	border-radius: 16px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+	width: 400px;
+	max-height: 80vh;
+	overflow-y: auto;
+	position: relative;
+}
+
+.modal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.modal-header h2 {
+	margin: 0;
+	font-size: 20px;
+}
+
+.close-button {
+	background: none;
+	border: none;
+	font-size: 24px;
+	cursor: pointer;
+}
+
+.modal-search-input {
+	width: 100%;
+	padding: 12px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	font-size: 16px;
+	box-sizing: border-box;
+	margin-bottom: 24px;
+}
+
+.popular-searches h3 {
+	font-size: 16px;
+	color: #555;
+	margin-top: 20px;
+	margin-bottom: 12px;
+}
+
+.tags-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.tag {
+	background-color: #f0f0f0;
+	color: #333;
+	padding: 8px 16px;
+	border-radius: 20px;
+	font-size: 14px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.tag:hover {
+	background-color: #e0e0e0;
+}
+
+.search-result-item {
+	padding: 10px 5px;
+	cursor: pointer;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.search-result-item:hover {
+	background-color: #f5f5f5;
+}
+
+.location-main {
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.location-sub {
+	font-size: 14px;
+	color: #888;
+}
+
+.no-results {
+	padding: 20px;
+	text-align: center;
+	color: #999;
+}
+/* 🚀 달력이 모달 위에 표시되도록 z-index 추가 */
+.flatpickr-calendar {
+	z-index: 1061 !important;
+}
+
+/* --- 탑승객 모달 CSS --- */
+.passenger-section, .seat-class-section {
+	margin-bottom: 24px;
+}
+
+.passenger-section h4, .seat-class-section h4 {
+	margin-top: 0;
+	margin-bottom: 12px;
+	font-size: 16px;
+	color: #333;
+}
+
+.passenger-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 16px;
+}
+
+.passenger-label small {
+	color: #888;
+	font-size: 12px;
+}
+
+.passenger-controls {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+}
+
+.passenger-controls .count {
+	font-size: 18px;
+	width: 25px;
+	text-align: center;
+}
+
+.control-btn {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px solid #ddd;
+	background-color: white;
+	font-size: 20px;
+	cursor: pointer;
+	color: #3d5aee;
+}
+
+.control-btn:disabled {
+	color: #ccc;
+	cursor: not-allowed;
+}
+
+.seat-class-options {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+}
+
+.seat-class-options label {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 14px;
+}
+
+.confirm-btn {
+	width: 100%;
+	padding: 14px;
+	background-color: #3d5aee;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-size: 16px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+#loadingModal {
+	display: none; /* 평소에는 숨겨 둠 */
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	z-index: 2000; /* 다른 요소들보다 위에 표시 */
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	color: white;
+}
+
+.spinner {
+	width: 50px;
+	height: 50px;
+	border: 5px solid #f3f3f3;
+	border-top: 5px solid #5ac4c9; /* 헤더 색상과 통일 */
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+	margin-bottom: 20px;
+}
+
+#loadingModal p {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+/* 스피너 회전 애니메이션 */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.booking-details-section h5 {
+	margin-bottom: 0.25rem;
+}
+
+.booking-details-section small {
+	font-size: 0.9rem;
+}
+
+.modal-footer {
+	justify-content: space-between;
+}
+
+#finalBookingBtn {
+	width: 60%;
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+	<div class="moana_gnb" role="complementary">
+		<div class="gnb_container">
+			<div class="box__inner">
+				<h1>
+					<a href="/" title="규아의 여행"> <img
+						src="https://pics.gmarket.co.kr/pc/single/kr/vertical/common/logo_g-travel.png"
+						alt="규아의 여행">
+					</a>
+				</h1>
+			</div>
+
+			<ul class="list__tab">
+				<li class="list-item"><a class="link__tab" href="/">항공</a></li>
+				<li class="list-item"><a class="link__tab" href="/chat">추천챗</a></li>
+			</ul>
+
+			<div class="link-container">
+				<a href="/revList"
+					class="link__booking-history sp_sd--after" th:if="${session.loginUser != null}">나의 예약내역</a>
+				<a
+					th:if="${session.loginUser == null}"
+					class="link__booking-history sp_sd--after" href="member/login">로그인</a>
+				<a th:if="${session.loginUser != null}"
+					th:text="${session.loginUser.UserName}"
+					class="link__booking-history sp_sd--after">허성무</a> <a
+					th:if="${session.loginUser != null}"
+					class="link__booking-history sp_sd--after" href="member/logout">로그아웃</a>
+			</div>
+		</div>
+	</div>
+
+	<main class="container py-5">
+		<div class="row g-4">
+
+			<div class="col-lg-3">
+				<div class="vstack gap-3">
+					<button class="filter-card-button" data-bs-toggle="modal"
+						data-bs-target="#researchModal"
+						th:data-trip-type="${airparmDto.tripType}"
+						th:data-departure-code="${airparmDto.departureCode}"
+						th:data-arrival-code="${airparmDto.arrivalCode}"
+						th:data-departure-date="${airparmDto.departureDate}"
+						th:data-return-date="${airparmDto.returnDate}"
+						th:data-adults="${airparmDto.adults}"
+						th:data-children="${airparmDto.children}"
+						th:data-infants="${airparmDto.infants}"
+						th:data-travel-class="${airparmDto.travelClass}"
+						th:data-departure-ko-location="${airparmDto.departureKoLocation}"
+   						th:data-arrival-ko-location="${airparmDto.arrivalKoLocation}">						
+						<div
+							class="d-flex justify-content-between align-items-center mb-2">
+							<span
+								class="badge bg-primary-subtle text-primary-emphasis rounded-pill"
+								th:if="${airparmDto.tripType} == 'round-trip'" th:text="왕복">왕복</span>
+							<span
+								class="badge bg-primary-subtle text-primary-emphasis rounded-pill"
+								th:if="${airparmDto.tripType} == 'one-way'" th:text="편도">왕복</span>
+						</div>
+
+						<h5 class="fw-bold mb-1"
+							th:text="${airparmDto.departureCode + ' ↔ ' + airparmDto.arrivalCode}">
+							제주 ↔ 오사카 <i class="bi bi-chevron-down"></i>
+						</h5>
+						<h4 class="fw-bold mb-1"
+							th:text="${'('+airparmDto.departureKoLocation + ' ↔ ' + airparmDto.arrivalKoLocation + ')'}">
+							제주 ↔ 오사카 <i class="bi bi-chevron-down"></i>
+						</h4>
+
+						<small class="text-body-secondary"
+							th:if="${#strings.isEmpty(#strings.trim(airparmDto.returnDate))}"
+							th:text="${airparmDto.departureDate}">11.6(목) - 11.8(토)</small> <small
+							class="text-body-secondary"
+							th:if="${not #strings.isEmpty(#strings.trim(airparmDto.returnDate))}"
+							th:text="${airparmDto.departureDate} + '~' + ${airparmDto.returnDate}">11.6(목)
+							- 11.8(토)</small> <br> <small class="text-body-secondary"
+							th:text="'성인 ' + ${airparmDto.adults} + ' 어린이 ' + ${airparmDto.children} + ' 유아 '
+							 + ${airparmDto.infants} + ' · ' + ${airparmDto.travelClass} +' class'">성인
+							1 · 일반석</small>
+					</button>
+				</div>
+			</div>
+
+			<div class="col-lg-9">
+				<h4 class="fw-bold">가는편을 선택해 주세요</h4>
+				<p class="text-body-secondary mb-4">성인 1인 기준, 발권대행수수료 포함</p>
+
+				<div class="vstack gap-3" th:each="searchAir : ${searchairDto}">
+					<button class="card flight-card-button w-100"
+						th:data-offer-id="${searchAir.id}"
+						th:data-departure-time="${searchAir.departureTime}"
+						th:data-carrier-code="${searchAir.carrierCode}"
+						th:data-departure-code="${airparmDto.departureCode}"
+						th:data-arrival-code="${airparmDto.arrivalCode}"
+						th:data-departure-date="${airparmDto.departureDate}"
+						th:data-return-date="${airparmDto.returnDate}"
+						th:data-adults="${airparmDto.adults}"
+						th:data-children="${airparmDto.children}"
+						th:data-infants="${airparmDto.infants}"
+						th:data-travel-class="${airparmDto.travelClass}"
+						th:data-arrival-time="${searchAir.arrivalTime}"
+						th:data-total-price="${searchAir.rawTotalPrice}"
+						th:data-origin-code="${searchAir.departureCode}"
+						th:data-destination-code="${searchAir.arrivalCode}"
+						th:data-departure-ko-location="${airparmDto.departureKoLocation}"
+       					th:data-arrival-ko-location="${airparmDto.arrivalKoLocation}"
+						onclick="openReturnFlightModal(this)">
+						<div class="card-body">
+							<div class="row align-items-center">
+								<div class="col-md-5">
+									<small class="text-body-secondary"
+										th:text="${searchAir.numberOfBookableSeats} + '석 가능'">7석
+										남음</small>
+									<div class="d-flex align-items-center mt-1">
+										<div>
+											<h6 class="fw-bold mb-0"
+												th:text="${searchAir.departureTime} + ' - ' + ${searchAir.arrivalTime}">16:00
+												- 17:40</h6>
+											<small class="text-body-secondary"
+												th:text="${searchAir.departureCode} + ' → ' + ${searchAir.arrivalCode} + ' · ' + ${searchAir.carrierCode} + ' 항공'">CJU-KIX
+												· 티웨이항공</small>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3 text-md-end">
+									<span class="fw-bold"
+										th:text="${searchAir.directFlight ? '직항' : '경유'}">직항</span>
+								</div>
+								<div class="col-md-4 text-md-end">
+									<span class="price-display"
+										th:text="${#numbers.formatInteger(searchAir.rawTotalPrice, 0, 'COMMA')} + '원'">292,050원</span>
+								</div>
+							</div>
+							<hr>
+						</div>
+					</button>
+					<br>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<div class="modal fade" id="researchModal" tabindex="-1"
+		aria-labelledby="researchModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="researchModalLabel">재검색</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form action="/air/searchAirport" method="POST"
+						class="flight-search-form">
+
+						<div class="d-flex nav-tabs mb-4">
+							<div>
+								<input type="radio" name="tripType" value="round-trip"
+									id="modal-round-trip" checked style="display: none;"> <label
+									for="modal-round-trip" class="nav-link-label">왕복</label>
+							</div>
+							<div>
+								<input type="radio" name="tripType" value="one-way"
+									id="modal-one-way" style="display: none;"> <label
+									for="modal-one-way" class="nav-link-label">편도</label>
+							</div>
+						</div>
+
+						<div class="d-flex align-items-end justify-content-between mb-4">
+							<div class="flex-grow-1">
+								<label for="modalDepartureBtn" class="form-label">출발지</label>
+								<button type="button" id="modalDepartureBtn"
+									class="form-control-like-button">SEL</button>
+							</div>
+							<button type="button" class="swap-button">↔</button>
+							<div class="flex-grow-1">
+								<label for="modalArrivalBtn" class="form-label">도착지</label>
+								<button type="button" id="modalArrivalBtn"
+									class="form-control-like-button">CJU</button>
+							</div>
+						</div>
+
+						<div class="mb-4">
+							<label for="modalDateRangeBtn" class="form-label">날짜</label>
+							<button type="button" id="modalDateRangeBtn"
+								class="form-control-like-button">2025-10-13 ~
+								2025-10-14</button>
+						</div>
+
+						<div class="mb-4">
+							<label for="passengerBtn" class="form-label">탑승객</label>
+							<button type="button" id="passengerBtn"
+								class="form-control-like-button">성인 1 어린이 0 유아 0 ·
+								ECONOMY class</button>
+						</div>
+
+						<input type="hidden" name="departureCode"
+							id="modalDepartureCodeInput"> <input type="hidden"
+							name="arrivalCode" id="modalArrivalCodeInput"> <input
+							type="hidden" name="departureDate" id="modalDepartureDateInput">
+						<input type="hidden" name="returnDate" id="modalReturnDateInput">
+						<input type="hidden" name="adults" id="adultsInput"> <input
+							type="hidden" name="children" id="childrenInput"> <input
+							type="hidden" name="infants" id="infantsInput"> <input
+							type="hidden" name="travelClass" id="travelClassInput">
+													
+						<input type="hidden" name="departureKoLocation" id="modalDepartureKoLocationInput">
+						<input type="hidden" name="arrivalKoLocation" id="modalArrivalKoLocationInput">
+						
+						<div class="d-grid mt-2">
+							<button type="submit" class="btn btn-primary btn-lg btn-submit">검색하기</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="modal fade" id="returnFlightListModal" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">오는 편 항공권을 선택해주세요</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div id="modal-return-flight-list">
+						<div class="d-flex justify-content-center">
+							<div class="spinner-border" role="status">
+								<span class="visually-hidden">Loading...</span>
+							</div>
+							<p class="ms-3">오는 편 항공권을 조회중입니다...</p>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="locationModal" class="modal-overlay">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 id="modalTitle">출발지 선택</h2>
+				<button id="closeModalBtn" class="close-button">&times;</button>
+			</div>
+			<input type="text" id="searchAir" class="modal-search-input"
+				placeholder="국가, 도시 또는 공항으로 찾아보세요">
+			<div class="popular-searches">
+				<h3>국내 인기 검색</h3>
+				<div class="tags-container">
+					<span class="tag" data-iata="ICN">서울/인천</span> <span class="tag"
+						data-iata="CJU">제주</span> <span class="tag" data-iata="PUS">부산</span>
+					<span class="tag" data-iata="GMP">서울/김포</span> <span class="tag"
+						data-iata="RSU">여수</span>
+				</div>
+				<h3>동남아 인기 검색</h3>
+				<div class="tags-container">
+					<span class="tag" data-iata="DAD">다낭</span> <span class="tag"
+						data-iata="BKK">방콕</span> <span class="tag" data-iata="TPE">타이페이</span>
+					<span class="tag" data-iata="HKG">홍콩</span> <span class="tag"
+						data-iata="DPS">발리</span>
+				</div>
+				<h3>일본 인기 검색</h3>
+				<div class="tags-container">
+					<span class="tag" data-iata="NRT">도쿄/나리타</span> <span class="tag"
+						data-iata="KIX">오사카</span> <span class="tag" data-iata="FUK">후쿠오카</span>
+					<span class="tag" data-iata="CTS">삿포로/산치토세</span> <span class="tag"
+						data-iata="OKA">오키나와</span>
+				</div>
+				<h3>유럽 인기 검색</h3>
+				<div class="tags-container">
+					<span class="tag" data-iata="CDG">파리</span> <span class="tag"
+						data-iata="LHR">런던</span> <span class="tag" data-iata="FCO">로마</span>
+					<span class="tag" data-iata="MAD">마드리드</span> <span class="tag"
+						data-iata="BCN">바르셀로나</span>
+				</div>
+				<h3>북미 및 기타</h3>
+				<div class="tags-container">
+					<span class="tag" data-iata="JEK">뉴욕</span> <span class="tag"
+						data-iata="SYD">시드니</span> <span class="tag" data-iata="LAX">로스앤젤레스</span>
+					<span class="tag" data-iata="SFO">샌프란시스코</span> <span class="tag"
+						data-iata="GUM">괌</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="passengerModal" class="modal-overlay">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>인원 및 좌석 등급</h2>
+				<button class="close-button">&times;</button>
+			</div>
+
+			<div class="passenger-section">
+				<h4>인원</h4>
+				<div class="passenger-row" data-type="adult">
+					<div class="passenger-label">
+						<div>성인</div>
+						<small>만 12세 이상</small>
+					</div>
+					<div class="passenger-controls">
+						<button type="button" class="control-btn minus" disabled>-</button>
+						<span class="count">1</span>
+						<button type="button" class="control-btn plus">+</button>
+					</div>
+				</div>
+				<div class="passenger-row" data-type="child">
+					<div class="passenger-label">
+						<div>소아</div>
+						<small>만 2~12세 미만</small>
+					</div>
+					<div class="passenger-controls">
+						<button type="button" class="control-btn minus" disabled>-</button>
+						<span class="count">0</span>
+						<button type="button" class="control-btn plus">+</button>
+					</div>
+				</div>
+				<div class="passenger-row" data-type="infant">
+					<div class="passenger-label">
+						<div>유아</div>
+						<small>만 2세 미만 (보호자와 동반 착석)</small>
+					</div>
+					<div class="passenger-controls">
+						<button type="button" class="control-btn minus" disabled>-</button>
+						<span class="count">0</span>
+						<button type="button" class="control-btn plus">+</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="seat-class-section">
+				<h4>좌석등급</h4>
+				<div class="seat-class-options">
+					<label><input type="radio" name="travelClassModal"
+						value="ECONOMY" checked> 일반석</label> <label><input
+						type="radio" name="travelClassModal" value="PREMIUM_ECONOMY">
+						프리미엄 일반석</label> <label><input type="radio"
+						name="travelClassModal" value="BUSINESS"> 비즈니스석</label> <label><input
+						type="radio" name="travelClassModal" value="FIRST"> 일등석</label>
+				</div>
+			</div>
+
+			<button type="button" id="confirmPassengerBtn" class="confirm-btn">선택
+				완료</button>
+		</div>
+	</div>
+
+	<div id="loadingModal">
+		<div class="spinner"></div>
+		<p>항공권을 재검색중입니다...</p>
+	</div>
+
+	<div class="modal fade" id="bookingConfirmationModal" tabindex="-1"
+		aria-labelledby="bookingConfirmationModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="bookingConfirmationModalLabel">나의
+						예약 내역 확인</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="booking-details-section">
+						<span class="badge bg-primary mb-2">가는 편</span>
+						<h5 class="fw-bold" id="confirm-dep-route">ICN → NRT</h5>
+						<small class="text-muted d-block" id="confirm-dep-schedule">2025-10-18
+							(토) 09:30 ~ 11:45</small> <small class="text-muted d-block"
+							id="confirm-dep-airline">대한항공 (KE123)</small>
+					</div>
+
+					<hr class="my-3">
+
+					<div class="booking-details-section">
+						<span class="badge bg-success mb-2">오는 편</span>
+						<h5 class="fw-bold" id="confirm-ret-route">NRT → ICN</h5>
+						<small class="text-muted d-block" id="confirm-ret-schedule">2025-10-25
+							(토) 14:00 ~ 16:20</small> <small class="text-muted d-block"
+							id="confirm-ret-airline">대한항공 (KE456)</small>
+					</div>
+
+					<hr class="my-3">
+
+					<div class="d-flex justify-content-between align-items-center mt-3">
+						<h6 class="mb-0">총 결제 예정 금액</h6>
+						<span class="price-display text-danger" id="confirm-total-price">542,000원</span>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">취소</button>
+					
+					<button type="button" class="btn btn-primary" id="finalBookingBtn"
+						data-bs-toggle="modal" 
+						data-bs-target="#hotelPromptModal"
+						data-bs-dismiss="modal">예약 확정하기</button>
+					</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="hotelPromptModal" tabindex="-1"
+		aria-labelledby="hotelPromptModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="hotelPromptModalLabel">예약 완료!</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p class="fs-5 text-center">
+						예약이 곧 완료됩니다. <br> <strong>근처 호텔</strong>도 함께 보시겠어요?
+					</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						onclick="confirmAndBook(this, '/')">아니요</button>
+					<button type="button" class="btn btn-primary"
+						onclick="confirmAndBookAndSeeHotels(this)">예</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+
+	<script>
+    // 1. 스크립트 상단에 사용할 모달 객체들을 미리 정의합니다.
+    const returnModal = new bootstrap.Modal(document.getElementById('returnFlightListModal'));
+    const confirmationModal = new bootstrap.Modal(document.getElementById('bookingConfirmationModal'));
+    
+    // [ 3. 추가 ] 새로운 "호텔 확인" 모달 객체 정의
+    const hotelPromptModal = new bootstrap.Modal(document.getElementById('hotelPromptModal'));
+
+
+    // '오는 편' 목록을 띄우는 함수
+   async function openReturnFlightModal(buttonElement) {
+    // (이 함수는 수정 사항 없음 - 기존과 동일)
+    const listContainer = document.getElementById('modal-return-flight-list');
+    listContainer.innerHTML = `
+        <div class="d-flex justify-content-center p-5">
+            <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
+            <p class="ms-3 mb-0">오는 편 항공권을 조회중입니다...</p>
+        </div>`;
+    
+    const returnModalElement = document.getElementById('returnFlightListModal');
+    
+    returnModalElement.dataset.departureInfo = JSON.stringify({
+        id: buttonElement.dataset.offerId,
+        carrierCode: buttonElement.dataset.carrierCode,
+        originCode: buttonElement.dataset.originCode,
+        destinationCode: buttonElement.dataset.destinationCode,
+        departureTime: buttonElement.dataset.departureTime,
+        arrivalTime: buttonElement.dataset.arrivalTime,
+        totalPrice: (buttonElement.dataset.totalPrice || "").replace(/,/g, ''),
+        departureDate: buttonElement.dataset.departureDate,
+        returnDate: buttonElement.dataset.returnDate,
+        departureKoLocation: buttonElement.dataset.departureKoLocation,
+        arrivalKoLocation: buttonElement.dataset.arrivalKoLocation
+    });
+
+    returnModal.show();
+    
+    const params = {
+        selectedDepartureTime: buttonElement.dataset.departureTime,
+        selectedCarrierCode: buttonElement.dataset.carrierCode,
+        departureCode: buttonElement.dataset.departureCode,
+        arrivalCode: buttonElement.dataset.arrivalCode,
+        departureDate: buttonElement.dataset.departureDate,
+        returnDate: buttonElement.dataset.returnDate,
+        adults: buttonElement.dataset.adults,
+        children: buttonElement.dataset.children,
+        infants: buttonElement.dataset.infants,
+        travelClass: buttonElement.dataset.travelClass
+    };
+    const queryString = new URLSearchParams(params).toString();
+    
+    try {
+        const response = await fetch(`/air/api/return-flights?${queryString}`);
+        if (!response.ok) {
+            throw new Error('항공편 조회에 실패했습니다. (서버 응답 오류)');
+        }
+        const returnFlights = await response.json();
+        listContainer.innerHTML = '';
+        if (returnFlights.length === 0) {
+            listContainer.innerHTML = '<p class="text-center p-5">선택 가능한 오는 편 항공권이 없습니다.</p>';
+            return;
+        }
+        returnFlights.forEach(flight => {
+            const isDirectText = flight.returnDirectFlight ? '직항' : '경유';
+            const rawPrice = flight.returnTotalPrice;
+            const formattedPrice = new Intl.NumberFormat('ko-KR').format(rawPrice);
+
+            const flightHtml = `
+                <div class="card flight-card-button mb-2">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-5">
+                                <h6 class="fw-bold mb-0">${flight.returnDepartureTime} - ${flight.returnArrivalTime}</h6>
+                                <small class="text-body-secondary">${flight.returnDepartureCode} → ${flight.returnArrivalCode} · ${flight.returnCarrierCode} 항공</small>
+                            </div>
+                            <div class="col-md-3 text-md-center">
+                                <span class="fw-bold">${isDirectText}</span>
+                            </div>
+                            <div class="col-md-4 text-md-end">
+                                <div class="d-flex flex-column align-items-end">
+                                    <span class="price-display mb-1">${formattedPrice}원</span>                                  
+                                    <button class="btn btn-primary btn-sm"
+                                            data-id="${flight.id}"
+                                            data-carrier-code="${flight.returnCarrierCode}"
+                                            data-departure-time="${flight.returnDepartureTime}"
+                                            data-arrival-time="${flight.returnArrivalTime}"
+                                            data-total-price="${rawPrice}"
+                                            data-origin-code="${flight.returnDepartureCode}"
+                                            data-destination-code="${flight.returnArrivalCode}"
+                                            onclick="selectReturnFlight(this)">
+                                        선택
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            listContainer.insertAdjacentHTML('beforeend', flightHtml);
+        });
+    } catch (error) {
+        listContainer.innerHTML = `<p class="text-center text-danger p-5">${error.message}</p>`;
+    }
+}
+
+    // 2. '오는 편' 선택 시, 확인 모달을 채워서 보여주는 함수
+    async function selectReturnFlight(selectedButton) {
+    // (이 함수는 수정 사항 없음 - 기존과 동일)
+    const returnModalElement = document.getElementById('returnFlightListModal');
+    const departureInfo = JSON.parse(returnModalElement.dataset.departureInfo);
+    const returnInfo = {
+        id: selectedButton.dataset.id,
+        carrierCode: selectedButton.dataset.carrierCode,
+        originCode: selectedButton.dataset.originCode,
+        destinationCode: selectedButton.dataset.destinationCode,
+        departureTime: selectedButton.dataset.departureTime,
+        arrivalTime: selectedButton.dataset.arrivalTime,
+        totalPrice: (selectedButton.dataset.totalPrice || "").replace(/,/g, '')
+    };
+
+    const bookingData = {
+    		departureKoLocation: departureInfo.departureKoLocation,
+            arrivalKoLocation: departureInfo.arrivalKoLocation,
+            
+        departureFlight: {
+            id: departureInfo.id,
+            carrierCode: departureInfo.carrierCode,
+            originCode: departureInfo.originCode,
+            destinationCode: departureInfo.destinationCode,
+            departureTime: `${departureInfo.departureDate}T${departureInfo.departureTime}:00`,
+            arrivalTime: `${departureInfo.departureDate}T${departureInfo.arrivalTime}:00`,
+            totalPrice: departureInfo.totalPrice
+        },
+        returnFlight: {
+            id: returnInfo.id,
+            carrierCode: returnInfo.carrierCode,
+            originCode: returnInfo.originCode,
+            destinationCode: returnInfo.destinationCode,
+            departureTime: `${departureInfo.returnDate}T${returnInfo.departureTime}:00`,
+            arrivalTime: `${departureInfo.returnDate}T${returnInfo.arrivalTime}:00`,
+            totalPrice: returnInfo.totalPrice
+        }
+    };
+
+    document.getElementById('confirm-dep-route').textContent = 
+        `${departureInfo.originCode} (${departureInfo.departureKoLocation}) → ${departureInfo.destinationCode} (${departureInfo.arrivalKoLocation})`;
+    document.getElementById('confirm-dep-schedule').textContent = `${departureInfo.departureDate} ${departureInfo.departureTime} ~ ${departureInfo.arrivalTime}`;
+    document.getElementById('confirm-dep-airline').textContent = `${departureInfo.carrierCode} 항공`;
+    
+    document.getElementById('confirm-ret-route').textContent = 
+        `${returnInfo.originCode} (${departureInfo.arrivalKoLocation}) → ${returnInfo.destinationCode} (${departureInfo.departureKoLocation})`;
+    document.getElementById('confirm-ret-schedule').textContent = `${departureInfo.returnDate} ${returnInfo.departureTime} ~ ${returnInfo.arrivalTime}`;
+    document.getElementById('confirm-ret-airline').textContent = `${returnInfo.carrierCode} 항공`;
+    
+    const totalPrice = parseFloat(returnInfo.totalPrice);
+    document.getElementById('confirm-total-price').textContent = new Intl.NumberFormat('ko-KR').format(totalPrice) + '원';
+    
+    const confirmationModalElement = document.getElementById('bookingConfirmationModal');
+    confirmationModalElement.dataset.bookingPayload = JSON.stringify(bookingData);
+
+    returnModal.hide();
+    confirmationModal.show();
+}
+
+    // [ 3. 수정 ] '예약 확정하기' 함수 수정
+    // - redirectUrl 파라미터를 받도록 수정
+    // - hotelPromptModal.hide()로 변경
+    async function confirmAndBook(button, redirectUrl = '/') { // 👈 [수정] redirectUrl 파라미터 추가
+        button.disabled = true; // 중복 클릭 방지
+
+        // 예약 정보는 여전히 원래 확인 모달에 저장되어 있음
+        const confirmationModalElement = document.getElementById('bookingConfirmationModal');
+        const bookingPayload = confirmationModalElement.dataset.bookingPayload;
+        
+        if (!bookingPayload) {
+            alert('예약 정보가 올바르지 않습니다. 다시 시도해주세요.');
+            button.disabled = false;
+            return;
+        }
+
+        hotelPromptModal.hide();    // 👈 [수정] 호텔 프롬프트 모달을 닫아야 함
+
+        const loadingModal = document.getElementById('loadingModal');
+        loadingModal.querySelector('p').textContent = '예약 정보를 생성중입니다...';
+        loadingModal.style.display = 'flex';
+
+        try {
+            const response = await fetch('/air/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: bookingPayload
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    alert('로그인이 필요합니다. 확인을 누르면 로그인 페이지로 이동합니다.');
+                    window.location.href = '/member/login';
+                    return;
+                }
+                const errorData = await response.json();
+                throw new Error(errorData.message || '예약 생성에 실패했습니다.');
+            }
+
+            const result = await response.json();
+            alert(`예약이 완료되었습니다! (예약 ID: ${result.bookingId})`);
+            
+            window.location.href = redirectUrl; // 👈 [수정] 파라미터로 받은 URL로 이동
+
+        } catch (error) {
+            console.error("Error creating booking:", error);
+            alert(`오류가 발생했습니다: ${error.message}`);
+            loadingModal.style.display = 'none';
+            // 버튼 비활성화를 풀 때, "예", "아니요" 버튼이 다를 수 있으므로
+            // hotelPromptModal에서 버튼을 다시 찾아 활성화합니다.
+            document.querySelectorAll('#hotelPromptModal button').forEach(btn => btn.disabled = false);
+        }
+    }
+    
+    
+    // [ 3. 추가 ] "호텔 보러가기(예)" 버튼 클릭 시 실행될 함수
+    async function confirmAndBookAndSeeHotels(button) {
+        // 1. 예약 정보(payload) 가져오기
+        const confirmationModalElement = document.getElementById('bookingConfirmationModal');
+        const bookingPayload = confirmationModalElement.dataset.bookingPayload;
+
+        if (!bookingPayload) {
+            alert('예약 정보를 찾을 수 없습니다. 다시 시도해주세요.');
+            return;
+        }
+
+        // 2. payload를 JSON으로 파싱
+        const bookingData = JSON.parse(bookingPayload);
+        
+        // 3. destinationCode만 추출
+        const destinationCode = bookingData.departureFlight.destinationCode;
+
+        // [⭐ 4. 핵심 수정]
+        // checkIn, checkOut을 제거하고 destination만 보냅니다.
+        const hotelUrl = `/hotel/List?destination=${destinationCode}`;
+
+        // 5. 수정된 confirmAndBook 함수를 '호텔 URL'과 함께 호출
+        await confirmAndBook(button, hotelUrl);
+    }
+
+
+    // ------------------------------------------------------------------
+    // 아래는 재검색, 장소선택, 탑승객 선택 모달 관련 스크립트 (기존 코드)
+    // (이 부분은 수정 사항 없음 - 기존과 동일)
+    // ------------------------------------------------------------------
+    const researchModal = document.getElementById('researchModal');
+    const modalDateRangeBtn = document.getElementById('modalDateRangeBtn');
+    const modalDepartureDateInput = document.getElementById('modalDepartureDateInput');
+    const modalReturnDateInput = document.getElementById('modalReturnDateInput');
+    const roundTripRadio = document.getElementById('modal-round-trip');
+    const oneWayRadio = document.getElementById('modal-one-way');
+
+    const datePicker = flatpickr(modalDateRangeBtn, {
+        dateFormat: "Y-m-d", locale: "ko",
+        onClose: function(selectedDates, dateStr, instance) {
+            const mode = instance.config.mode;
+            if (mode === 'range' && selectedDates.length === 2) {
+                const startDate = flatpickr.formatDate(selectedDates[0], "Y-m-d");
+                const endDate = flatpickr.formatDate(selectedDates[1], "Y-m-d");
+                instance.element.textContent = `${startDate} ~ ${endDate}`;
+                modalDepartureDateInput.value = startDate;
+                modalReturnDateInput.value = endDate;
+            } else if (mode === 'single' && selectedDates.length === 1) {
+                const selectedDate = flatpickr.formatDate(selectedDates[0], "Y-m-d");
+                instance.element.textContent = selectedDate;
+                modalDepartureDateInput.value = selectedDate;
+                modalReturnDateInput.value = '';
+            }
+        }
+    });
+    modalDateRangeBtn.addEventListener('click', (event) => event.preventDefault());
+
+    function updateCalendarMode() {
+        datePicker.clear();
+        modalDateRangeBtn.textContent = '날짜를 선택하세요';
+        modalDepartureDateInput.value = '';
+        modalReturnDateInput.value = '';
+        datePicker.set('mode', oneWayRadio.checked ? 'single' : 'range');
+    }
+    roundTripRadio.addEventListener('change', updateCalendarMode);
+    oneWayRadio.addEventListener('change', updateCalendarMode);
+
+ // '재검색' 모달이 열릴 때 실행되는 이벤트 리스너
+    researchModal.addEventListener('show.bs.modal', function (event) {
+        // 1. 재검색 버튼에서 모든 데이터 가져오기 (⭐한글 지역명 포함)
+        const button = event.relatedTarget;
+        const { 
+            tripType, departureCode, arrivalCode, departureDate, returnDate, 
+            adults, children, infants, travelClass,
+            departureKoLocation, arrivalKoLocation // ⭐ 추가된 부분
+        } = button.dataset;
+
+        // 2. 모달 안의 모든 요소들을 ID로 선택
+        const modalDepartureBtn = researchModal.querySelector('#modalDepartureBtn');
+        const modalArrivalBtn = researchModal.querySelector('#modalArrivalBtn');
+        const passengerBtn = researchModal.querySelector('#passengerBtn'); 
+        
+        const modalDepartureCodeInput = researchModal.querySelector('#modalDepartureCodeInput');
+        const modalArrivalCodeInput = researchModal.querySelector('#modalArrivalCodeInput');
+        // ⭐ [추가] 새로 추가한 한글 지역명 input 선택
+        const modalDepartureKoLocationInput = researchModal.querySelector('#modalDepartureKoLocationInput');
+        const modalArrivalKoLocationInput = researchModal.querySelector('#modalArrivalKoLocationInput');
+
+        const adultsInput = researchModal.querySelector('#adultsInput'); 
+        const childrenInput = researchModal.querySelector('#childrenInput'); 
+        const infantsInput = researchModal.querySelector('#infantsInput'); 
+        const travelClassInput = researchModal.querySelector('#travelClassInput');
+
+        // 3. 가져온 데이터로 모달 내용 채우기 (⭐한글 지역명 input 값 채우기 추가)
+        modalDepartureBtn.textContent = departureCode;
+        modalArrivalBtn.textContent = arrivalCode;
+        modalDepartureCodeInput.value = departureCode;
+        modalArrivalCodeInput.value = arrivalCode;
+        // ⭐ [추가] 한글 지역명 input에 값 설정
+        modalDepartureKoLocationInput.value = departureKoLocation;
+        modalArrivalKoLocationInput.value = arrivalKoLocation;
+
+        let dateString = departureDate;
+        if (tripType === 'round-trip' && returnDate && returnDate.trim() !== '') {
+            dateString += ` ~ ${returnDate}`;
+        }
+        modalDateRangeBtn.textContent = dateString;
+        modalDepartureDateInput.value = departureDate;
+        modalReturnDateInput.value = returnDate;
+
+        let passengerString = `성인 ${adults} 어린이 ${children} 유아 ${infants} · ${travelClass} class`;
+        passengerBtn.textContent = passengerString;
+        adultsInput.value = adults;
+        childrenInput.value = children;
+        infantsInput.value = infants;
+        travelClassInput.value = travelClass;
+
+        // 4. 달력 설정
+        if (tripType === 'round-trip') {
+            roundTripRadio.checked = true;
+            datePicker.set('mode', 'range');
+            if (returnDate && returnDate.trim() !== '') {
+                datePicker.setDate([departureDate, returnDate]);
+            }
+        } else {
+            oneWayRadio.checked = true;
+            datePicker.set('mode', 'single');
+            if (departureDate) {
+                datePicker.setDate([departureDate]);
+            }
+        }
+    });
+    const modalDepartureBtn = document.getElementById('modalDepartureBtn');
+    const modalArrivalBtn = document.getElementById('modalArrivalBtn');
+    const modalDepartureCodeInput = document.getElementById('modalDepartureCodeInput');
+    const modalArrivalCodeInput = document.getElementById('modalArrivalCodeInput');
+
+    const locationModal = document.getElementById('locationModal');
+    const locationModalContent = locationModal.querySelector('.modal-content');
+    const popularSearchesContainer = locationModal.querySelector('.popular-searches');
+    const defaultModalContentHtml = popularSearchesContainer.innerHTML;
+    locationModalContent.addEventListener('mousedown', (event) => event.stopPropagation());
+
+    let locationSelectionContext = null; 
+
+    function closeLocationModal() {
+        locationModal.style.display = 'none';
+        const researchModalEl = document.getElementById('researchModal');
+        const backdropEl = document.querySelector('.modal-backdrop');
+        researchModalEl.style.display = 'block';
+        if (backdropEl) backdropEl.style.display = 'block';
+    }
+
+    function openLocationModal(context) {
+        const researchModalEl = document.getElementById('researchModal');
+        const backdropEl = document.querySelector('.modal-backdrop');
+        researchModalEl.style.display = 'none';
+        if (backdropEl) backdropEl.style.display = 'none';
+        
+        locationSelectionContext = context;
+        locationModalContent.querySelector('#modalTitle').textContent = context.type === 'departure' ? '출발지 선택' : '도착지 선택';
+        popularSearchesContainer.innerHTML = defaultModalContentHtml;
+        locationModalContent.querySelector('#searchAir').value = "";
+        popularSearchesContainer.querySelectorAll('.tag').forEach(tag => tag.addEventListener('click', handleTagClick));
+        locationModal.style.display = 'flex';
+        locationModalContent.querySelector('#searchAir').focus();
+    }
+
+    function selectLocation(kolocation, iataCode) {
+        if (!locationSelectionContext) return; 
+
+        // 버튼에는 IATA 코드만 표시 (기존 UI와 통일)
+        locationSelectionContext.buttonElement.textContent = iataCode;
+        
+        // 숨겨진 IATA 코드 input 값 업데이트
+        locationSelectionContext.inputElement.value = iataCode;
+
+        // ⭐ [핵심] 숨겨진 한글 지역명 input 값도 함께 업데이트!
+        locationSelectionContext.koLocationInputElement.value = kolocation;
+
+        closeLocationModal();
+    }
+
+    function handleTagClick(event) {
+        const { textContent: cityName, dataset: { iata: iataCode } } = event.currentTarget;
+        selectLocation(cityName, iataCode);
+    }
+
+    function renderSearchResults(airList) {
+        let airListHtml = '';
+        if (airList && airList.length > 0) {
+            airList.forEach(air => {
+                airListHtml += `
+                    <div class="search-result-item" data-kolocation="${air.kolocation}" data-iata="${air.iataCode}">
+                        <div class="location-main">${air.kolocation} (${air.iataCode})</div>
+                        <div class="location-sub">${air.enlocation}</div>
+                    </div>`;
+            });
+        } else {
+            airListHtml = '<div class="no-results">검색 결과가 없습니다.</div>';
+        }
+        popularSearchesContainer.innerHTML = airListHtml;
+    }
+
+    modalDepartureBtn.addEventListener('click', () => {
+        openLocationModal({
+            type: 'departure',
+            buttonElement: modalDepartureBtn,
+            inputElement: modalDepartureCodeInput,
+            // ⭐ [추가] 출발지 한글 지역명 input 요소를 전달
+            koLocationInputElement: document.getElementById('modalDepartureKoLocationInput')
+        });
+    });
+
+    modalArrivalBtn.addEventListener('click', () => {
+        openLocationModal({
+            type: 'arrival',
+            buttonElement: modalArrivalBtn,
+            inputElement: modalArrivalCodeInput,
+            // ⭐ [추가] 도착지 한글 지역명 input 요소를 전달
+            koLocationInputElement: document.getElementById('modalArrivalKoLocationInput')
+        });
+    });
+
+    locationModal.addEventListener('click', function(event) {
+        const { target } = event;
+        if (target.id === 'searchAir') return;
+        if (target.id === 'closeModalBtn' || target.classList.contains('close-button') || target === locationModal) {
+            closeLocationModal();
+            return;
+        }
+        const resultItem = target.closest('.search-result-item');
+        if (resultItem) {
+            const { kolocation, iata } = resultItem.dataset;
+            selectLocation(kolocation, iata);
+        }
+    });
+
+    locationModal.addEventListener('keydown', function(event) {
+        if (event.target.id === 'searchAir' && event.key === 'Enter') {
+            event.preventDefault();
+            $.ajax({
+                url: "/air/searchAir", type: "get", dataType: "json", data: { "text": event.target.value },
+                success: (res) => renderSearchResults(res)
+            });
+        }
+    });
+
+    document.querySelectorAll('#locationModal .tag').forEach(tag => tag.addEventListener('click', handleTagClick));
+
+    const passengerBtn = document.getElementById('passengerBtn');
+    const passengerModal = document.getElementById('passengerModal');
+    const passengerModalContent = passengerModal.querySelector('.modal-content');
+    const confirmPassengerBtn = document.getElementById('confirmPassengerBtn');
+    const adultsInput = document.querySelector('#researchModal #adultsInput');
+    const childrenInput = document.querySelector('#researchModal #childrenInput');
+    const infantsInput = document.querySelector('#researchModal #infantsInput');
+    const travelClassInput = document.querySelector('#researchModal #travelClassInput');
+
+    function openPassengerModal() {
+        const researchModalEl = document.getElementById('researchModal');
+        const backdropEl = document.querySelector('.modal-backdrop');
+        researchModalEl.style.display = 'none';
+        if (backdropEl) backdropEl.style.display = 'none';
+        passengerModal.style.display = 'flex';
+    }
+
+    function closePassengerModal() {
+        passengerModal.style.display = 'none';
+        const researchModalEl = document.getElementById('researchModal');
+        const backdropEl = document.querySelector('.modal-backdrop');
+        researchModalEl.style.display = 'block';
+        if (backdropEl) backdropEl.style.display = 'block';
+    }
+
+    function updateButtonStates() {
+        const adults = parseInt(passengerModal.querySelector('.passenger-row[data-type="adult"] .count').textContent);
+        const children = parseInt(passengerModal.querySelector('.passenger-row[data-type="child"] .count').textContent);
+        const infants = parseInt(passengerModal.querySelector('.passenger-row[data-type="infant"] .count').textContent);
+        const totalAllPassengers = adults + children + infants;
+        const adultControls = passengerModal.querySelector('.passenger-row[data-type="adult"]');
+        const childControls = passengerModal.querySelector('.passenger-row[data-type="child"]');
+        const infantControls = passengerModal.querySelector('.passenger-row[data-type="infant"]');
+        const isTotalMaxed = (totalAllPassengers >= 9);
+        adultControls.querySelector('.plus').disabled = isTotalMaxed;
+        adultControls.querySelector('.minus').disabled = (adults <= 1 || adults < infants);
+        childControls.querySelector('.plus').disabled = isTotalMaxed;
+        childControls.querySelector('.minus').disabled = (children <= 0);
+        infantControls.querySelector('.plus').disabled = isTotalMaxed || (infants >= adults);
+        infantControls.querySelector('.minus').disabled = (infants <= 0);
+    }
+
+    passengerBtn.addEventListener('click', openPassengerModal);
+    passengerModal.addEventListener('click', (event) => {
+        if (event.target === passengerModal || event.target.classList.contains('close-button')) closePassengerModal();
+    });
+    passengerModalContent.addEventListener('click', (event) => {
+        const button = event.target;
+        if (!button.classList.contains('control-btn') || button.disabled) return;
+        const countSpan = button.closest('.passenger-row').querySelector('.count');
+        let currentCount = parseInt(countSpan.textContent);
+        countSpan.textContent = button.classList.contains('plus') ? currentCount + 1 : currentCount - 1;
+        updateButtonStates();
+    });
+    confirmPassengerBtn.addEventListener('click', () => {
+        const adults = passengerModal.querySelector('.passenger-row[data-type="adult"] .count').textContent;
+        const children = passengerModal.querySelector('.passenger-row[data-type="child"] .count').textContent;
+        const infants = passengerModal.querySelector('.passenger-row[data-type="infant"] .count').textContent;
+        const selectedClassRadio = passengerModal.querySelector('input[name="travelClassModal"]:checked');
+        adultsInput.value = adults;
+        childrenInput.value = children;
+        infantsInput.value = infants;
+        travelClassInput.value = selectedClassRadio.value;
+        passengerBtn.textContent = `성인 ${adults} 어린이 ${children} 유아 ${infants} · ${selectedClassRadio.parentElement.textContent.trim()}`;
+        closePassengerModal();
+    });
+    updateButtonStates();
+
+    const researchForm = document.querySelector('#researchModal .flight-search-form');
+    researchForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const loadingModal = document.getElementById('loadingModal');
+        loadingModal.querySelector('p').textContent = '항공권을 재검색중입니다...';
+        loadingModal.style.display = 'flex';
+        setTimeout(() => event.target.submit(), 100);
+    });
+</script>
+</body>
+</html>
