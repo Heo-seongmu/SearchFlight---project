@@ -244,6 +244,14 @@ body {
 	margin: 0 16px;
 }
 
+/* [ ⭐️ 신규 추가 ⭐️ ] 총 비행시간 스타일 */
+.flight-duration {
+    font-size: 14px;
+    color: #888; /* 기존 시간보다 연한 색상 */
+    font-weight: normal;
+    margin-left: 8px; /* 시간과 살짝 띄우기 */
+}
+
 /* 카드 푸터 (가격, 버튼) */
 .card-footer {
 	display: flex;
@@ -384,10 +392,17 @@ body {
 							th:text="${booking.departureDestinationCode}">KIX</span></strong> <small
 							th:text="'(' + ${booking.arrivalKoLocation} + ')'">(오사카)</small>
 					</div>
+					
 					<div class="segment-schedule">
 						<i class="bi bi-clock"></i> <span
 							th:text="${#temporals.format(booking.departureTime, 'yyyy-MM-dd HH:mm')} + ' ~ ' + ${#temporals.format(booking.departureArrivalTime, 'HH:mm')}">2025-10-22
 							17:00 ~ 18:50</span>
+						
+						<span class="flight-duration" 
+							  th:with="depDuration = ${T(java.time.Duration).between(booking.departureTime, booking.departureArrivalTime)}"
+							  th:text="'(총 ' + ${depDuration.toHours()} + '시간 ' + (${depDuration.toMinutes() % 60}) + '분)'">
+							(총 1시간 50분)
+						</span>
 					</div>
 				</div>
 
@@ -406,10 +421,17 @@ body {
 								th:text="${booking.returnDestinationCode}">ICN</span></strong> <small
 								th:text="'(' + ${booking.departureKoLocation} + ')'">(서울/인천)</small>
 						</div>
+						
 						<div class="segment-schedule">
 							<i class="bi bi-clock"></i> <span
 								th:text="${#temporals.format(booking.returnTime, 'yyyy-MM-dd HH:mm')} + ' ~ ' + ${#temporals.format(booking.returnArrivalTime, 'HH:mm')}">2025-10-30
 								11:50 ~ 13:50</span>
+							
+							<span class="flight-duration" 
+								  th:with="retDuration = ${T(java.time.Duration).between(booking.returnTime, booking.returnArrivalTime)}"
+								  th:text="'(총 ' + ${retDuration.toHours()} + '시간 ' + (${retDuration.toMinutes() % 60}) + '분)'">
+								(총 2시간 00분)
+							</span>
 						</div>
 					</div>
 				</th:block>
