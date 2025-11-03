@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import hsm.bootproject.SearchFlight.Service.BookingService;
-import hsm.bootproject.SearchFlight.Service.HotelService;
 import hsm.bootproject.SearchFlight.domain.Booking;
 import hsm.bootproject.SearchFlight.domain.Member;
 import jakarta.servlet.http.HttpSession;
@@ -18,12 +17,10 @@ public class HomeController {
 	
 	@Autowired
     private BookingService bookingService;
-	
-	@Autowired
-	private HotelService hotelService;
-	
+		
 	@GetMapping("/")
-	public String home() {
+	public String home() { 	
+
 		return "main";
 	}
 	

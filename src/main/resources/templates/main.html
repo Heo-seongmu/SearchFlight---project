@@ -483,6 +483,128 @@ main {
     100% { transform: rotate(360deg); }
 }
 
+
+/* --- ▼▼▼▼▼ 인기 여행지 섹션 스타일 ▼▼▼▼▼ --- */
+
+/* 섹션 전체 레이아웃 */
+.popular-destinations-section {
+	padding: 40px 0;
+    /* 검색창이 'margin-bottom: 100px'을 가지므로,
+       검색창과 겹치지 않게 충분한 상단 마진을 줍니다. */
+	margin-top: 100px;
+}
+
+/* GNB(헤더)와 동일한 최대 너비를 적용하기 위한 컨테이너 */
+.content-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+	box-sizing: border-box;
+}
+
+/* 메인 타이틀 (예: 대한민국 출발 최저가 항공권) */
+.popular-destinations-section h2 {
+	font-size: 24px;
+	font-weight: bold;
+	color: #333;
+	margin-top: 0;
+	margin-bottom: 8px;
+}
+
+/* 서브 타이틀 (예: 가장 저렴한 가격의...) */
+.popular-destinations-section p {
+	font-size: 16px;
+	color: #777;
+	margin-bottom: 30px;
+}
+
+/* 섹션 제목 (예: 국내 인기 여행지) */
+.popular-destinations-section h3 {
+	font-size: 20px;
+	font-weight: bold;
+	color: #333;
+	margin-top: 40px;
+	margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* 카드 그리드 (3열) */
+.destination-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr); /* 3열 그리드 */
+	gap: 24px; /* 카드 사이의 간격 */
+}
+
+/* 여행지 카드 */
+.destination-card {
+	background-color: #fff;
+	border-radius: 12px; /* 둥근 모서리 */
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 은은한 그림자 */
+	overflow: hidden; /* 이미지가 모서리를 삐져나가지 않도록 */
+	transition: all 0.3s ease; /* 부드러운 호버 효과 */
+}
+
+.destination-card:hover {
+	transform: translateY(-5px); /* 호버 시 살짝 위로 이동 */
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 카드 이미지 */
+.destination-card img {
+	width: 100%;
+	height: 200px; /* 이미지 높이 고정 */
+	object-fit: cover; /* 이미지가 잘리지 않고 꽉 차도록 */
+}
+
+/* 카드 텍스트 영역 */
+.card-details {
+	padding: 16px;
+}
+
+.card-details h4 {
+	font-size: 18px;
+	font-weight: bold;
+	color: #222;
+	margin: 0 0 4px 0;
+}
+
+.card-details small {
+	font-size: 14px;
+	color: #888;
+}
+
+/* --- ▼▼▼▼▼ [수정] 가격 CSS 삭제 ▼▼▼▼▼ --- */
+/* .card-price 스타일 삭제됨 */
+/* --- ▲▲▲▲▲ CSS 수정 완료 ▲▲▲▲▲ --- */
+
+
+/* 태블릿 사이즈 (992px 이하) */
+@media (max-width: 992px) {
+	.destination-grid {
+		grid-template-columns: repeat(2, 1fr); /* 2열로 변경 */
+	}
+}
+
+/* 모바일 사이즈 (576px 이하) */
+@media (max-width: 576px) {
+	.destination-grid {
+		grid-template-columns: 1fr; /* 1열로 변경 */
+	}
+    
+    .popular-destinations-section h2 {
+        font-size: 20px;
+    }
+    .popular-destinations-section p {
+        font-size: 14px;
+    }
+    .popular-destinations-section h3 {
+        font-size: 18px;
+    }
+}
+
+/* --- ▲▲▲▲▲ 여기까지가 새 CSS입니다 ▲▲▲▲▲ --- */
+
 </style>
 </head>
 <body>
@@ -564,7 +686,117 @@ main {
 				</div>
 			</form>
 		</section>
-	</main>
+        
+       <section class="popular-destinations-section">
+            <div class="content-container">
+                <h2>대한민국 출발 인기 항공권</h2>
+                <p>GyuA 여행이 추천하는 인기 여행지를 만나보세요.</p>
+
+                <h3>국내 인기 여행지</h3>
+                
+                <div class="destination-grid">
+                    
+                    <div class="destination-card">
+                        <img src="https://afroflix.com.br/wp-content/uploads/2022/12/10-dicas-para-visitar-a-Ilha-de-Jeju-Coreia-do.jpg" alt="제주">
+                        <div class="card-details">
+                            <h4>제주</h4>
+                            <small>대한민국</small>
+                        </div>
+                    </div>
+                    <div class="destination-card">
+                        <img src="https://th.bing.com/th/id/R.a6adc43cb36a3dc595b61a274daf97ee?rik=JN1TW6JmvEBV2Q&riu=http%3a%2f%2fwww.sajinlove.com%2fv2%2ffiles%2fattach%2fimages%2f41862%2f048%2f938%2fb521f185fa8ae34d7cce8ef41f0b468b.JPG&ehk=mtVYPQ1mpW3%2fq4gg25JtvEtTRuY8a4jq5GNTustaoho%3d&risl=&pid=ImgRaw&r=0" alt="부산">
+                        <div class="card-details">
+                            <h4>부산</h4>
+                            <small>대한민국</small>
+                        </div>
+                    </div>
+                    <div class="destination-card">
+                        <img src="https://cdn.nbn-news.co.kr/news/photo/202303/56827_56985_4310.jpg" alt="여수">
+                        <div class="card-details">
+                            <h4>여수</h4>
+                            <small>대한민국</small>
+                        </div>
+                    </div>
+                    <div class="destination-card">
+                        <img src="https://media-cdn.tripadvisor.com/media/photo-c/1280x250/10/a5/50/da/photo5jpg.jpg" alt="양양">
+                        <div class="card-details">
+                            <h4>양양</h4>
+                            <small>대한민국</small>
+                        </div>
+                    </div>
+                    <div class="destination-card">
+                        <img src="https://a.cdn-hotels.com/gdcs/production102/d1023/e3c18663-14e2-49e3-b9f0-bd7a029a661f.jpg" alt="광주">
+                        <div class="card-details">
+                            <h4>광주</h4>
+                            <small>대한민국</small>
+                        </div>
+                    </div>
+                    <div class="destination-card">
+                        <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_656CD683ECA603597F9EFD04DDC41801.jpg" alt="포항">
+                        <div class="card-details">
+                            <h4>포항</h4>
+                            <small>대한민국</small>
+                        </div>
+                    </div>
+                </div>
+
+               <h3>해외 인기 여행지</h3>
+                
+                <div class="destination-grid">
+                    
+                    <div class="destination-card">
+                        <img src="https://www.agoda.com/wp-content/uploads/2018/10/City-guides_things-to-do-in-Osaka_Japan_Osaka-Castle_cherry-blossoms_sakura.jpg" alt="오사카">
+                        <div class="card-details">
+                            <h4>오사카</h4>
+                            <small>일본</small>
+                        </div>
+                    </div>
+                    
+                    <div class="destination-card">
+                        <img src="https://tse2.mm.bing.net/th/id/OIP.wAJbuI75Vrd5TNfAgqmnSQHaE8?rs=1&pid=ImgDetMain&o=7&rm=3" alt="파리">
+                        <div class="card-details">
+                            <h4>파리</h4>
+                            <small>프랑스</small>
+                        </div>
+                    </div>
+
+                    <div class="destination-card">
+                        <img src="https://th.bing.com/th/id/R.d0005be20219596334e4427fcdcef9ed?rik=QbbI0k61bctCoA&riu=http%3a%2f%2fwww.aseanexpress.co.kr%2fdata%2fphotos%2f20201042%2fart_16024538052164_b3d553.jpg&ehk=8ZDlSxOlsTcHm29cT9BVoMLtNUmEGZlwE3oyF9PUbU4%3d&risl=&pid=ImgRaw&r=0" alt="다낭">
+                        <div class="card-details">
+                            <h4>다낭</h4>
+                            <small>베트남</small>
+                        </div>
+                    </div>
+
+                    <div class="destination-card">
+                        <img src="https://a.cdn-hotels.com/gdcs/production59/d1143/fc0453c0-e10c-4c4b-b31e-2a95179ddca3.jpg" alt="방콕">
+                        <div class="card-details">
+                            <h4>방콕</h4>
+                            <small>태국</small>
+                        </div>
+                    </div>
+
+                    <div class="destination-card">
+                        <img src="https://tse1.mm.bing.net/th/id/OIP.pU1BrWzAOPeu4XvVbeyAQQHaE8?rs=1&pid=ImgDetMain&o=7&rm=3" alt="괌">
+                        <div class="card-details">
+                            <h4>괌</h4>
+                            <small>미국</small>
+                        </div>
+                    </div>
+
+                    <div class="destination-card">
+                        <img src="https://ak-d.tripcdn.com/images/0100w120008c1v67b2474_C_800_10000.jpg" alt="타이베이">
+                        <div class="card-details">
+                            <h4>타이베이</h4>
+                            <small>대만</small>
+                        </div> 
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </section>
+        </main>
 
 	<div id="locationModal" class="modal-overlay">
 		<div class="modal-content">
@@ -813,7 +1045,7 @@ main {
 	            data: { "text": event.target.value },
 	            success: function(res) {
 	                renderSearchResults(res);
-	            }
+            }
 	        });
 	    }
 	});
