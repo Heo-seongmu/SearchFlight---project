@@ -49,8 +49,28 @@ public class HomeController {
         }
         List<Booking> bookingList = bookingService.getMyBookings(loginUser.getId());
         model.addAttribute("bookingList", bookingList);
+        model.addAttribute("viewType", "confirmed");
 		
         // 5. 뷰 템플릿의 이름을 반환합니다.
 		return "revList";
 	}
+	
+	@GetMapping("/revCancelList")
+    public String revCancelList(Model model, HttpSession session) {
+        
+        Member loginUser = (Member) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            return "redirect:/member/login"; 
+        }
+
+        // 1. '취소된(CANCELLED)' 내역만 조회
+        List<Booking> bookingList = bookingService.getMyCancelledBookings(loginUser.getId());
+        
+        // 2. 모델에 데이터 추가
+        model.addAttribute("bookingList", bookingList);
+        model.addAttribute("viewType", "cancelled"); 
+
+        // 3. ⭐️ 동일한 템플릿 반환
+        return "revList";
+    }
 }

@@ -22,8 +22,6 @@ import lombok.Setter;
 @Setter
 public class Booking {
 
-    // ... (id, 가는 편 정보, 종합 정보 등은 그대로) ...
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,24 +48,18 @@ public class Booking {
     @Column(nullable = false)
     private String arrivalKoLocation; // '도착지' 한글명은 편도/왕복 공통이므로 필수로 둡니다.
 
-    // --- 오는 편 항공권 정보 (선택) ---
-    // 👇 [수정] nullable = false 제거
     @Column 
     private String returnAirline;
 
-    // 👇 [수정] nullable = false 제거
     @Column
     private LocalDateTime returnTime;
 
-    // 👇 [수정] nullable = false 제거
     @Column
     private LocalDateTime returnArrivalTime;
 
-    // 👇 [수정] nullable = false 제거
     @Column
     private String returnOriginCode;
 
-    // 👇 [수정] nullable = false 제거
     @Column
     private String returnDestinationCode;
 

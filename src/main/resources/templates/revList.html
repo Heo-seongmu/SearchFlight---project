@@ -4,99 +4,98 @@
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<title>GyuA 여행 예약 내역</title>
+<title
+	th:text="${viewType == 'cancelled' ? 'GyuA 여행 - 취소 내역' : 'GyuA 여행 - 예약 내역'}">GyuA
+	여행 예약 내역</title>
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
+/* --- (기존 스타일: body, gnb, card 등) --- */
 body {
 	margin: 0;
 	padding: 0;
 }
-/* --- 헤더 (GNB) 스타일 --- */
+
 .moana_gnb {
-	background-color: #5ac4c9; /* 헤더 전체 배경색 */
-	color: #fff; /* 헤더 기본 글자색 */
-	padding: 10px 0; /* 헤더 상하 패딩 */
-	width: 100%; /* 헤더 너비 */
+	background-color: #5ac4c9;
+	color: #fff;
+	padding: 10px 0;
+	width: 100%;
 }
 
 .gnb_container {
-	max-width: 1200px; /* 콘텐츠 최대 너비 제한 */
-	margin: 0 auto; /* 중앙 정렬 */
-	display: flex; /* 자식 요소들을 가로로 배치 */
-	align-items: center; /* 세로 중앙 정렬 */
-	justify-content: space-between; /* 요소들 사이에 균일한 간격 배분 */
-	padding: 0 20px; /* 좌우 패딩 */
-	box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
+	max-width: 1200px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 20px;
+	box-sizing: border-box;
 }
 
 .box__inner {
 	display: flex;
 	align-items: center;
-	gap: 20px; /* 자식 요소 간 간격 */
+	gap: 20px;
 }
 
 .moana_gnb h1 {
-	margin: 0; /* h1 태그 기본 마진 제거 */
+	margin: 0;
 }
 
 .moana_gnb h1 img {
-	height: 32px; /* 로고 이미지 높이 */
-	vertical-align: middle; /* 이미지 세로 정렬 */
+	height: 32px;
+	vertical-align: middle;
 }
 
-/* 상단 메뉴 (항공, 추천챗 등) 스타일 */
 .list__tab {
-	list-style: none; /* 리스트 점 제거 */
+	list-style: none;
 	margin: 0;
 	padding: 0;
-	display: flex; /* 메뉴 아이템들을 가로로 정렬 */
-	gap: 20px; /* 메뉴 아이템 간 간격 */
+	display: flex;
+	gap: 20px;
 }
 
 .list__tab .list-item a {
-	color: #fff; /* 메뉴 글자색 흰색 */
-	text-decoration: none; /* 밑줄 제거 */
-	font-weight: bold; /* 글자 굵게 */
+	color: #fff;
+	text-decoration: none;
+	font-weight: bold;
 	padding: 5px 0;
-	position: relative; /* 밑줄 위치의 기준점 */
-	transition: color 0.3s ease; /* 색상 변경 시 부드러운 효과 */
+	position: relative;
+	transition: color 0.3s ease;
 }
 
-/* 메뉴에 마우스를 올리거나 활성화되었을 때 스타일 */
 .list__tab .list-item a:hover, .list__tab .list-item a.link__tab--active
 	{
-	color: #eee; /* 호버 또는 활성화 시 글자색 변경 */
+	color: #eee;
 }
 
-/* 활성화된 메뉴 하단 밑줄 스타일 */
 .list__tab .list-item a.link__tab--active::after {
 	content: '';
 	position: absolute;
 	left: 0;
-	bottom: -5px; /* 밑줄 위치 조정 */
+	bottom: -5px;
 	width: 100%;
 	height: 2px;
-	background-color: #fff; /* 활성화 메뉴 밑줄 색상 */
+	background-color: #fff;
 }
 
-/* 우측 링크(나의 예약내역, 로그인 등) 컨테이너 */
 .link-container {
 	display: flex;
 	align-items: center;
-	gap: 10px; /* 링크 간 간격 */
+	gap: 10px;
 }
 
-/* 우측 링크(나의 예약내역, 로그인 등) 개별 스타일 */
 .link__booking-history {
-	border: 1px solid #fff; /* 흰색 테두리 */
+	border: 1px solid #fff;
 	color: #fff;
-	padding: 8px 15px; /* 내부 여백 */
-	border-radius: 20px; /* 둥근 테두리 */
+	padding: 8px 15px;
+	border-radius: 20px;
 	text-decoration: none;
 	font-size: 14px;
-	white-space: nowrap; /* 줄바꿈 방지 */
+	white-space: nowrap;
 }
 
 .main-container {
@@ -105,7 +104,6 @@ body {
 	padding: 40px 20px;
 }
 
-/* 페이지 제목 */
 .page-title {
 	font-size: 28px;
 	font-weight: 800;
@@ -113,13 +111,12 @@ body {
 	color: #333;
 }
 
-/* 예약 카드 전체 스타일 */
 .booking-card {
 	background-color: #fff;
 	border-radius: 12px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 	margin-bottom: 24px;
-	overflow: hidden; /* 내부 요소가 카드를 벗어나지 않도록 */
+	overflow: hidden;
 	transition: box-shadow 0.2s ease-in-out;
 }
 
@@ -127,7 +124,6 @@ body {
 	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* 카드 헤더 (예약일, 상태) */
 .card-header {
 	display: flex;
 	justify-content: space-between;
@@ -138,39 +134,36 @@ body {
 	font-size: 14px;
 }
 
-/* [ ⭐️ 신규 추가 ⭐️ ] 헤더 좌측 (날짜 + 뱃지) */
 .header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px; /* 날짜와 뱃지 사이 간격 */
+	display: flex;
+	align-items: center;
+	gap: 12px;
 }
 
 .booking-date {
 	color: #666;
 }
 
-/* [ ⭐️ 신규 추가 ⭐️ ] 편도/왕복 뱃지 */
 .trip-type-badge {
-    padding: 3px 10px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: bold;
-    border: 1px solid;
+	padding: 3px 10px;
+	border-radius: 10px;
+	font-size: 13px;
+	font-weight: bold;
+	border: 1px solid;
 }
 
-.trip-type-badge.oneway { /* 편도 뱃지 */
-    background-color: #f0f5ff; /* 연한 파랑 */
-    color: #2f54eb;
-    border-color: #adc6ff;
+.trip-type-badge.oneway {
+	background-color: #f0f5ff;
+	color: #2f54eb;
+	border-color: #adc6ff;
 }
 
-.trip-type-badge.roundtrip { /* 왕복 뱃지 */
-    background-color: #f6ffed; /* 연한 초록 */
-    color: #52c41a;
-    border-color: #b7eb8f;
+.trip-type-badge.roundtrip {
+	background-color: #f6ffed;
+	color: #52c41a;
+	border-color: #b7eb8f;
 }
 
-/* 예약 상태 배지 */
 .status-badge {
 	padding: 4px 10px;
 	border-radius: 12px;
@@ -178,17 +171,16 @@ body {
 	font-size: 13px;
 }
 
-.status-confirmed { /* 예약 확정 */
+.status-confirmed {
 	background-color: #e6f7ff;
 	color: #1890ff;
 }
 
-.status-cancelled { /* 예약 취소 */
+.status-cancelled {
 	background-color: #fff1f0;
 	color: #ff4d4f;
 }
 
-/* 카드 바디 (여정 정보) */
 .card-body {
 	padding: 24px;
 }
@@ -200,7 +192,6 @@ body {
 	margin: 20px 0;
 }
 
-/* 각 여정(가는편/오는편) 스타일 */
 .flight-segment {
 	display: flex;
 	align-items: center;
@@ -213,20 +204,20 @@ body {
 	align-items: center;
 	gap: 8px;
 	color: #555;
-	min-width: 220px; /* 너비 고정으로 레이아웃 안정성 확보 */
+	min-width: 220px;
 }
 
 .segment-airline i, .segment-schedule i {
-	color: #5ac4c9; /* 아이콘 색상 */
+	color: #5ac4c9;
 	font-size: 1.2em;
 }
 
 .segment-airline i.return-flight {
-	transform: scaleX(-1); /* 오는 편 비행기 아이콘 좌우반전 */
+	transform: scaleX(-1);
 }
 
 .segment-route {
-	flex-grow: 1; /* 남는 공간을 모두 차지 */
+	flex-grow: 1;
 	text-align: center;
 	font-size: 18px;
 	font-weight: bold;
@@ -244,15 +235,13 @@ body {
 	margin: 0 16px;
 }
 
-/* [ ⭐️ 신규 추가 ⭐️ ] 총 비행시간 스타일 */
 .flight-duration {
-    font-size: 14px;
-    color: #888; /* 기존 시간보다 연한 색상 */
-    font-weight: normal;
-    margin-left: 8px; /* 시간과 살짝 띄우기 */
+	font-size: 14px;
+	color: #888;
+	font-weight: normal;
+	margin-left: 8px;
 }
 
-/* 카드 푸터 (가격, 버튼) */
 .card-footer {
 	display: flex;
 	justify-content: space-between;
@@ -278,7 +267,6 @@ body {
 	color: #d91f29;
 }
 
-/* 예약 취소 버튼 */
 .btn-cancel {
 	background-color: transparent;
 	border: 1px solid #ff4d4f;
@@ -295,7 +283,6 @@ body {
 	color: #fff;
 }
 
-/* 예약 내역이 없을 때 메시지 */
 .no-booking-message {
 	text-align: center;
 	padding: 80px 20px;
@@ -320,6 +307,115 @@ body {
 }
 
 .btn-home:hover {
+	background-color: #4aa0a5;
+}
+
+/* ================================================
+  [ ⭐️ '다시 예약' 버튼 스타일 (신규 추가) ⭐️ ]
+  ================================================
+*/
+.btn-rebook {
+	background-color: #5ac4c9;
+	color: #fff;
+	padding: 8px 16px;
+	border: 1px solid #5ac4c9;
+	border-radius: 6px;
+	font-weight: bold;
+	cursor: pointer;
+	text-decoration: none;
+	transition: all 0.2s ease;
+}
+
+.btn-rebook:hover {
+	background-color: #4aa0a5;
+	border-color: #4aa0a5;
+}
+
+/* ================================================
+  [ ⭐️ 모달(Modal) 스타일 (신규 추가) ⭐️ ]
+  ================================================
+*/
+.modal-overlay {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.5);
+	align-items: center;
+	justify-content: center;
+}
+
+.modal-content {
+	background-color: #fefefe;
+	margin: auto;
+	padding: 24px;
+	border: 1px solid #888;
+	width: 90%;
+	max-width: 400px;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	text-align: center;
+}
+
+.modal-content h4 {
+	margin-top: 0;
+	font-size: 20px;
+	color: #333;
+}
+
+.modal-content p {
+	font-size: 16px;
+	color: #555;
+	margin-bottom: 24px;
+}
+
+.modal-actions {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
+.modal-actions button, .modal-actions a {
+	padding: 8px 16px;
+	border-radius: 6px;
+	font-weight: bold;
+	cursor: pointer;
+	text-decoration: none;
+	font-size: 15px;
+	border: 1px solid transparent;
+}
+
+.btn-modal-secondary {
+	background-color: #f0f0f0;
+	border-color: #ccc;
+	color: #333;
+}
+
+.btn-modal-secondary:hover {
+	background-color: #e0e0e0;
+}
+
+.btn-modal-danger {
+	background-color: #ff4d4f;
+	color: #fff;
+	border-color: #ff4d4f;
+}
+
+.btn-modal-danger:hover {
+	background-color: #d9363e;
+}
+
+.btn-modal-primary {
+	background-color: #5ac4c9;
+	color: #fff;
+	border-color: #5ac4c9;
+}
+
+.btn-modal-primary:hover {
 	background-color: #4aa0a5;
 }
 </style>
@@ -353,25 +449,38 @@ body {
 	</header>
 
 	<main class="main-container">
-		<h2 class="page-title">나의 예약 내역</h2>
+
+		<div
+			style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+			<h2 class="page-title" style="margin-bottom: 0;"
+				th:text="${viewType == 'cancelled' ? '취소된 예약 내역' : '나의 예약 내역'}">
+				나의 예약 내역</h2>
+
+			<a th:if="${viewType == 'confirmed'}" href="/revCancelList"
+				style="text-decoration: none; color: #555; font-weight: 500;">
+				취소된 내역 보기 &gt; </a> <a th:if="${viewType == 'cancelled'}"
+				href="/revList"
+				style="text-decoration: none; color: #555; font-weight: 500;">
+				예약된 내역 보기 &gt; </a>
+		</div>
 
 		<div th:if="${#lists.isEmpty(bookingList)}" class="no-booking-message">
-			<p>아직 예약 내역이 없습니다.</p>
+			<p th:if="${viewType == 'confirmed'}">아직 예약 내역이 없습니다.</p>
+			<p th:if="${viewType == 'cancelled'}">취소된 예약 내역이 없습니다.</p>
 			<a href="/" class="btn-home">항공권 검색하러 가기</a>
 		</div>
 
 		<div th:unless="${#lists.isEmpty(bookingList)}"
 			th:each="booking : ${bookingList}" class="booking-card">
+
 			<div class="card-header">
-				
 				<div class="header-left">
 					<span class="booking-date"
-						th:text="'예약일: ' + ${#temporals.format(booking.createdAt, 'yyyy-MM-dd')}">예약일: 2025-10-18</span>
-					
-					<span th:if="${booking.returnAirline == null}" 
-						  class="trip-type-badge oneway">편도</span>
-					<span th:if="${booking.returnAirline != null}" 
-						  class="trip-type-badge roundtrip">왕복</span>
+						th:text="'예약일: ' + ${#temporals.format(booking.createdAt, 'yyyy-MM-dd')}">예약일:
+						2025-10-18</span> <span th:if="${booking.returnAirline == null}"
+						class="trip-type-badge oneway">편도</span> <span
+						th:if="${booking.returnAirline != null}"
+						class="trip-type-badge roundtrip">왕복</span>
 				</div>
 				<span class="status-badge"
 					th:text="${booking.bookingStatus == 'CONFIRMED' ? '예약 확정' : '예약 취소'}"
@@ -392,23 +501,17 @@ body {
 							th:text="${booking.departureDestinationCode}">KIX</span></strong> <small
 							th:text="'(' + ${booking.arrivalKoLocation} + ')'">(오사카)</small>
 					</div>
-					
 					<div class="segment-schedule">
 						<i class="bi bi-clock"></i> <span
 							th:text="${#temporals.format(booking.departureTime, 'yyyy-MM-dd HH:mm')} + ' ~ ' + ${#temporals.format(booking.departureArrivalTime, 'HH:mm')}">2025-10-22
-							17:00 ~ 18:50</span>
-						
-						<span class="flight-duration" 
-							  th:with="depDuration = ${T(java.time.Duration).between(booking.departureTime, booking.departureArrivalTime)}"
-							  th:text="'(총 ' + ${depDuration.toHours()} + '시간 ' + (${depDuration.toMinutes() % 60}) + '분)'">
-							(총 1시간 50분)
-						</span>
+							17:00 ~ 18:50</span> <span class="flight-duration"
+							th:with="depDuration = ${T(java.time.Duration).between(booking.departureTime, booking.departureArrivalTime)}"
+							th:text="'(총 ' + ${depDuration.toHours()} + '시간 ' + (${depDuration.toMinutes() % 60}) + '분)'">
+							(총 1시간 50분) </span>
 					</div>
 				</div>
-
 				<th:block th:if="${booking.returnAirline != null}">
 					<hr class="segment-divider" />
-
 					<div class="flight-segment">
 						<div class="segment-airline">
 							<i class="bi bi-airplane-fill return-flight"></i> <span
@@ -421,33 +524,113 @@ body {
 								th:text="${booking.returnDestinationCode}">ICN</span></strong> <small
 								th:text="'(' + ${booking.departureKoLocation} + ')'">(서울/인천)</small>
 						</div>
-						
 						<div class="segment-schedule">
 							<i class="bi bi-clock"></i> <span
 								th:text="${#temporals.format(booking.returnTime, 'yyyy-MM-dd HH:mm')} + ' ~ ' + ${#temporals.format(booking.returnArrivalTime, 'HH:mm')}">2025-10-30
-								11:50 ~ 13:50</span>
-							
-							<span class="flight-duration" 
-								  th:with="retDuration = ${T(java.time.Duration).between(booking.returnTime, booking.returnArrivalTime)}"
-								  th:text="'(총 ' + ${retDuration.toHours()} + '시간 ' + (${retDuration.toMinutes() % 60}) + '분)'">
-								(총 2시간 00분)
-							</span>
+								11:50 ~ 13:50</span> <span class="flight-duration"
+								th:with="retDuration = ${T(java.time.Duration).between(booking.returnTime, booking.returnArrivalTime)}"
+								th:text="'(총 ' + ${retDuration.toHours()} + '시간 ' + (${retDuration.toMinutes() % 60}) + '분)'">
+								(총 2시간 00분) </span>
 						</div>
 					</div>
 				</th:block>
 			</div>
 
 			<div class="card-footer">
-				<div class="total-price">
-					<span>총 결제 금액</span> <strong
-						th:text="${#numbers.formatInteger(booking.totalPrice, 0, 'COMMA')} + '원'">183,579원</strong>
-				</div>
-				<div class="action-buttons">
-					<button class="btn-cancel"
-						th:if="${booking.bookingStatus == 'CONFIRMED'}">예약 취소</button>
-				</div>
+
+				<th:block th:if="${viewType == 'confirmed'}">
+					<div class="total-price">
+						<span>총 결제 금액</span> <strong
+							th:text="${#numbers.formatInteger(booking.totalPrice, 0, 'COMMA')} + '원'">183,579원</strong>
+					</div>
+					<div class="action-buttons">
+						<button class="btn-cancel"
+							th:if="${booking.bookingStatus == 'CONFIRMED'}"
+							th:onclick="openCancelModal([[${booking.id}]])">예약 취소</button>
+					</div>
+				</th:block>
+
+				<th:block th:if="${viewType == 'cancelled'}">
+					<div class="total-price">
+						<span>(취소된 결제 금액)</span> <strong
+							th:text="${#numbers.formatInteger(booking.totalPrice, 0, 'COMMA')} + '원'">...</strong>
+					</div>
+					<div class="action-buttons">
+						<button class="btn-rebook"
+							th:onclick="openRebookModal([[${booking.id}]])">다시 예약</button>
+					</div>
+				</th:block>
+
 			</div>
 		</div>
 	</main>
+
+	<div id="cancelConfirmModal" class="modal-overlay">
+		<div class="modal-content">
+			<h4>예약 취소 확인</h4>
+			<p>정말 이 예약을 취소하시겠습니까?</p>
+			<div class="modal-actions">
+				<button class="btn-modal-secondary"
+					onclick="closeModal('cancelConfirmModal')">아니요</button>
+				<a id="confirmCancelButton" class="btn-modal-danger" href="#">예</a>
+			</div>
+		</div>
+	</div>
+
+	<div id="rebookConfirmModal" class="modal-overlay">
+		<div class="modal-content">
+			<h4>다시 예약 확인</h4>
+			<p>취소된 예약을 '예약 확정' 상태로 되돌리시겠습니까?</p>
+			<div class="modal-actions">
+				<button class="btn-modal-secondary"
+					onclick="closeModal('rebookConfirmModal')">아니요</button>
+				<a id="confirmRebookButton" class="btn-modal-primary" href="#">예</a>
+			</div>
+		</div>
+	</div>
+
+	<div id="resultModal" class="modal-overlay"
+		th:style="${cancelSuccess != null or cancelError != null or rebookSuccess != null} ? 'display:flex;' : 'display:none;'">
+		<div class="modal-content">
+			<h4>알림</h4>
+			<p th:if="${cancelSuccess}" th:text="${cancelSuccess}"></p>
+			<p th:if="${cancelError}" th:text="${cancelError}"></p>
+			<p th:if="${rebookSuccess}" th:text="${rebookSuccess}"></p>
+			<div class="modal-actions">
+				<button class="btn-modal-primary"
+					onclick="closeModal('resultModal')">확인</button>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		// '예약 취소 확인' 모달 열기
+		function openCancelModal(bookingId) {
+			const confirmButton = document
+					.getElementById('confirmCancelButton');
+			confirmButton.href = '/air/bookings/cancel/' + bookingId;
+			document.getElementById('cancelConfirmModal').style.display = 'flex';
+		}
+
+		// [ ⭐️ 신규 추가 ⭐️ ]
+		// '다시 예약 확인' 모달 열기
+		function openRebookModal(bookingId) {
+			const confirmButton = document
+					.getElementById('confirmRebookButton');
+			// '다시 예약' 컨트롤러 URL로 설정
+			confirmButton.href = '/air/bookings/rebook/' + bookingId;
+			document.getElementById('rebookConfirmModal').style.display = 'flex';
+		}
+
+		// '모달 닫기' (공통)
+		function closeModal(modalId) {
+			document.getElementById(modalId).style.display = 'none';
+		}
+
+		/* '처리 완료' 모달은 
+		   Thymeleaf가 th:style="display:flex"로 띄워주기 때문에
+		   별도 JS 리스너가 필요 없습니다.
+		 */
+	</script>
 </body>
 </html>

@@ -9,11 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import hsm.bootproject.SearchFlight.Service.AirService;
 import hsm.bootproject.SearchFlight.Service.BookingService;
@@ -24,8 +27,8 @@ import hsm.bootproject.SearchFlight.dto.ReturnFlightDto;
 import hsm.bootproject.SearchFlight.dto.airParmDto;
 import hsm.bootproject.SearchFlight.dto.airportDto;
 import hsm.bootproject.SearchFlight.dto.searchAirDto;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping("/air")
@@ -128,6 +131,47 @@ public String searchAirport(airParmDto airparmDto, Model model, HttpSession sess
         
         // 서비스에 파라미터를 넘겨주고, 오는 편 항공권 목록을 받습니다.
         return airService.findReturnFlights(airparmDto, selectedCarrierCode, selectedDepartureTime); 
+    }
+	
+	@GetMapping("/bookings/cancel/{id}")
+    public String cancelBooking(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        
+        try {
+            bookingService.cancelBookingById(id);
+            
+            // 성공 메시지를 'resultModal'로 전달
+            redirectAttributes.addFlashAttribute("cancelSuccess", "예약이 성공적으로 취소됐습니다!");
+            
+        } catch (EntityNotFoundException | IllegalStateException e) {
+            // 실패 메시지를 'resultModal'로 전달
+            redirectAttributes.addFlashAttribute("cancelError", e.getMessage());
+            
+        } catch (Exception e) {
+             redirectAttributes.addFlashAttribute("cancelError", "처리 중 알 수 없는 오류가 발생했습니다.");
+        }
+
+        // '나의 예약 내역' 페이지로 리다이렉트
+        return "redirect:/revList"; 
+    }
+	
+	@GetMapping("/bookings/rebook/{id}")
+    public String rebookBooking(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        
+        try {
+            // 1. 서비스 호출 (신규 메서드)
+            bookingService.rebookBookingById(id);
+            
+            // 2. 성공 메시지 전달
+            redirectAttributes.addFlashAttribute("rebookSuccess", "예약이 '예약 확정' 상태로 변경됐습니다.");
+            
+        } catch (EntityNotFoundException | IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("cancelError", e.getMessage()); // (기존 에러 메시지 재활용)
+        } catch (Exception e) {
+             redirectAttributes.addFlashAttribute("cancelError", "처리 중 알 수 없는 오류가 발생했습니다.");
+        }
+
+        // 3. '예약된 내역' 페이지로 리다이렉트
+        return "redirect:/revList";
     }
 	
 }

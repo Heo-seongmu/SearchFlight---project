@@ -13,6 +13,7 @@ import hsm.bootproject.SearchFlight.domain.Member;
 import hsm.bootproject.SearchFlight.dto.BookingRequestDto;
 import hsm.bootproject.SearchFlight.dto.FlightDetailDto;
 import hsm.bootproject.SearchFlight.repository.BookingRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -118,7 +119,41 @@ public class BookingService {
 	    
 	    public List<Booking> getMyBookings(Long memberId) {
 	        // 리포지토리를 호출하여 DB에서 예약 목록을 가져와 그대로 반환합니다.
-	        return bookingRepository.findByMemberIdOrderByCreatedAtDesc(memberId);
+	    	return bookingRepository.findByMemberIdAndBookingStatusOrderByCreatedAtDesc(memberId, "CONFIRMED");
+	    }
+	    
+	    public List<Booking> getMyCancelledBookings(Long memberId) {
+	        // 리포지토리에 "CANCELLED" 상태를 넘겨서 조회합니다.
+	        return bookingRepository.findByMemberIdAndBookingStatusOrderByCreatedAtDesc(memberId, "CANCELLED");
+	    }
+	    
+	    @Transactional
+	    public void cancelBookingById(Long bookingId) {
+	        
+	        Booking booking = bookingRepository.findById(bookingId)
+	            .orElseThrow(() -> new EntityNotFoundException("해당 예약을 찾을 수 없습니다."));
+
+	        if ("CANCELLED".equals(booking.getBookingStatus())) {
+	            throw new IllegalStateException("이미 취소된 예약입니다.");
+	        }
+	        
+	        booking.setBookingStatus("CANCELLED"); // ⬅️ 상태 변경
+	    }
+	    
+	    @Transactional
+	    public void rebookBookingById(Long bookingId) {
+	        
+	        // 1. 예약을 찾습니다.
+	        Booking booking = bookingRepository.findById(bookingId)
+	            .orElseThrow(() -> new EntityNotFoundException("해당 예약을 찾을 수 없습니다."));
+
+	        // 2. 이미 '예약 확정' 상태인지 확인합니다.
+	        if ("CONFIRMED".equals(booking.getBookingStatus())) {
+	            throw new IllegalStateException("이미 '예약 확정' 상태인 예약입니다.");
+	        }
+	        
+	        // 3. 상태를 "CONFIRMED"로 변경합니다.
+	        booking.setBookingStatus("CONFIRMED");
 	    }
 	
 }

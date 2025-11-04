@@ -27,7 +27,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long>{
 	        @Param("returnAirline") String returnAirline,
 	        @Param("returnTime") LocalDateTime returnTime
 	    );
-	
-	List<Booking> findByMemberIdOrderByCreatedAtDesc(Long memberId);
+
+	List<Booking> findByMemberIdAndBookingStatusOrderByCreatedAtDesc(Long memberId, String string); 
 	
 }
