@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<title>GyuA 여행</title>
+<title>무성의 여행</title>
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
@@ -44,10 +44,6 @@ body {
 	margin: 0;
 }
 
-.moana_gnb h1 img {
-	height: 32px;
-	vertical-align: middle;
-}
 
 /* 상단 메뉴 (항공, 호텔 등) 스타일 */
 .list__tab {
@@ -574,22 +570,35 @@ main {
 	color: #888;
 }
 
-/* --- ▼▼▼▼▼ [수정] 가격 CSS 삭제 ▼▼▼▼▼ --- */
-/* .card-price 스타일 삭제됨 */
-/* --- ▲▲▲▲▲ CSS 수정 완료 ▲▲▲▲▲ --- */
+.activities-preview {
+    margin-top: 12px; /* 위쪽 제목과의 간격 */
+    display: flex; /* 태그들을 가로로 나열 */
+    flex-wrap: wrap; /* 태그가 많아지면 줄바꿈 */
+    gap: 6px; /* 태그 사이 간격 */
+}
+
+.activity-tag {
+    background-color: #f0f2f5; /* 메인 배경색과 비슷하게 */
+    color: #555;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 20px; /* 동그란 태그 */
+    white-space: nowrap; /* 태그 내용이 줄바꿈되지 않도록 */
+}
+
 
 
 /* 태블릿 사이즈 (992px 이하) */
 @media (max-width: 992px) {
 	.destination-grid {
-		grid-template-columns: repeat(2, 1fr); /* 2열로 변경 */
+		grid-template-columns: repeat(2, 1fr); 
 	}
 }
 
 /* 모바일 사이즈 (576px 이하) */
 @media (max-width: 576px) {
 	.destination-grid {
-		grid-template-columns: 1fr; /* 1열로 변경 */
+		grid-template-columns: 1fr;
 	}
     
     .popular-destinations-section h2 {
@@ -603,8 +612,12 @@ main {
     }
 }
 
-/* --- ▲▲▲▲▲ 여기까지가 새 CSS입니다 ▲▲▲▲▲ --- */
-
+.box__inner h1 a {
+    color: #fff;             /* 텍스트 색상 (헤더와 동일한 흰색) */
+    text-decoration: none;  /* 링크 밑줄 제거 */
+    font-size: 22px;        /* 폰트 크기 (원하는 크기로 조절하세요) */
+    font-weight: bold;      /* 폰트 굵기 */
+}
 </style>
 </head>
 <body>
@@ -613,10 +626,7 @@ main {
 		<div class="gnb_container">
 			<div class="box__inner">
 				<h1>
-					<a href="/"> <img
-						src="//pics.gmarket.co.kr/pc/single/kr/vertical/common/logo_g-travel.png"
-						alt="G마켓 여행" />
-					</a>
+					<a href="/">무성의 여행</a>
 				</h1>		
 			</div>
 			<ul class="list__tab">
@@ -700,6 +710,10 @@ main {
                         <div class="card-details">
                             <h4>제주</h4>
                             <small>대한민국</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag">우도 잠수함</span>
+                                <span class="activity-tag">난타 공연</span>
+                            </div>
                         </div>
                     </div>
                     <div class="destination-card">
@@ -707,6 +721,10 @@ main {
                         <div class="card-details">
                             <h4>부산</h4>
                             <small>대한민국</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag">해운대 요트 투어</span>
+                                <span class="activity-tag">더베이 101</span>
+                            </div>
                         </div>
                     </div>
                     <div class="destination-card">
@@ -714,6 +732,10 @@ main {
                         <div class="card-details">
                             <h4>여수</h4>
                             <small>대한민국</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag">해상 케이블카</span>
+                                <span class="activity-tag">아르떼뮤지엄</span>
+                            </div>
                         </div>
                     </div>
                     <div class="destination-card">
@@ -721,6 +743,10 @@ main {
                         <div class="card-details">
                             <h4>양양</h4>
                             <small>대한민국</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag">서핑 강습</span>
+                                <span class="activity-tag">낙산사</span>
+                            </div>
                         </div>
                     </div>
                     <div class="destination-card">
@@ -728,6 +754,10 @@ main {
                         <div class="card-details">
                             <h4>광주</h4>
                             <small>대한민국</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag">펭귄마을</span>
+                                <span class="activity-tag">무등산 투어</span>
+                            </div>
                         </div>
                     </div>
                     <div class="destination-card">
@@ -735,6 +765,10 @@ main {
                         <div class="card-details">
                             <h4>포항</h4>
                             <small>대한민국</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag">스페이스워크</span>
+                                <span class="activity-tag">구룡포</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -748,6 +782,10 @@ main {
                         <div class="card-details">
                             <h4>오사카</h4>
                             <small>일본</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag">유니버설 스튜디오</span>
+                                <span class="activity-tag">오사카성</span>
+                            </div>
                         </div>
                     </div>
                     
@@ -756,6 +794,10 @@ main {
                         <div class="card-details">
                             <h4>파리</h4>
                             <small>프랑스</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag">에펠탑 입장권</span>
+                                <span class="activity-tag">루브르 박물관</span>
+                            </div>
                         </div>
                     </div>
 
@@ -764,6 +806,10 @@ main {
                         <div class="card-details">
                             <h4>다낭</h4>
                             <small>베트남</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag">바나힐 투어</span>
+                                <span class="activity-tag">마사지</span>
+                            </div>
                         </div>
                     </div>
 
@@ -772,6 +818,10 @@ main {
                         <div class="card-details">
                             <h4>방콕</h4>
                             <small>태국</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag">왕궁 투어</span>
+                                <span class="activity-tag">카오산로드</span>
+                            </div>
                         </div>
                     </div>
 
@@ -780,6 +830,10 @@ main {
                         <div class="card-details">
                             <h4>괌</h4>
                             <small>미국</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag">돌핀 크루즈</span>
+                                <span class="activity-tag">렌터카</span>
+                            </div>
                         </div>
                     </div>
 
@@ -788,6 +842,10 @@ main {
                         <div class="card-details">
                             <h4>타이베이</h4>
                             <small>대만</small>
+                             <div class="activities-preview">
+                                <span class="activity-tag">예스진지 투어</span>
+                                <span class="activity-tag">타이베이 101</span>
+                            </div>
                         </div> 
                     </div>
                     

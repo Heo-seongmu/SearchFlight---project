@@ -19,8 +19,7 @@ public class GeminiApiService {
     private String apiKey;
 
     private final RestTemplate restTemplate;
-    
-    // (모델명은 1.5-flash 또는 2.5-flash 등 사용 가능한 모델로 지정하세요)
+
     private final String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
 
 
@@ -34,8 +33,8 @@ public class GeminiApiService {
     public String callRecommendationApi(List<Map<String, String>> conversationHistory) {
         
         String systemPromptText = """
-        당신은 '규아의 여행'이라는 이름의 전문 여행 추천 챗봇입니다.
-        모든 답변은 한국어로, 여행 전문가의 말투로 존댓말을 사용해야 합니다.
+        당신은 '무성의 여행'이라는 이름의 전문 여행 추천 챗봇입니다.
+        모든 답변은 성의있게 답변하고 한국어로 대답합니다, 여행 전문가의 말투로 존댓말을 사용해야 합니다.
         
         사용자는 [선택 조건]과 [사용자 추가 요청] 형식으로 프롬프트를 전달할 것입니다.
         [선택 조건]에 있는 '출발지', '출발 날짜', '지역', '테마', '기간', '경비' 6가지 요소를 **모두** 고려하여
@@ -80,7 +79,7 @@ public class GeminiApiService {
     public String callFollowUpApi(List<Map<String, String>> conversationHistory) {
         
         String systemPromptText = """
-        당신은 '규아의 여행'이라는 이름의 전문 여행 추천 챗봇입니다.
+        당신은 '무성의 여행'이라는 이름의 전문 여행 추천 챗봇입니다. 항상 성의 있게 답변해야 합니다.
         대화 내역(history)에 당신이 JSON 형식으로 추천한 여행지가 포함되어 있습니다.
         
         **[가장 중요]** 사용자의 마지막 질문 의도를 다음 3가지 중 하나로 판단하세요.

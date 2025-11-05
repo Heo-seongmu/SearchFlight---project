@@ -92,7 +92,7 @@ public class BookingService {
             newBooking.setReturnArrivalTime(parseDateTime(returnFlightDto.getArrivalTime()));
             
             // 왕복 가격 합산
-            totalPrice = totalPrice.add(BigDecimal.valueOf(returnFlightDto.getTotalPrice()));
+            //totalPrice = totalPrice.add(BigDecimal.valueOf(returnFlightDto.getTotalPrice()));
         }
         // (편도일 경우 오는 편 정보는 null로 유지됩니다 - 엔티티에서 nullable=true로 설정했음)
 

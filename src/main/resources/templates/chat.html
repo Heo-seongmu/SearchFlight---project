@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Launcher &mdash; Free Website Template, Free HTML5
-	Template by FreeHTML5.co</title>
+<title>무성의 채팅</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description"
 	content="Free HTML5 Website Template by FreeHTML5.co" />
@@ -13,7 +12,7 @@
 <meta name="author" content="FreeHTML5.co" />
 
 <link
-	href="[https://fonts.googleapis.com/css?family=Open+Sans:400,700,800](https://fonts.googleapis.com/css?family=Open+Sans:400,700,800)"
+	href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800"
 	rel="stylesheet">
 
 <link rel="stylesheet" href="css/animate.css">
@@ -46,9 +45,11 @@
 	align-items: center;
 }
 
-.moana_gnb h1 img {
-	height: 32px;
-	vertical-align: middle;
+.box__inner h1 a {
+    color: #fff;             /* 텍스트 색상 (헤더와 동일한 흰색) */
+    text-decoration: none;  /* 링크 밑줄 제거 */
+    font-size: 22px;        /* 폰트 크기 (원하는 크기로 조절하세요) */
+    font-weight: bold;      /* 폰트 굵기 */
 }
 
 .list__tab {
@@ -275,10 +276,7 @@
 		<div class="gnb_container">
 			<div class="box__inner">
 				<h1>
-					<a href="/" title="규아의 여행" data-montelena-acode="200009522"> <img
-						src="//pics.gmarket.co.kr/pc/single/kr/vertical/common/logo_g-travel.png"
-						height="32" alt="규아의 여행">
-					</a>
+					<a href="/">무성의 여행</a>
 				</h1>
 			</div>
 			<ul class="list__tab">
@@ -417,7 +415,6 @@
 		src="/webjars/stomp-websocket/2.3.4/stomp.js"></script>
 
 	<script>
-		// --- 스크립트 ---
 
 		let stompClient = null;
 		const chatBox = document.getElementById('chatBox');
@@ -429,14 +426,12 @@
 		let localConversationHistory = [];
 		const flightSearchLoadingModal = document.getElementById('flightSearchLoadingModal');
 		
-		let chatMode = 'recommend'; // [신규] 'recommend' or 'follow-up'
+		let chatMode = 'recommend'; 
 
-		// --- DOMContentLoaded 리스너 (수정) ---
 		document.addEventListener('DOMContentLoaded', (event) => {
 			loadChatHistory();
 		});
 
-		// --- [수정] 이벤트 리스너: 'submit' 대신 'click'과 'keypress' 사용 ---
 		// messageForm.addEventListener('submit', sendMessage, true); // (제거)
 		sendButton.addEventListener('click', sendMessage, true);
 		messageInput.addEventListener('keypress', function(e) {
@@ -445,8 +440,6 @@
 				sendMessage(e);
 			}
 		});
-		
-		// [신규] '새로운 여행 추천받기' 버튼 리스너
 		newSearchButton.addEventListener('click', function() {
 			setChatMode('recommend');
 		});

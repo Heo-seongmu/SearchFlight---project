@@ -29,7 +29,7 @@ public class ChatHistoryController {
         // 1. (비로그인) loginUser가 세션에 없으면 비로그인 메시지 반환
         if (loginUser == null) {
             return Collections.singletonList(
-                new chatMessageDto("안녕하세요! '규아의 여행'입니다. 어떤 여행 스타일을 원하시나요?", "AI")
+                new chatMessageDto("안녕하세요! '무성의 여행'입니다. 어떤 여행 스타일을 원하시나요?", "AI")
             );
         }
 
@@ -39,7 +39,7 @@ public class ChatHistoryController {
         // 3. (로그인) 내역이 없다면, 환영 메시지 반환
         if (history.isEmpty()) { 
              return Collections.singletonList(
-                new chatMessageDto("안녕하세요! '규아의 여행'입니다. 다시 찾아주셨네요. 무엇을 도와드릴까요?", "AI")
+                new chatMessageDto("안녕하세요! '무성의 여행'입니다. 다시 찾아주셨네요. 무엇을 도와드릴까요?", "AI")
             );
         }
 
