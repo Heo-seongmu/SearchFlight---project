@@ -1,0 +1,492 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>무성의 여행 - 탑승객 정보</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link
+	href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800"
+	rel="stylesheet">
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<style type="text/css">
+/* --- [기존] 헤더 및 기본 스타일 --- */
+.moana_gnb {
+	background-color: #5ac4c9;
+	color: #fff;
+	padding: 10px 0;
+}
+
+.gnb_container {
+	max-width: 1200px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 20px;
+}
+
+.moana_gnb h1 {
+	margin: 0;
+	display: flex;
+	align-items: center;
+}
+
+.box__inner h1 a {
+	color: #fff;
+	text-decoration: none;
+	font-size: 22px;
+	font-weight: bold;
+}
+
+.list__tab {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	gap: 20px;
+}
+
+.list__tab .list-item a {
+	color: #fff;
+	text-decoration: none;
+	font-weight: bold;
+	padding: 5px 0;
+	position: relative;
+	transition: color 0.3s ease;
+}
+
+.link-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.link__booking-history {
+	background-color: transparent;
+	border: 1px solid #fff;
+	color: #fff;
+	padding: 8px 15px;
+	border-radius: 20px;
+	text-decoration: none;
+	font-size: 14px;
+	transition: background-color 0.3s ease, color 0.3s ease;
+	white-space: nowrap;
+}
+
+.link__booking-history:hover {
+	background-color: #fff;
+	color: #5ac4c9;
+}
+
+.box__inner {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+body {
+	margin: 0;
+	background-color: #f8f9fa; /* 전체 페이지 배경색 */
+}
+
+/* --- [신규] 3-Step Progress Bar (image_35dd7d.png 스타일) --- */
+.progress-steps-container {
+	position: relative;
+	width: 100%;
+	margin-bottom: 3rem; /* 콘텐츠와의 간격 */
+	padding: 0 5%; /* 좌우 여백 */
+	box-sizing: border-box;
+}
+
+.progress-steps-line {
+	position: absolute;
+	top: 18px; /* 원 높이(36px)의 절반 */
+	left: 10%; /* 첫 원 이후부터 */
+	right: 10%; /* 마지막 원 이전까지 */
+	height: 2px;
+	background-color: #dee2e6; /* 연한 회색 선 */
+	z-index: 1;
+}
+
+.progress-steps {
+	display: flex;
+	justify-content: space-between;
+	position: relative;
+	z-index: 2; /* 선(line)보다 위에 표시 */
+}
+
+.progress-step {
+	width: 100px; /* 각 스텝의 너비 */
+	text-align: center;
+}
+
+.progress-step .step-circle {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background-color: #f8f9fa; /* body 배경색과 동일하게 하여 선을 가리는 효과 */
+	border: 2px solid #dee2e6; /* 비활성 테두리 */
+	color: #6c757d; /* 비활성 텍스트 */
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 0.5rem auto; /* 숫자와 라벨 사이 간격 */
+}
+
+/* 활성(active) 및 완료(completed) 상태 */
+.progress-step.active .step-circle, .progress-step.completed .step-circle
+	{
+	background-color: #5ac4c9; /* 테마 메인 컬러 */
+	border-color: #5ac4c9;
+	color: #fff;
+}
+
+.progress-step .step-label {
+	font-size: 0.9rem;
+	color: #6c757d; /* 비활성 라벨 */
+}
+
+.progress-step.active .step-label, .progress-step.completed .step-label
+	{
+	color: #5ac4c9; /* 활성 라벨 */
+	font-weight: 500;
+}
+
+/* --- [신규] 탑승객 정보 페이지 전용 스타일 --- */
+.form-section-card {
+	margin-bottom: 2rem;
+}
+/* 탑승객 정보 테이블 내 input/select 크기 조절 */
+.passenger-table .form-control, .passenger-table .form-select {
+	min-width: 120px;
+}
+/* 모바일에서 테이블 스크롤 가능하게 */
+.table-responsive {
+	margin-bottom: 1rem;
+}
+/* 결제 수단 리스트 */
+.payment-method-list .list-group-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1rem 1.25rem;
+}
+.payment-method-list .form-check {
+	flex-grow: 1;
+	margin-bottom: 0;
+}
+.payment-method-list .price-label {
+	font-weight: 700;
+	color: #d91f29; /* 캡처 이미지의 빨간색 가격 */
+	font-size: 1.1rem;
+	white-space: nowrap;
+	margin-left: 1rem;
+}
+/* 약관 동의 섹션 */
+.agreement-section .form-check {
+	position: relative;
+	padding-left: 2em; /* 체크박스 공간 확보 */
+}
+.agreement-section .form-check-label a {
+	float: right;
+	text-decoration: none;
+	font-size: 0.9em;
+	color: #6c757d;
+}
+.agreement-section .form-check-label a:hover {
+	text-decoration: underline;
+}
+/* 메인 결제 버튼 */
+.btn-payment-final {
+	background-color: #5ac4c9;
+	border-color: #5ac4c9;
+	padding: 0.75rem;
+	font-size: 1.1rem;
+	font-weight: bold;
+}
+.btn-payment-final:hover {
+	background-color: #4ba9af;
+	border-color: #4ba9af;
+}
+</style>
+</head>
+<body>
+	<div class="moana_gnb" role="complementary">
+		<div class="gnb_container">
+			<div class="box__inner">
+				<h1>
+					<a href="/">무성의 여행</a>
+				</h1>
+			</div>
+
+			<ul class="list__tab">
+				<li class="list-item"><a class="link__tab" href="/">항공</a></li>
+				<li class="list-item"><a class="link__tab" href="/chat">추천챗</a></li>
+			</ul>
+
+			<div class="link-container">
+				<a href="/revList"
+					class="link__booking-history sp_sd--after" th:if="${session.loginUser != null}">나의 예약내역</a>
+				<a
+					th:if="${session.loginUser == null}"
+					class="link__booking-history sp_sd--after" href="member/login">로그인</a>
+				<a th:if="${session.loginUser != null}"
+					th:text="${session.loginUser.UserName}"
+					class="link__booking-history sp_sd--after">허성무</a> <a
+					th:if="${session.loginUser != null}"
+					class="link__booking-history sp_sd--after" href="member/logout">로그아웃</a>
+			</div>
+		</div>
+	</div>
+
+	<main class="container py-5">
+
+		<div class="progress-steps-container">
+			<div class="progress-steps-line"></div>
+			<div class="progress-steps">
+				<div class="progress-step completed">
+					<div class="step-circle">1</div>
+					<div class="step-label">항공 선택</div>
+				</div>
+				<div class="progress-step active">
+					<div class="step-circle">2</div>
+					<div class="step-label">탑승객 정보</div>
+				</div>
+				<div class="progress-step">
+					<div class="step-circle">3</div>
+					<div class="step-label">예약</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row g-4">
+
+			<div class="col-lg-8">
+				<form id="bookingForm" action="/book-flight" method="POST">
+
+					<h3 class="fw-bold mb-3">예약자 정보</h3>
+					<div class="card shadow-sm form-section-card">
+						<div class="card-body p-4">
+							<div class="mb-3">
+								<label for="bookerName" class="form-label fw-bold">이름</label>
+								<input type="text" class="form-control" id="bookerName"
+									value="홍길동" required>
+							</div>
+							<div class="row g-3">
+								<div class="col-md-6">
+									<label for="bookerPhone" class="form-label fw-bold">휴대전화</label>
+									<input type="tel" class="form-control" id="bookerPhone"
+										placeholder="'-' 없이 숫자만 입력" required>
+								</div>
+								<div class="col-md-6">
+									<label for="bookerEmail" class="form-label fw-bold">이메일</label>
+									<input type="email" class="form-control" id="bookerEmail"
+										placeholder="example@email.com" required>
+								</div>
+							</div>
+							<small class="text-muted d-block mt-3">
+								입력하신 이메일로 예약내역이 발송되며, 예약 변경 및 취소 시 SM/SMS가 발송됩니다. <br>
+								(휴대전화번호/이메일 정보는 암호화되어 항공사에 전달되지 않습니다.)
+							</small>
+						</div>
+					</div>
+
+					<h3 class="fw-bold mb-3">탑승객 정보 <span class="fw-normal fs-5 text-muted">(성인 1)</span></h3>
+					<div class="card shadow-sm form-section-card">
+						<div class="card-body p-4">
+							<div class="table-responsive">
+								<table class="table align-middle passenger-table"
+									style="min-width: 700px;">
+									<thead class="table-light">
+										<tr>
+											<th>No</th>
+											<th>구분</th>
+											<th class="text-nowrap">영문 성 (Last Name)</th>
+											<th class="text-nowrap">영문 이름 (First Name)</th>
+											<th>성별</th>
+											<th>생년월일</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>1</td>
+											<td><span class="badge bg-primary-subtle text-primary-emphasis">성인</span></td>
+											<td><input type="text" class="form-control"
+												placeholder="HONG" required></td>
+											<td><input type="text" class="form-control"
+												placeholder="GILDONG" required></td>
+											<td><select class="form-select" required>
+													<option value="">선택</option>
+													<option value="MALE">남성</option>
+													<option value="FEMALE">여성</option>
+											</select></td>
+											<td><input type="text" class="form-control flatpickr-date"
+												placeholder="YYYY-MM-DD" required></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							
+							<hr class="my-4">
+
+							<h5 class="fw-bold mb-3">여권 정보 (국제선 필수)</h5>
+							<div class="row g-3">
+								<div class="col-md-4">
+									<label class="form-label fw-bold">여권번호</label>
+									<input type="text" class="form-control" placeholder="여권번호 입력">
+								</div>
+								<div class="col-md-4">
+									<label class="form-label fw-bold">여권발급국</label>
+									<select class="form-select">
+										<option value="KR">대한민국 (KOREA, REPUBLIC OF)</option>
+										<option value="US">미국 (USA)</option>
+										<option value="JP">일본 (JAPAN)</option>
+										</select>
+								</div>
+								<div class="col-md-4">
+									<label class="form-label fw-bold">여권만료일</label>
+									<input type="text" class="form-control flatpickr-date"
+										placeholder="YYYY-MM-DD">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="alert alert-danger" role="alert">
+						<h5 class="alert-heading fw-bold fs-6">탑승객 정보 입력시 유의사항</h5>
+						<ul class="mb-0 small" style="padding-left: 1.2rem;">
+							<li class="mb-1">탑승객 정보는 여권에 기재된 영문이름과 동일해야 합니다. (이름 변경 불가)</li>
+							<li class="mb-1">항공권 예약/발권 후 이름 변경은 불가하며, 환불 후 재구매하셔야 합니다.</li>
+							<li>영문성/이름 글자 수 11자 초과 시 문의 부탁드립니다.</li>
+						</ul>
+					</div>
+					
+					<div class="d-flex justify-content-between align-items-center mt-4 p-3 bg-light rounded">
+						<h5 class="mb-0 fw-bold">총 결제 예정 금액</h5>
+						<span class="price-label" style="font-size: 1.75rem;">234,500원</span>
+					</div>
+
+				</form>
+				</div>
+
+			<div class="col-lg-4">
+				
+				<h3 class="fw-bold mb-3">결제 수단</h3>
+				<div class="card shadow-sm form-section-card">
+					<div class="card-body p-0">
+						<ul class="list-group list-group-flush payment-method-list">
+							<li class="list-group-item">
+								<div class="form-check">
+									<input class="form-check-input" type="radio"
+										name="paymentMethod" id="cardNH" checked> <label
+										class="form-check-label" for="cardNH"> NH채움카드 </label>
+								</div> <span class="price-label">234,500원</span>
+							</li>
+							<li class="list-group-item">
+								<div class="form-check">
+									<input class="form-check-input" type="radio"
+										name="paymentMethod" id="cardHana"> <label
+										class="form-check-label" for="cardHana"> 하나카드 </label>
+								</div> <span class="price-label">234,500원</span>
+							</li>
+							<li class="list-group-item">
+								<div class="form-check">
+									<input class="form-check-input" type="radio"
+										name="paymentMethod" id="cardShinhan"> <label
+										class="form-check-label" for="cardShinhan"> 신한카드 </label>
+								</div> <span class="price-label">234,500원</span>
+							</li>
+							<li class="list-group-item">
+								<div class="form-check">
+									<input class="form-check-input" type="radio"
+										name="paymentMethod" id="cardKB"> <label
+										class="form-check-label" for="cardKB"> KB국민카드 </label>
+								</div> <span class="price-label text-body-secondary">245,500원</span>
+							</li>
+							</ul>
+						<div class="card-footer text-muted small">
+							선택한 요금 종류에 맞는 카드로 결제해주세요. 결제 정보를 변경하면 총 요금이 적용됩니다.
+						</div>
+					</div>
+				</div>
+
+				<h4 class="fw-bold mb-3">요금규정 및 개인정보처리방침</h4>
+				<div class="card shadow-sm form-section-card agreement-section">
+					<div class="card-body p-4">
+						<div class="form-check border-bottom pb-3 mb-3">
+							<input class="form-check-input" type="checkbox" id="agreeAll"
+								style="width: 1.25em; height: 1.25em;"> <label
+								class="form-check-label fw-bold" for="agreeAll"
+								style="padding-top: 2px;"> 전체 동의 </label>
+						</div>
+						<div class="form-check mb-2">
+							<input class="form-check-input" type="checkbox" id="agree1" required>
+							<label class="form-check-label small" for="agree1">
+								(필수) 유의사항에 동의 <a href="#" target="_blank">자세히</a>
+							</label>
+						</div>
+						<div class="form-check mb-2">
+							<input class="form-check-input" type="checkbox" id="agree2" required>
+							<label class="form-check-label small" for="agree2">
+								(필수) 이용약관 동의 <a href="#" target="_blank">자세히</a>
+							</label>
+						</div>
+						<div class="form-check mb-2">
+							<input class="form-check-input" type="checkbox" id="agree3" required>
+							<label class="form-check-label small" for="agree3">
+								(필수) 개인정보 수집 및 이용 동의 <a href="#" target="_blank">자세히</a>
+							</label>
+						</div>
+						<div class="form-check mb-2">
+							<input class="form-check-input" type="checkbox" id="agree4" required>
+							<label class="form-check-label small" for="agree4">
+								(필수) 환불규정에 동의 <a href="#" target="_blank">자세히</a>
+							</label>
+						</div>
+						</div>
+				</div>
+
+				<div class="d-grid">
+					<button type="submit" form="bookingForm"
+						class="btn btn-primary btn-payment-final">
+						234,500원 결제하기
+					</button>
+				</div>
+			</div>
+			</div>
+		</main>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+
+	<script>
+    // 날짜 선택기 (flatpickr) 초기화
+    flatpickr(".flatpickr-date", {
+        locale: "ko", // 한글
+        dateFormat: "Y-m-d", // 날짜 형식
+    });
+    
+    // 전체 동의 체크박스 로직
+    document.getElementById('agreeAll').addEventListener('change', function (e) {
+        const isChecked = e.target.checked;
+        document.querySelectorAll('.agreement-section .form-check-input[required]').forEach(function (checkbox) {
+            checkbox.checked = isChecked;
+        });
+    });
+    </script>
+</body>
+</html>

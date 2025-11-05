@@ -499,6 +499,36 @@ body {
 	width: 60%;
 	font-weight: bold;
 }
+
+/* --- [새로 추가] 예약 단계 표시 (Progress Bar) --- */
+.step-icon {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background-color: #e9ecef; /* 연한 회색 */
+	color: #6c757d; /* 텍스트 옅은 색 */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+	margin: 0 auto 8px auto; /* 아이콘과 텍스트 사이 간격 */
+}
+
+.step-icon-active {
+	background-color: #5ac4c9; /* 헤더의 메인 컬러 */
+	color: #fff;
+}
+
+.step-connector {
+	flex-grow: 1; /* 스텝 사이의 공간을 채움 */
+	height: 3px;
+	background-color: #e9ecef; /* 연한 회색 */
+	margin-top: 16px; /* (아이콘 높이 36px / 2) - (선 높이 3px / 2) = 16.5px */
+	margin-left: 1rem;
+	margin-right: 1rem;
+}
+/* --- [여기까지] --- */
+		
 </style>
 </head>
 <body>
@@ -525,12 +555,38 @@ body {
 					th:text="${session.loginUser.UserName}"
 					class="link__booking-history sp_sd--after">허성무</a> <a
 					th:if="${session.loginUser != null}"
-					class="link__booking-history sp_sd--after" href="member/logout">로그아웃</a>
+					class="link__booking-history sp_sd--after" href="member/logout">로그인</a>
 			</div>
 		</div>
 	</div>
 
 	<main class="container py-5">
+	
+		<div class="card shadow-sm mb-4">
+			<div class="card-body p-4">
+				<div class="d-flex justify-content-between align-items-start">
+					
+					<div class="text-center">
+						<div class="step-icon step-icon-active">1</div>
+						<div class="fw-bold text-primary small">항공 선택</div>
+					</div>
+					
+					<div class="step-connector"></div>
+					
+					<div class="text-center">
+						<div class="step-icon">2</div>
+						<div class="text-muted small">탑승객 정보</div>
+					</div>
+								
+					<div class="step-connector"></div>
+					
+					<div class="text-center">
+						<div class="step-icon">3</div>
+						<div class="text-muted small">예약</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="row g-4">
 
 			<div class="col-lg-3">
