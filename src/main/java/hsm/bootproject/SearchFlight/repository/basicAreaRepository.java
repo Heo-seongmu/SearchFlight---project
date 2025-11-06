@@ -9,5 +9,7 @@ import hsm.bootproject.SearchFlight.domain.basicArea;
 public interface basicAreaRepository extends JpaRepository<basicArea, Long>{
 
 	List<basicArea> findByKolocationContainingOrCountryContaining(String kolocation, String country);
+	
+	basicArea findByIataCode(String iataCode);
 
 }

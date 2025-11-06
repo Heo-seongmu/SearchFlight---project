@@ -42,10 +42,10 @@
 }
 
 .box__inner h1 a {
-    color: #fff;             /* 텍스트 색상 (헤더와 동일한 흰색) */
-    text-decoration: none;  /* 링크 밑줄 제거 */
-    font-size: 22px;        /* 폰트 크기 (원하는 크기로 조절하세요) */
-    font-weight: bold;      /* 폰트 굵기 */
+	color: #fff; /* 텍스트 색상 (헤더와 동일한 흰색) */
+	text-decoration: none; /* 링크 밑줄 제거 */
+	font-size: 22px; /* 폰트 크기 (원하는 크기로 조절하세요) */
+	font-weight: bold; /* 폰트 굵기 */
 }
 
 .list__tab {
@@ -473,17 +473,17 @@ body {
 	font-size: 18px;
 	font-weight: bold;
 }
-
+  
 /* 스피너 회전 애니메이션 */
-@keyframes spin {
+@keyframes spin { 
     0% {
-        transform: rotate(0deg);
+	    transform: rotate(0deg);
     }
     100% {
-        transform: rotate(360deg);
+	    transform: rotate(360deg);
     }
 }
-
+  
 .booking-details-section h5 {
 	margin-bottom: 0.25rem;
 }
@@ -529,7 +529,6 @@ body {
 	margin-right: 1rem;
 }
 /* --- [여기까지] --- */
-
 </style>
 </head>
 <body>
@@ -547,9 +546,8 @@ body {
 			</ul>
 
 			<div class="link-container">
-				<a href="/revList"
-					class="link__booking-history sp_sd--after" th:if="${session.loginUser != null}">나의 예약내역</a>
-				<a
+				<a href="/revList" class="link__booking-history sp_sd--after"
+					th:if="${session.loginUser != null}">나의 예약내역</a> <a
 					th:if="${session.loginUser == null}"
 					class="link__booking-history sp_sd--after" href="member/login">로그인</a>
 				<a th:if="${session.loginUser != null}"
@@ -562,25 +560,25 @@ body {
 	</div>
 
 	<main class="container py-5">
-	
+
 		<div class="card shadow-sm mb-4">
 			<div class="card-body p-4">
 				<div class="d-flex justify-content-between align-items-start">
-					
+
 					<div class="text-center">
 						<div class="step-icon step-icon-active">1</div>
 						<div class="fw-bold text-primary small">항공 선택</div>
 					</div>
-					
+
 					<div class="step-connector"></div>
-					
+
 					<div class="text-center">
 						<div class="step-icon">2</div>
 						<div class="text-muted small">탑승객 정보</div>
 					</div>
-					
+
 					<div class="step-connector"></div>
-					
+
 					<div class="text-center">
 						<div class="step-icon">3</div>
 						<div class="text-muted small">예약</div>
@@ -604,7 +602,7 @@ body {
 						th:data-infants="${airparmDto.infants}"
 						th:data-travel-class="${airparmDto.travelClass}"
 						th:data-departure-ko-location="${airparmDto.departureKoLocation}"
-   						th:data-arrival-ko-location="${airparmDto.arrivalKoLocation}">						
+						th:data-arrival-ko-location="${airparmDto.arrivalKoLocation}">
 						<div
 							class="d-flex justify-content-between align-items-center mb-2">
 							<span
@@ -660,8 +658,8 @@ body {
 						th:data-origin-code="${searchAir.departureCode}"
 						th:data-destination-code="${searchAir.arrivalCode}"
 						th:data-departure-ko-location="${airparmDto.departureKoLocation}"
-       					th:data-arrival-ko-location="${airparmDto.arrivalKoLocation}"
-						onclick="selectOneWayFlight(this)"> 
+						th:data-arrival-ko-location="${airparmDto.arrivalKoLocation}"
+						onclick="selectOneWayFlight(this)">
 						<div class="card-body">
 							<div class="row align-items-center">
 								<div class="col-md-5">
@@ -759,11 +757,11 @@ body {
 						<input type="hidden" name="adults" id="adultsInput"> <input
 							type="hidden" name="children" id="childrenInput"> <input
 							type="hidden" name="infants" id="infantsInput"> <input
-							type="hidden" name="travelClass" id="travelClassInput">
-													
-						<input type="hidden" name="departureKoLocation" id="modalDepartureKoLocationInput">
-						<input type="hidden" name="arrivalKoLocation" id="modalArrivalKoLocationInput">
-						
+							type="hidden" name="travelClass" id="travelClassInput"> <input
+							type="hidden" name="departureKoLocation"
+							id="modalDepartureKoLocationInput"> <input type="hidden"
+							name="arrivalKoLocation" id="modalArrivalKoLocationInput">
+
 						<div class="d-grid mt-2">
 							<button type="submit" class="btn btn-primary btn-lg btn-submit">검색하기</button>
 						</div>
@@ -954,16 +952,15 @@ body {
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary"
 						data-bs-dismiss="modal">취소</button>
-					
+
 					<button type="button" class="btn btn-primary" id="finalBookingBtn"
-						data-bs-toggle="modal" 
-						data-bs-target="#hotelPromptModal"
+						data-bs-toggle="modal" data-bs-target="#hotelPromptModal"
 						data-bs-dismiss="modal">예약 확정하기</button>
-					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="modal fade" id="hotelPromptModal" tabindex="-1"
 		aria-labelledby="hotelPromptModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
@@ -996,12 +993,17 @@ body {
 	<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 
 	<script>
-    // 1. 스크립트 상단에 사용할 모달 객체들을 미리 정의합니다.
-    const returnModal = new bootstrap.Modal(document.getElementById('returnFlightListModal'));
-    const confirmationModal = new bootstrap.Modal(document.getElementById('bookingConfirmationModal'));
-    const hotelPromptModal = new bootstrap.Modal(document.getElementById('hotelPromptModal'));
+    // 1. 폼 생성을 위한 헬퍼 함수
+    function createHiddenInput(form, name, value) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+    }
 
-	// [ ⭐️ 편도(One-Way) 항공편 선택 시 ⭐️ ]
+    // [ ⭐️ 편도(One-Way) 항공편 선택 시 ⭐️ ]
+    // 이 함수가 없어서 오류가 발생했습니다.
     async function selectOneWayFlight(buttonElement) {
         // 1. 항공권 정보 추출
         const departureInfo = {
@@ -1011,7 +1013,6 @@ body {
             destinationCode: buttonElement.dataset.destinationCode,
             departureTime: buttonElement.dataset.departureTime,
             arrivalTime: buttonElement.dataset.arrivalTime,
-            // [ ⭐ 최종 수정 확인 ⭐ ] totalPrice를 숫자로 파싱
             totalPrice: parseFloat((buttonElement.dataset.totalPrice || "0").replace(/,/g, '')),
             departureDate: buttonElement.dataset.departureDate,
             departureKoLocation: buttonElement.dataset.departureKoLocation,
@@ -1020,33 +1021,13 @@ body {
 
         // 2. 승객 정보 추출
         const passengerInfo = {
-            // [ ⭐ 최종 수정 확인 ⭐ ] 승객 수를 숫자로 파싱
             adults: parseInt(buttonElement.dataset.adults, 10),
             children: parseInt(buttonElement.dataset.children, 10),
             infants: parseInt(buttonElement.dataset.infants, 10),
             travelClass: buttonElement.dataset.travelClass
         };
 
-        // 3. 확인 모달 요소 가져오기
-        const confirmationModalElement = document.getElementById('bookingConfirmationModal');
-
-        // 4. '가는 편' 정보 채우기
-        const depSection = confirmationModalElement.querySelector('.booking-details-section:nth-of-type(1)');
-        depSection.style.display = 'block';
-        document.getElementById('confirm-dep-route').textContent =
-            `${departureInfo.originCode} (${departureInfo.departureKoLocation}) → ${departureInfo.destinationCode} (${departureInfo.arrivalKoLocation})`;
-        document.getElementById('confirm-dep-schedule').textContent = `${departureInfo.departureDate} ${departureInfo.departureTime} ~ ${departureInfo.arrivalTime}`;
-        document.getElementById('confirm-dep-airline').textContent = `${departureInfo.carrierCode} 항공`;
-
-        // 5. '오는 편' 섹션 숨기기
-        const retSection = confirmationModalElement.querySelector('.booking-details-section:nth-of-type(2)');
-        retSection.style.display = 'none';
-        confirmationModalElement.querySelector('.booking-details-section:nth-of-type(1) + hr').style.display = 'none';
-
-        // 6. 총 결제 금액 설정
-        document.getElementById('confirm-total-price').textContent = new Intl.NumberFormat('ko-KR').format(departureInfo.totalPrice) + '원';
-
-        // 7. 서버로 보낼 데이터 생성
+        // 3. 서버로 보낼 데이터 생성
         const bookingData = {
             departureKoLocation: departureInfo.departureKoLocation,
             arrivalKoLocation: departureInfo.arrivalKoLocation,
@@ -1063,267 +1044,51 @@ body {
                 arrivalTime: `${departureInfo.departureDate}T${departureInfo.arrivalTime}:00`,
                 totalPrice: departureInfo.totalPrice // 숫자
             },
-            returnFlight: null
+            returnFlight: null // 편도이므로 '오는 편'은 null
         };
 
-        // 8. 데이터 저장 및 확인 모달 표시
-        confirmationModalElement.dataset.bookingPayload = JSON.stringify(bookingData);
-        confirmationModal.show();
-    }
-
-
-    // [ ⭐️ 왕복 시 '오는 편' 모달 열기 ⭐️ ]
-   async function openReturnFlightModal(buttonElement) {
-        const listContainer = document.getElementById('modal-return-flight-list');
-        listContainer.innerHTML = `<div class="d-flex justify-content-center p-5"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div><p class="ms-3 mb-0">오는 편 항공권을 조회중입니다...</p></div>`;
-
-        const returnModalElement = document.getElementById('returnFlightListModal');
-
-        // 가는 편 정보 + 승객 정보를 JSON 문자열로 저장 (totalPrice는 숫자로 변환해서)
-        returnModalElement.dataset.departureInfo = JSON.stringify({
-            id: buttonElement.dataset.offerId,
-            carrierCode: buttonElement.dataset.carrierCode,
-            originCode: buttonElement.dataset.originCode,
-            destinationCode: buttonElement.dataset.destinationCode,
-            departureTime: buttonElement.dataset.departureTime,
-            arrivalTime: buttonElement.dataset.arrivalTime,
-            // [ ⭐ 최종 수정 확인 ⭐ ] totalPrice 숫자로 저장
-            totalPrice: parseFloat((buttonElement.dataset.totalPrice || "0").replace(/,/g, '')),
-            departureDate: buttonElement.dataset.departureDate,
-            returnDate: buttonElement.dataset.returnDate,
-            departureKoLocation: buttonElement.dataset.departureKoLocation,
-            arrivalKoLocation: buttonElement.dataset.arrivalKoLocation,
-            adults: buttonElement.dataset.adults, // 문자열로 저장했다가 selectReturnFlight에서 파싱
-            children: buttonElement.dataset.children,
-            infants: buttonElement.dataset.infants,
-            travelClass: buttonElement.dataset.travelClass
-        });
-
-        returnModal.show();
-
-        const params = {
-            selectedDepartureTime: buttonElement.dataset.departureTime,
-            selectedCarrierCode: buttonElement.dataset.carrierCode,
-            departureCode: buttonElement.dataset.departureCode,
-            arrivalCode: buttonElement.dataset.arrivalCode,
-            departureDate: buttonElement.dataset.departureDate,
-            returnDate: buttonElement.dataset.returnDate,
-            adults: buttonElement.dataset.adults,
-            children: buttonElement.dataset.children,
-            infants: buttonElement.dataset.infants,
-            travelClass: buttonElement.dataset.travelClass
-        };
-        const queryString = new URLSearchParams(params).toString();
-
-        try {
-            const response = await fetch(`/air/api/return-flights?${queryString}`);
-            if (!response.ok) throw new Error('항공편 조회 실패 (서버 응답 오류)');
-            const returnFlights = await response.json();
-            listContainer.innerHTML = '';
-            if (returnFlights.length === 0) {
-                listContainer.innerHTML = '<p class="text-center p-5">선택 가능한 오는 편 항공권이 없습니다.</p>';
-                return;
-            }
-            returnFlights.forEach(flight => {
-                const isDirectText = flight.returnDirectFlight ? '직항' : '경유';
-                // [ ⭐ 최종 수정 확인 ⭐ ] 오는 편 가격도 숫자로 다루기 위해 rawPrice 저장
-                const rawPrice = flight.returnTotalPrice;
-                const formattedPrice = new Intl.NumberFormat('ko-KR').format(rawPrice);
-
-                const flightHtml = `
-                    <div class="card flight-card-button mb-2"> <div class="card-body"> <div class="row align-items-center">
-                        <div class="col-md-5">
-                            <h6 class="fw-bold mb-0">${flight.returnDepartureTime} - ${flight.returnArrivalTime}</h6>
-                            <small class="text-body-secondary">${flight.returnDepartureCode} → ${flight.returnArrivalCode} · ${flight.returnCarrierCode} 항공</small>
-                        </div>
-                        <div class="col-md-3 text-md-center"> <span class="fw-bold">${isDirectText}</span> </div>
-                        <div class="col-md-4 text-md-end"> <div class="d-flex flex-column align-items-end">
-                            <span class="price-display mb-1">${formattedPrice}원</span>
-                            <button class="btn btn-primary btn-sm"
-                                    data-id="${flight.id}" data-carrier-code="${flight.returnCarrierCode}"
-                                    data-departure-time="${flight.returnDepartureTime}" data-arrival-time="${flight.returnArrivalTime}"
-                                    data-total-price="${rawPrice}"
-                                    data-origin-code="${flight.returnDepartureCode}" data-destination-code="${flight.returnArrivalCode}"
-                                    onclick="selectReturnFlight(this)"> 선택 </button>
-                        </div> </div>
-                    </div> </div> </div>`;
-                listContainer.insertAdjacentHTML('beforeend', flightHtml);
-            });
-        } catch (error) {
-            listContainer.innerHTML = `<p class="text-center text-danger p-5">${error.message}</p>`;
-        }
-    }
-
-    // [ ⭐️ 왕복 시 '오는 편' 선택 시 ⭐️ ]
-    async function selectReturnFlight(selectedButton) {
-        const returnModalElement = document.getElementById('returnFlightListModal');
-        // 가는 편 정보 (totalPrice는 이미 숫자) + 승객 정보 (문자열)
-        const departureInfo = JSON.parse(returnModalElement.dataset.departureInfo);
-        // 오는 편 정보
-        const returnInfo = {
-            id: selectedButton.dataset.id,
-            carrierCode: selectedButton.dataset.carrierCode,
-            originCode: selectedButton.dataset.originCode,
-            destinationCode: selectedButton.dataset.destinationCode,
-            departureTime: selectedButton.dataset.departureTime,
-            arrivalTime: selectedButton.dataset.arrivalTime,
-            // [ ⭐ 최종 수정 확인 ⭐ ] 오는 편 totalPrice도 숫자로 파싱
-            totalPrice: parseFloat((selectedButton.dataset.totalPrice || "0").replace(/,/g, ''))
-        };
-
-        // 서버로 보낼 데이터 생성
-        const bookingData = {
-            departureKoLocation: departureInfo.departureKoLocation,
-            arrivalKoLocation: departureInfo.arrivalKoLocation,
-            // [ ⭐ 최종 수정 확인 ⭐ ] 승객 수를 숫자로 파싱
-            adults: parseInt(departureInfo.adults, 10),
-            children: parseInt(departureInfo.children, 10),
-            infants: parseInt(departureInfo.infants, 10),
-            travelClass: departureInfo.travelClass,
-            departureFlight: { // 가는 편
-                id: departureInfo.id,
-                carrierCode: departureInfo.carrierCode,
-                originCode: departureInfo.originCode,
-                destinationCode: departureInfo.destinationCode,
-                departureTime: `${departureInfo.departureDate}T${departureInfo.departureTime}:00`,
-                arrivalTime: `${departureInfo.departureDate}T${departureInfo.arrivalTime}:00`,
-                totalPrice: departureInfo.totalPrice // 이미 숫자
-            },
-            returnFlight: { // 오는 편
-                id: returnInfo.id,
-                carrierCode: returnInfo.carrierCode,
-                originCode: returnInfo.originCode,
-                destinationCode: returnInfo.destinationCode,
-                departureTime: `${departureInfo.returnDate}T${returnInfo.departureTime}:00`,
-                arrivalTime: `${departureInfo.returnDate}T${returnInfo.arrivalTime}:00`,
-                totalPrice: returnInfo.totalPrice // 숫자
-            }
-        };
-
-        // 확인 모달 내용 채우기
-        document.querySelector('#bookingConfirmationModal .booking-details-section:nth-of-type(1)').style.display = 'block';
-        document.getElementById('confirm-dep-route').textContent =
-            `${departureInfo.originCode} (${departureInfo.departureKoLocation}) → ${departureInfo.destinationCode} (${departureInfo.arrivalKoLocation})`;
-        document.getElementById('confirm-dep-schedule').textContent = `${departureInfo.departureDate} ${departureInfo.departureTime} ~ ${departureInfo.arrivalTime}`;
-        document.getElementById('confirm-dep-airline').textContent = `${departureInfo.carrierCode} 항공`;
-
-        document.querySelector('#bookingConfirmationModal .booking-details-section:nth-of-type(2)').style.display = 'block';
-        document.querySelector('#bookingConfirmationModal .booking-details-section:nth-of-type(1) + hr').style.display = 'block';
-        document.getElementById('confirm-ret-route').textContent =
-            `${returnInfo.originCode} (${departureInfo.arrivalKoLocation}) → ${returnInfo.destinationCode} (${departureInfo.departureKoLocation})`;
-        document.getElementById('confirm-ret-schedule').textContent = `${departureInfo.returnDate} ${returnInfo.departureTime} ~ ${returnInfo.arrivalTime}`;
-        document.getElementById('confirm-ret-airline').textContent = `${returnInfo.carrierCode} 항공`;
-
-        // 오는 편 가격 표시 (이미 숫자)
-        document.getElementById('confirm-total-price').textContent = new Intl.NumberFormat('ko-KR').format(returnInfo.totalPrice) + '원';
-
-        // 데이터 저장 및 확인 모달 표시
-        const confirmationModalElement = document.getElementById('bookingConfirmationModal');
-        confirmationModalElement.dataset.bookingPayload = JSON.stringify(bookingData);
-
-        returnModal.hide();
-        confirmationModal.show();
-    }
-
-    // [ ⭐️ 예약 확정 ('아니요' 또는 '예' 클릭 시 공통 호출) ⭐️ ]
-    async function confirmAndBook(button, redirectUrl = '/') {
-        button.disabled = true;
-
-        const confirmationModalElement = document.getElementById('bookingConfirmationModal');
-        const bookingPayloadString = confirmationModalElement.dataset.bookingPayload; // Get the string
-
-        // --- Enhanced Debugging ---
-        console.log("===== 🚀 Raw bookingPayload String =====");
-        console.log(bookingPayloadString); // Log the raw string
-
-        let bookingData;
-        try {
-            bookingData = JSON.parse(bookingPayloadString); // Parse it
-            console.log("===== ✅ Parsed bookingPayload Object =====");
-            console.log(bookingData); // Log the parsed object
-
-            // Explicitly check types
-            console.log("--- Type Checks ---");
-            console.log("typeof adults:", typeof bookingData.adults, bookingData.adults);
-            console.log("typeof children:", typeof bookingData.children, bookingData.children);
-            console.log("typeof infants:", typeof bookingData.infants, bookingData.infants);
-            if (bookingData.departureFlight) {
-                console.log("typeof dep totalPrice:", typeof bookingData.departureFlight.totalPrice, bookingData.departureFlight.totalPrice);
-            }
-             if (bookingData.returnFlight) {
-                console.log("typeof ret totalPrice:", typeof bookingData.returnFlight.totalPrice, bookingData.returnFlight.totalPrice);
-            }
-            console.log("-------------------");
-
-        } catch (e) {
-            console.error("🚨 Failed to parse bookingPayload JSON:", e);
-            alert('예약 정보 형식 오류. 다시 시도해주세요.');
-            button.disabled = false;
-            return; // Stop if parsing fails
-        }
-        // --- End Enhanced Debugging ---
-
-
-        if (!bookingData) { // Check the parsed object
-            alert('예약 정보가 올바르지 않습니다. 다시 시도해주세요.');
-            button.disabled = false;
-            return;
-        }
-
-        hotelPromptModal.hide();
-
+        // --- [수정된 부분] ---
+        // 4. 확인 모달 대신 PsgInfo 페이지로 POST 이동
+        
+        // 로딩 모달 표시
         const loadingModal = document.getElementById('loadingModal');
-        loadingModal.querySelector('p').textContent = '예약 정보를 생성중입니다...';
+        loadingModal.querySelector('p').textContent = '예약 정보 페이지로 이동중입니다...';
         loadingModal.style.display = 'flex';
 
-        try {
-            const response = await fetch('/air/bookings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: bookingPayloadString // Send the original string
-            });
+        // 5. 동적 폼 생성
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/air/PsgInfo'; // 컨트롤러 경로
 
-            if (!response.ok) {
-                if (response.status === 401) {
-                    alert('로그인이 필요합니다. 확인을 누르면 로그인 페이지로 이동합니다.');
-                    window.location.href = '/member/login';
-                    return;
-                }
-                if (response.status === 400) {
-                	const errorData = await response.json();
-                    throw new Error(errorData.message || '필수 정보가 누락되었습니다.');
-                }
-                throw new Error('예약 생성에 실패했습니다. (서버 오류)');
+        // 6. 폼 데이터 채우기 (createHiddenInput 함수는 스크립트에 이미 존재)
+        
+        // 상위 레벨 정보 (승객 정보 포함)
+        createHiddenInput(form, 'departureKoLocation', bookingData.departureKoLocation);
+        createHiddenInput(form, 'arrivalKoLocation', bookingData.arrivalKoLocation);
+        createHiddenInput(form, 'adults', bookingData.adults);
+        createHiddenInput(form, 'children', bookingData.children);
+        createHiddenInput(form, 'infants', bookingData.infants);
+        createHiddenInput(form, 'travelClass', bookingData.travelClass);
+
+        // '가는 편' 정보 (departureFlight.id, departureFlight.carrierCode 등)
+        if (bookingData.departureFlight) {
+            for (const key in bookingData.departureFlight) {
+                createHiddenInput(form, `departureFlight.${key}`, bookingData.departureFlight[key]);
             }
-
-            const result = await response.json();
-            alert(`예약이 완료되었습니다! (예약 ID: ${result.bookingId})`);
-
-            window.location.href = redirectUrl;
-
-        } catch (error) {
-           console.error("Error creating booking:", error);
-           alert(`오류가 발생했습니다: ${error.message}`);
-           loadingModal.style.display = 'none';
-           document.querySelectorAll('#hotelPromptModal button').forEach(btn => btn.disabled = false);
         }
+
+        // '오는 편' 정보 (null이므로 이 루프는 실행되지 않음, 정상)
+        if (bookingData.returnFlight) {
+            for (const key in bookingData.returnFlight) {
+                createHiddenInput(form, `returnFlight.${key}`, bookingData.returnFlight[key]);
+            }
+        }
+
+        // 7. 폼 전송
+        document.body.appendChild(form);
+        form.submit();
     }
 
-
-    // [ ⭐️ '예' 버튼 클릭 시 (호텔 보기) ⭐️ ]
-    async function confirmAndBookAndSeeHotels(button) {
-        const confirmationModalElement = document.getElementById('bookingConfirmationModal');
-        const bookingPayload = confirmationModalElement.dataset.bookingPayload;
-
-        if (!bookingPayload) {
-            alert('예약 정보를 찾을 수 없습니다. 다시 시도해주세요.');
-            return;
-        }
-        const bookingData = JSON.parse(bookingPayload);
-        const destinationCode = bookingData.departureFlight.destinationCode;
-        const hotelUrl = `/hotel/List?destination=${destinationCode}`;
-        await confirmAndBook(button, hotelUrl);
-    }
 
     // ==================================================================
     // 아래는 재검색, 장소/탑승객 선택 모달 관련 코드 (수정 없음)

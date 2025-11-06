@@ -99,7 +99,7 @@ body {
 	background-color: #f8f9fa; /* 전체 페이지 배경색 */
 }
 
-/* --- [신규] 3-Step Progress Bar (image_35dd7d.png 스타일) --- */
+/* --- 3-Step Progress Bar --- */
 .progress-steps-container {
 	position: relative;
 	width: 100%;
@@ -144,7 +144,6 @@ body {
 	margin: 0 auto 0.5rem auto; /* 숫자와 라벨 사이 간격 */
 }
 
-/* 활성(active) 및 완료(completed) 상태 */
 .progress-step.active .step-circle, .progress-step.completed .step-circle
 	{
 	background-color: #5ac4c9; /* 테마 메인 컬러 */
@@ -163,51 +162,43 @@ body {
 	font-weight: 500;
 }
 
-/* --- [신규] 탑승객 정보 페이지 전용 스타일 --- */
+/* --- 탑승객 정보 페이지 전용 스타일 --- */
 .form-section-card {
 	margin-bottom: 2rem;
 }
-/* 탑승객 정보 테이블 내 input/select 크기 조절 */
+
 .passenger-table .form-control, .passenger-table .form-select {
 	min-width: 120px;
 }
-/* 모바일에서 테이블 스크롤 가능하게 */
+
 .table-responsive {
 	margin-bottom: 1rem;
 }
-/* 결제 수단 리스트 */
-.payment-method-list .list-group-item {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 1rem 1.25rem;
-}
-.payment-method-list .form-check {
-	flex-grow: 1;
-	margin-bottom: 0;
-}
-.payment-method-list .price-label {
+
+.price-label {
 	font-weight: 700;
-	color: #d91f29; /* 캡처 이미지의 빨간색 가격 */
+	color: #d91f29; /* 빨간색 가격 */
 	font-size: 1.1rem;
 	white-space: nowrap;
 	margin-left: 1rem;
 }
-/* 약관 동의 섹션 */
+
 .agreement-section .form-check {
 	position: relative;
 	padding-left: 2em; /* 체크박스 공간 확보 */
 }
+
 .agreement-section .form-check-label a {
 	float: right;
 	text-decoration: none;
 	font-size: 0.9em;
 	color: #6c757d;
 }
+
 .agreement-section .form-check-label a:hover {
 	text-decoration: underline;
 }
-/* 메인 결제 버튼 */
+
 .btn-payment-final {
 	background-color: #5ac4c9;
 	border-color: #5ac4c9;
@@ -215,9 +206,17 @@ body {
 	font-size: 1.1rem;
 	font-weight: bold;
 }
+
 .btn-payment-final:hover {
 	background-color: #4ba9af;
 	border-color: #4ba9af;
+}
+
+/* [ ⭐️ 새로 추가 ⭐️ ] 탑승객 구분 HR 스타일 */
+.passenger-divider {
+	border-top: 2px dashed #dee2e6; /* 점선 구분 */
+	margin-top: 1.5rem;
+	margin-bottom: 1.5rem;
 }
 </style>
 </head>
@@ -236,21 +235,27 @@ body {
 			</ul>
 
 			<div class="link-container">
-				<a href="/revList"
-					class="link__booking-history sp_sd--after" th:if="${session.loginUser != null}">나의 예약내역</a>
-				<a
+				<a href="/revList" class="link__booking-history sp_sd--after"
+					th:if="${session.loginUser != null}">나의 예약내역</a> <a
 					th:if="${session.loginUser == null}"
-					class="link__booking-history sp_sd--after" href="member/login">로그인</a>
+					class="link__booking-history sp_sd--after" href="/member/login">로그인</a>
 				<a th:if="${session.loginUser != null}"
 					th:text="${session.loginUser.UserName}"
 					class="link__booking-history sp_sd--after">허성무</a> <a
 					th:if="${session.loginUser != null}"
-					class="link__booking-history sp_sd--after" href="member/logout">로그아웃</a>
+					class="link__booking-history sp_sd--after" href="/member/logout">로그아웃</a>
 			</div>
 		</div>
 	</div>
 
-	<main class="container py-5">
+	<main class="container py-5"
+		th:with="
+    totalPrice=${bookingInfo.returnFlight != null ? bookingInfo.returnFlight.totalPrice : bookingInfo.departureFlight.totalPrice},
+    depFlight=${bookingInfo.departureFlight},
+    retFlight=${bookingInfo.returnFlight},
+    passengerCount=${bookingInfo.adults + bookingInfo.children + bookingInfo.infants},
+    isDomestic=${isDomestic} 
+">
 
 		<div class="progress-steps-container">
 			<div class="progress-steps-line"></div>
@@ -273,93 +278,281 @@ body {
 		<div class="row g-4">
 
 			<div class="col-lg-8">
-				<form id="bookingForm" action="/book-flight" method="POST">
+
+				<form id="bookingForm" action="/air/confirmBooking" method="POST">
 
 					<h3 class="fw-bold mb-3">예약자 정보</h3>
 					<div class="card shadow-sm form-section-card">
 						<div class="card-body p-4">
 							<div class="mb-3">
-								<label for="bookerName" class="form-label fw-bold">이름</label>
-								<input type="text" class="form-control" id="bookerName"
-									value="홍길동" required>
+								<label for="bookerName" class="form-label fw-bold">이름</label> <input
+									type="text" class="form-control" id="bookerName"
+									name="bookerName"
+									th:value="${session.loginUser != null ? session.loginUser.UserName : ''}"
+									required>
 							</div>
 							<div class="row g-3">
 								<div class="col-md-6">
 									<label for="bookerPhone" class="form-label fw-bold">휴대전화</label>
 									<input type="tel" class="form-control" id="bookerPhone"
-										placeholder="'-' 없이 숫자만 입력" required>
+										name="bookerPhone" placeholder="'-' 없이 숫자만 입력" required>
 								</div>
 								<div class="col-md-6">
 									<label for="bookerEmail" class="form-label fw-bold">이메일</label>
 									<input type="email" class="form-control" id="bookerEmail"
+										name="bookerEmail"
+										th:value="${session.loginUser != null ? session.loginUser.email : ''}"
 										placeholder="example@email.com" required>
 								</div>
 							</div>
-							<small class="text-muted d-block mt-3">
-								입력하신 이메일로 예약내역이 발송되며, 예약 변경 및 취소 시 SM/SMS가 발송됩니다. <br>
-								(휴대전화번호/이메일 정보는 암호화되어 항공사에 전달되지 않습니다.)
+							<small class="text-muted d-block mt-3"> 입력하신 이메일로 예약내역이
+								발송되며, 예약 변경 및 취소 시 SM/SMS가 발송됩니다. <br> (휴대전화번호/이메일 정보는
+								암호화되어 항공사에 전달되지 않습니다.)
 							</small>
 						</div>
 					</div>
 
-					<h3 class="fw-bold mb-3">탑승객 정보 <span class="fw-normal fs-5 text-muted">(성인 1)</span></h3>
+					<h3 class="fw-bold mb-3">
+						탑승객 정보 <span class="fw-normal fs-5 text-muted"
+							th:text="'(총 ' + ${passengerCount} + '명)'">(총 3명)</span>
+					</h3>
 					<div class="card shadow-sm form-section-card">
 						<div class="card-body p-4">
-							<div class="table-responsive">
-								<table class="table align-middle passenger-table"
-									style="min-width: 700px;">
-									<thead class="table-light">
-										<tr>
-											<th>No</th>
-											<th>구분</th>
-											<th class="text-nowrap">영문 성 (Last Name)</th>
-											<th class="text-nowrap">영문 이름 (First Name)</th>
-											<th>성별</th>
-											<th>생년월일</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>1</td>
-											<td><span class="badge bg-primary-subtle text-primary-emphasis">성인</span></td>
-											<td><input type="text" class="form-control"
-												placeholder="HONG" required></td>
-											<td><input type="text" class="form-control"
-												placeholder="GILDONG" required></td>
-											<td><select class="form-select" required>
-													<option value="">선택</option>
-													<option value="MALE">남성</option>
-													<option value="FEMALE">여성</option>
-											</select></td>
-											<td><input type="text" class="form-control flatpickr-date"
-												placeholder="YYYY-MM-DD" required></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-							
-							<hr class="my-4">
 
-							<h5 class="fw-bold mb-3">여권 정보 (국제선 필수)</h5>
-							<div class="row g-3">
-								<div class="col-md-4">
-									<label class="form-label fw-bold">여권번호</label>
-									<input type="text" class="form-control" placeholder="여권번호 입력">
+							<div th:each="i : ${#numbers.sequence(1, bookingInfo.adults)}"
+								th:with="paxIndex=${i-1}">
+								<h5 class="fw-bold mb-3" th:text="'성인 ' + ${i}">성인 1</h5>
+								<div class="table-responsive">
+									<table class="table align-middle passenger-table mb-3"
+										style="min-width: 700px;">
+										<thead class="table-light">
+											<tr>
+												<th>구분</th>
+												<th th:text="${isDomestic} ? '한글 성' : '영문 성 (Last Name)'">영문
+													성</th>
+												<th th:text="${isDomestic} ? '한글 이름' : '영문 이름 (First Name)'">영문
+													이름</th>
+												<th>성별</th>
+												<th>생년월일</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td><span
+													class="badge bg-primary-subtle text-primary-emphasis">성인</span></td>
+
+												<td><input type="text" class="form-control"
+													th:name="'passengers[' + ${paxIndex} + '].lastName'"
+													th:placeholder="${isDomestic} ? '홍' : 'HONG'" required></td>
+												<td><input type="text" class="form-control"
+													th:name="'passengers[' + ${paxIndex} + '].firstName'"
+													th:placeholder="${isDomestic} ? '길동' : 'GILDONG'" required></td>
+												<td><select class="form-select"
+													th:name="'passengers[' + ${paxIndex} + '].gender'" required>
+														<option value="">선택</option>
+														<option value="MALE">남성</option>
+														<option value="FEMALE">여성</option>
+												</select></td>
+												<td><input type="text"
+													class="form-control flatpickr-date"
+													th:name="'passengers[' + ${paxIndex} + '].birthDate'"
+													placeholder="YYYY-MM-DD" required></td>
+												<input type="hidden"
+													th:name="'passengers[' + ${paxIndex} + '].passengerType'"
+													value="ADULT">
+											</tr>
+										</tbody>
+									</table>
 								</div>
-								<div class="col-md-4">
-									<label class="form-label fw-bold">여권발급국</label>
-									<select class="form-select">
-										<option value="KR">대한민국 (KOREA, REPUBLIC OF)</option>
-										<option value="US">미국 (USA)</option>
-										<option value="JP">일본 (JAPAN)</option>
-										</select>
-								</div>
-								<div class="col-md-4">
-									<label class="form-label fw-bold">여권만료일</label>
-									<input type="text" class="form-control flatpickr-date"
-										placeholder="YYYY-MM-DD">
-								</div>
+
+								<th:block th:if="${!isDomestic}">
+									<h6 class="fw-bold mb-3">여권 정보 (국제선 필수)</h6>
+									<div class="row g-3 mb-4">
+										<div class="col-md-4">
+											<label class="form-label">여권번호</label> <input type="text"
+												class="form-control"
+												th:name="'passengers[' + ${paxIndex} + '].passportNumber'"
+												placeholder="여권번호 입력" required>
+										</div>
+										<div class="col-md-4">
+											<label class="form-label">여권발급국</label> <select
+												class="form-select"
+												th:name="'passengers[' + ${paxIndex} + '].passportIssuingCountry'"
+												required>
+												<option value="KR">대한민국 (KOREA, REPUBLIC OF)</option>
+												<option value="US">미국 (USA)</option>
+												<option value="JP">일본 (JAPAN)</option>
+											</select>
+										</div>
+										<div class="col-md-4">
+											<label class="form-label">여권만료일</label> <input type="text"
+												class="form-control flatpickr-date"
+												th:name="'passengers[' + ${paxIndex} + '].passportExpiryDate'"
+												placeholder="YYYY-MM-DD" required>
+										</div>
+									</div>
+								</th:block>
+
+								<hr class="passenger-divider"
+									th:if="${paxIndex < passengerCount - 1}">
 							</div>
+
+							<div th:if="${bookingInfo.children > 0}"
+								th:each="i : ${#numbers.sequence(1, bookingInfo.children)}"
+								th:with="paxIndex=${bookingInfo.adults + i - 1}">
+								<h5 class="fw-bold mb-3" th:text="'소아 ' + ${i}">소아 1</h5>
+								<div class="table-responsive">
+									<table class="table align-middle passenger-table mb-3"
+										style="min-width: 700px;">
+										<thead class="table-light">
+											<tr>
+												<th>구분</th>
+												<th th:text="${isDomestic} ? '한글 성' : '영문 성 (Last Name)'">영문
+													성</th>
+												<th th:text="${isDomestic} ? '한글 이름' : '영문 이름 (First Name)'">영문
+													이름</th>
+												<th>성별</th>
+												<th>생년월일</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td><span
+													class="badge bg-success-subtle text-success-emphasis">소아</span></td>
+												<td><input type="text" class="form-control"
+													th:name="'passengers[' + ${paxIndex} + '].lastName'"
+													th:placeholder="${isDomestic} ? '홍' : 'HONG'" required></td>
+												<td><input type="text" class="form-control"
+													th:name="'passengers[' + ${paxIndex} + '].firstName'"
+													th:placeholder="${isDomestic} ? '길동' : 'GILDONG'" required></td>
+												<td><select class="form-select"
+													th:name="'passengers[' + ${paxIndex} + '].gender'" required>
+														<option value="">선택</option>
+														<option value="MALE">남성</option>
+														<option value="FEMALE">여성</option>
+												</select></td>
+												<td><input type="text"
+													class="form-control flatpickr-date"
+													th:name="'passengers[' + ${paxIndex} + '].birthDate'"
+													placeholder="YYYY-MM-DD" required></td>
+												<input type="hidden"
+													th:name="'passengers[' + ${paxIndex} + '].passengerType'"
+													value="CHILD">
+											</tr>
+										</tbody>
+									</table>
+								</div>
+
+								<th:block th:if="${!isDomestic}">
+									<h6 class="fw-bold mb-3">여권 정보 (국제선 필수)</h6>
+									<div class="row g-3 mb-4">
+										<div class="col-md-4">
+											<label class="form-label">여권번호</label> <input type="text"
+												class="form-control"
+												th:name="'passengers[' + ${paxIndex} + '].passportNumber'"
+												placeholder="여권번호 입력" required>
+										</div>
+										<div class="col-md-4">
+											<label class="form-label">여권발급국</label> <select
+												class="form-select"
+												th:name="'passengers[' + ${paxIndex} + '].passportIssuingCountry'"
+												required>
+												<option value="KR">대한민국 (KOREA, REPUBLIC OF)</option>
+												<option value="US">미국 (USA)</option>
+												<option value="JP">일본 (JAPAN)</option>
+											</select>
+										</div>
+										<div class="col-md-4">
+											<label class="form-label">여권만료일</label> <input type="text"
+												class="form-control flatpickr-date"
+												th:name="'passengers[' + ${paxIndex} + '].passportExpiryDate'"
+												placeholder="YYYY-MM-DD" required>
+										</div>
+									</div>
+								</th:block>
+
+								<hr class="passenger-divider"
+									th:if="${paxIndex < passengerCount - 1}">
+							</div>
+
+							<div th:if="${bookingInfo.infants > 0}"
+								th:each="i : ${#numbers.sequence(1, bookingInfo.infants)}"
+								th:with="paxIndex=${bookingInfo.adults + bookingInfo.children + i - 1}">
+								<h5 class="fw-bold mb-3" th:text="'유아 ' + ${i}">유아 1</h5>
+								<div class="table-responsive">
+									<table class="table align-middle passenger-table mb-3"
+										style="min-width: 700px;">
+										<thead class="table-light">
+											<tr>
+												<th>구분</th>
+												<th th:text="${isDomestic} ? '한글 성' : '영문 성 (Last Name)'">영문
+													성</th>
+												<th th:text="${isDomestic} ? '한글 이름' : '영문 이름 (First Name)'">영문
+													이름</th>
+												<th>성별</th>
+												<th>생년월일</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td><span
+													class="badge bg-warning-subtle text-warning-emphasis">유아</span></td>
+												<td><input type="text" class="form-control"
+													th:name="'passengers[' + ${paxIndex} + '].lastName'"
+													th:placeholder="${isDomestic} ? '홍' : 'HONG'" required></td>
+												<td><input type="text" class="form-control"
+													th:name="'passengers[' + ${paxIndex} + '].firstName'"
+													th:placeholder="${isDomestic} ? '길동' : 'GILDONG'" required></td>
+												<td><select class="form-select"
+													th:name="'passengers[' + ${paxIndex} + '].gender'" required>
+														<option value="">선택</option>
+														<option value="MALE">남성</option>
+														<option value="FEMALE">여성</option>
+												</select></td>
+												<td><input type="text"
+													class="form-control flatpickr-date"
+													th:name="'passengers[' + ${paxIndex} + '].birthDate'"
+													placeholder="YYYY-MM-DD" required></td>
+												<input type="hidden"
+													th:name="'passengers[' + ${paxIndex} + '].passengerType'"
+													value="INFANT">
+											</tr>
+										</tbody>
+									</table>
+								</div>
+
+								<th:block th:if="${!isDomestic}">
+									<h6 class="fw-bold mb-3">여권 정보 (국제선 필수)</h6>
+									<div class="row g-3 mb-4">
+										<div class="col-md-4">
+											<label class="form-label">여권번호</label> <input type="text"
+												class="form-control"
+												th:name="'passengers[' + ${paxIndex} + '].passportNumber'"
+												placeholder="여권번호 입력" required>
+										</div>
+										<div class="col-md-4">
+											<label class="form-label">여권발급국</label> <select
+												class="form-select"
+												th:name="'passengers[' + ${paxIndex} + '].passportIssuingCountry'"
+												required>
+												<option value="KR">대한민국 (KOREA, REPUBLIC OF)</option>
+												<option value="US">미국 (USA)</option>
+												<option value="JP">일본 (JAPAN)</option>
+											</select>
+										</div>
+										<div class="col-md-4">
+											<label class="form-label">여권만료일</label> <input type="text"
+												class="form-control flatpickr-date"
+												th:name="'passengers[' + ${paxIndex} + '].passportExpiryDate'"
+												placeholder="YYYY-MM-DD" required>
+										</div>
+									</div>
+								</th:block>
+
+								<hr class="passenger-divider"
+									th:if="${paxIndex < passengerCount - 1}">
+							</div>
+
 						</div>
 					</div>
 
@@ -371,57 +564,138 @@ body {
 							<li>영문성/이름 글자 수 11자 초과 시 문의 부탁드립니다.</li>
 						</ul>
 					</div>
-					
-					<div class="d-flex justify-content-between align-items-center mt-4 p-3 bg-light rounded">
+
+					<input type="hidden" name="departureKoLocation"
+						th:value="${bookingInfo.departureKoLocation}"> <input
+						type="hidden" name="arrivalKoLocation"
+						th:value="${bookingInfo.arrivalKoLocation}"> <input
+						type="hidden" name="adults" th:value="${bookingInfo.adults}">
+					<input type="hidden" name="children"
+						th:value="${bookingInfo.children}"> <input type="hidden"
+						name="infants" th:value="${bookingInfo.infants}"> <input
+						type="hidden" name="travelClass"
+						th:value="${bookingInfo.travelClass}"> <input
+						type="hidden" name="departureFlight.id" th:value="${depFlight.id}">
+					<input type="hidden" name="departureFlight.carrierCode"
+						th:value="${depFlight.carrierCode}"> <input type="hidden"
+						name="departureFlight.originCode"
+						th:value="${depFlight.originCode}"> <input type="hidden"
+						name="departureFlight.destinationCode"
+						th:value="${depFlight.destinationCode}"> <input
+						type="hidden" name="departureFlight.departureTime"
+						th:value="${depFlight.departureTime}"> <input
+						type="hidden" name="departureFlight.arrivalTime"
+						th:value="${depFlight.arrivalTime}"> <input type="hidden"
+						name="departureFlight.totalPrice"
+						th:value="${depFlight.totalPrice}">
+
+					<th:block th:if="${retFlight != null}">
+						<input type="hidden" name="returnFlight.id"
+							th:value="${retFlight.id}">
+						<input type="hidden" name="returnFlight.carrierCode"
+							th:value="${retFlight.carrierCode}">
+						<input type="hidden" name="returnFlight.originCode"
+							th:value="${retFlight.originCode}">
+						<input type="hidden" name="returnFlight.destinationCode"
+							th:value="${retFlight.destinationCode}">
+						<input type="hidden" name="returnFlight.departureTime"
+							th:value="${retFlight.departureTime}">
+						<input type="hidden" name="returnFlight.arrivalTime"
+							th:value="${retFlight.arrivalTime}">
+						<input type="hidden" name="returnFlight.totalPrice"
+							th:value="${retFlight.totalPrice}">
+					</th:block>
+
+					<div
+						class="d-flex justify-content-between align-items-center mt-4 p-3 bg-light rounded">
 						<h5 class="mb-0 fw-bold">총 결제 예정 금액</h5>
-						<span class="price-label" style="font-size: 1.75rem;">234,500원</span>
+						<span class="price-label text-danger" style="font-size: 1.75rem;"
+							th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + '원'">
+							234,500원 </span>
 					</div>
 
 				</form>
-				</div>
+			</div>
 
 			<div class="col-lg-4">
-				
-				<h3 class="fw-bold mb-3">결제 수단</h3>
-				<div class="card shadow-sm form-section-card">
-					<div class="card-body p-0">
-						<ul class="list-group list-group-flush payment-method-list">
-							<li class="list-group-item">
-								<div class="form-check">
-									<input class="form-check-input" type="radio"
-										name="paymentMethod" id="cardNH" checked> <label
-										class="form-check-label" for="cardNH"> NH채움카드 </label>
-								</div> <span class="price-label">234,500원</span>
-							</li>
-							<li class="list-group-item">
-								<div class="form-check">
-									<input class="form-check-input" type="radio"
-										name="paymentMethod" id="cardHana"> <label
-										class="form-check-label" for="cardHana"> 하나카드 </label>
-								</div> <span class="price-label">234,500원</span>
-							</li>
-							<li class="list-group-item">
-								<div class="form-check">
-									<input class="form-check-input" type="radio"
-										name="paymentMethod" id="cardShinhan"> <label
-										class="form-check-label" for="cardShinhan"> 신한카드 </label>
-								</div> <span class="price-label">234,500원</span>
-							</li>
-							<li class="list-group-item">
-								<div class="form-check">
-									<input class="form-check-input" type="radio"
-										name="paymentMethod" id="cardKB"> <label
-										class="form-check-label" for="cardKB"> KB국민카드 </label>
-								</div> <span class="price-label text-body-secondary">245,500원</span>
-							</li>
-							</ul>
-						<div class="card-footer text-muted small">
-							선택한 요금 종류에 맞는 카드로 결제해주세요. 결제 정보를 변경하면 총 요금이 적용됩니다.
+
+				<h3 class="fw-bold mb-3">예약 정보</h3>
+				<div class="card shadow-sm form-section-card mb-4">
+					<div class="card-body p-4">
+
+						<div>
+							<span class="badge bg-primary mb-2">가는 편</span>
+							<h5 class="fw-bold mb-1"
+								th:text="${bookingInfo.departureKoLocation} + ' → ' + ${bookingInfo.arrivalKoLocation}">서울
+								→ 방콕</h5>
+							<small class="text-muted d-block"
+								th:text="${#strings.substring(depFlight.departureTime, 0, 10)} + ' (' + ${depFlight.carrierCode} + ')'">
+								2025-11-14 (VZ 항공) </small> <small class="text-muted d-block"
+								th:text="${#strings.substring(depFlight.departureTime, 11, 16)} + ' - ' + ${#strings.substring(depFlight.arrivalTime, 11, 16)}">
+								15:45 - 19:55 </small>
+						</div>
+
+						<div th:if="${retFlight != null}" class="mt-3 pt-3 border-top">
+							<span class="badge bg-success mb-2">오는 편</span>
+							<h5 class="fw-bold mb-1"
+								th:text="${bookingInfo.arrivalKoLocation} + ' → ' + ${bookingInfo.departureKoLocation}">방콕
+								→ 서울</h5>
+							<small class="text-muted d-block"
+								th:text="${#strings.substring(retFlight.departureTime, 0, 10)} + ' (' + ${retFlight.carrierCode} + ')'">
+								2025-11-20 (TW 항공) </small> <small class="text-muted d-block"
+								th:text="${#strings.substring(retFlight.departureTime, 11, 16)} + ' - ' + ${#strings.substring(retFlight.arrivalTime, 11, 16)}">
+								10:10 - 17:30 </small>
+						</div>
+
+						<div class="mt-3 pt-3 border-top">
+							<h6 class="fw-bold mb-2">탑승객 정보</h6>
+							<div class="d-flex justify-content-between align-items-center">
+								<span class="text-muted">총 탑승객</span> <span class="fw-bold"
+									th:text="${passengerCount} + '명'">총 1명</span>
+							</div>
+							<div
+								class="d-flex justify-content-between align-items-center text-muted small mt-1">
+								<span
+									th:text="'성인 ' + ${bookingInfo.adults} + '명' + 
+											 (${bookingInfo.children} > 0 ? ' · 소아 ' + ${bookingInfo.children} + '명' : '') +
+											 (${bookingInfo.infants} > 0 ? ' · 유아 ' + ${bookingInfo.infants} + '명' : '')">
+									(성인 1명) </span>
+							</div>
 						</div>
 					</div>
 				</div>
 
-				<h4 class="fw-bold mb-3">요금규정 및 개인정보처리방침</h4>
+				<h3 class="fw-bold mb-3">결제 금액</h3>
+				<div class="card shadow-sm form-section-card mb-4">
+					<div class="card-body p-4">
+
+						<div
+							class="d-flex justify-content-between align-items-center mb-2">
+							<span class="text-muted">총 항공권 요금</span> <span class="fw-bold"
+								th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + '원'">234,500원</span>
+						</div>
+
+						<div
+							class="d-flex justify-content-between align-items-center text-muted small">
+							<span
+								th:text="'(성인 ' + ${bookingInfo.adults} + 
+										 ((${bookingInfo.children} > 0) ? ' · 소아 ' + ${bookingInfo.children} : '') +
+										 ((${bookingInfo.infants} > 0) ? ' · 유아 ' + ${bookingInfo.infants} : '') + ')'">
+								(성인 1) </span>
+						</div>
+
+						<hr class="my-3">
+
+						<div class="d-flex justify-content-between align-items-center">
+							<h5 class="mb-0 fw-bold">총 결제 예정 금액</h5>
+							<span class="price-label text-danger" style="font-size: 1.5rem;"
+								th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + '원'">
+								234,500원 </span>
+						</div>
+					</div>
+				</div>
+
+				<h4 class="fw-bold mb-3">개인정보처리방침</h4>
 				<div class="card shadow-sm form-section-card agreement-section">
 					<div class="card-body p-4">
 						<div class="form-check border-bottom pb-3 mb-3">
@@ -430,42 +704,47 @@ body {
 								class="form-check-label fw-bold" for="agreeAll"
 								style="padding-top: 2px;"> 전체 동의 </label>
 						</div>
+
 						<div class="form-check mb-2">
-							<input class="form-check-input" type="checkbox" id="agree1" required>
-							<label class="form-check-label small" for="agree1">
-								(필수) 유의사항에 동의 <a href="#" target="_blank">자세히</a>
+							<input class="form-check-input" type="checkbox" id="agree1"
+								required> <label class="form-check-label small"
+								for="agree1"> (필수) 유의사항에 동의 
 							</label>
 						</div>
 						<div class="form-check mb-2">
-							<input class="form-check-input" type="checkbox" id="agree2" required>
-							<label class="form-check-label small" for="agree2">
-								(필수) 이용약관 동의 <a href="#" target="_blank">자세히</a>
+							<input class="form-check-input" type="checkbox" id="agree2"
+								required> <label class="form-check-label small"
+								for="agree2"> (필수) 이용약관 동의 
 							</label>
 						</div>
 						<div class="form-check mb-2">
-							<input class="form-check-input" type="checkbox" id="agree3" required>
-							<label class="form-check-label small" for="agree3">
-								(필수) 개인정보 수집 및 이용 동의 <a href="#" target="_blank">자세히</a>
+							<input class="form-check-input" type="checkbox" id="agree3"
+								required> <label class="form-check-label small"
+								for="agree3"> (필수) 개인정보 수집 및 이용 동의 
 							</label>
 						</div>
 						<div class="form-check mb-2">
-							<input class="form-check-input" type="checkbox" id="agree4" required>
-							<label class="form-check-label small" for="agree4">
-								(필수) 환불규정에 동의 <a href="#" target="_blank">자세히</a>
+							<input class="form-check-input" type="checkbox" id="agree4"
+								required> <label class="form-check-label small"
+								for="agree4"> (필수) 환불규정에 동의 
 							</label>
 						</div>
-						</div>
+					</div>
 				</div>
 
 				<div class="d-grid">
 					<button type="submit" form="bookingForm"
 						class="btn btn-primary btn-payment-final">
-						234,500원 결제하기
+						<span
+							th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + '원 결제하기'">234,500원
+							결제하기</span>
 					</button>
 				</div>
+
 			</div>
-			</div>
-		</main>
+		</div>
+	</main>
+
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script
@@ -474,19 +753,73 @@ body {
 	<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 
 	<script>
-    // 날짜 선택기 (flatpickr) 초기화
-    flatpickr(".flatpickr-date", {
-        locale: "ko", // 한글
-        dateFormat: "Y-m-d", // 날짜 형식
-    });
-    
-    // 전체 동의 체크박스 로직
-    document.getElementById('agreeAll').addEventListener('change', function (e) {
-        const isChecked = e.target.checked;
-        document.querySelectorAll('.agreement-section .form-check-input[required]').forEach(function (checkbox) {
-            checkbox.checked = isChecked;
-        });
-    });
-    </script>
+		// 날짜 선택기 (flatpickr) 초기화
+		flatpickr(".flatpickr-date", {
+			locale : "ko", // 한글
+			dateFormat : "Y-m-d", // 날짜 형식
+		});
+
+		// 전체 동의 체크박스 로직
+		document.getElementById('agreeAll').addEventListener(
+				'change',
+				function(e) {
+					const isChecked = e.target.checked;
+					// 'required' 속성을 가진 모든 체크박스를 선택하여 상태 변경
+					document.querySelectorAll(
+							'.agreement-section .form-check-input[required]')
+							.forEach(function(checkbox) {
+								checkbox.checked = isChecked;
+							});
+				});
+		
+		const agreeAllCheckbox = document.getElementById('agreeAll');
+		const requiredCheckboxes = document.querySelectorAll('.agreement-section .form-check-input[required]');
+
+		requiredCheckboxes.forEach(function(checkbox) {
+			checkbox.addEventListener('change', function() {
+				let allChecked = true; // 일단 모두 체크됐다고 가정
+				requiredCheckboxes.forEach(function(cb) {
+					if (!cb.checked) {
+						allChecked = false; // 하나라도 체크 안되면 false
+					}
+				});
+				agreeAllCheckbox.checked = allChecked; // '전체 동의' 체크박스 상태 업데이트
+			});
+		});
+
+
+		// --- 2. '결제하기' 버튼 클릭 시, 모든 필수 약관이 체크되었는지 검사 ---
+		const bookingForm = document.getElementById('bookingForm');
+		
+		bookingForm.addEventListener('submit', function(event) {
+			
+			let allAgreed = true;
+			
+			// 모든 'required' 체크박스를 순회합니다.
+			requiredCheckboxes.forEach(function(checkbox) {
+				if (!checkbox.checked) {
+					allAgreed = false; // 하나라도 체크가 안 되어 있으면 false
+				}
+			});
+
+			// 만약 하나라도 체크가 안 되어 있다면,
+			if (!allAgreed) {
+				// 1. 폼 제출(submit)을 막습니다.
+				event.preventDefault(); 
+				
+				// 2. 사용자에게 알림창을 띄웁니다.
+				alert('모든 필수 약관에 동의해야 합니다.');
+				
+				// 3. (선택적) 동의 안 한 첫 번째 항목으로 포커스를 이동시킵니다.
+				for (const checkbox of requiredCheckboxes) {
+					if (!checkbox.checked) {
+						checkbox.focus();
+						break;
+					}
+				}
+			}
+			// (모두 동의한 경우, 폼은 정상적으로 제출됩니다.)
+		});
+	</script>
 </body>
 </html>

@@ -23,6 +23,7 @@ import hsm.bootproject.SearchFlight.Service.BookingService;
 import hsm.bootproject.SearchFlight.domain.Member;
 import hsm.bootproject.SearchFlight.dto.BookingRequestDto;
 import hsm.bootproject.SearchFlight.dto.BookingResponseDto;
+import hsm.bootproject.SearchFlight.dto.PsgInfoRequestDto;
 import hsm.bootproject.SearchFlight.dto.ReturnFlightDto;
 import hsm.bootproject.SearchFlight.dto.airParmDto;
 import hsm.bootproject.SearchFlight.dto.airportDto;
@@ -172,6 +173,45 @@ public String searchAirport(airParmDto airparmDto, Model model, HttpSession sess
 
         // 3. '예약된 내역' 페이지로 리다이렉트
         return "redirect:/revList";
+    }
+	
+	@PostMapping("/PsgInfo")
+    public String showPsgInfoPage(PsgInfoRequestDto psgInfoRequestDto, Model model) {
+        
+        // 1. (기존) DTO를 모델에 추가
+        model.addAttribute("bookingInfo", psgInfoRequestDto);
+        
+        // ▼▼▼ [ ⭐️ 여기가 수정/추가된 부분 ⭐️ ] ▼▼▼
+        
+        // 2. 국내선/국제선 여부 판별
+        boolean isDomesticFlight = false;
+        if (psgInfoRequestDto.getDepartureFlight() != null) {
+            String originIata = psgInfoRequestDto.getDepartureFlight().getOriginCode();
+            String destIata = psgInfoRequestDto.getDepartureFlight().getDestinationCode();
+            
+            // AirService를 통해 두 공항이 *모두* 국내 공항인지 확인
+            if (airService.isDomesticAirport(originIata) && airService.isDomesticAirport(destIata)) {
+                isDomesticFlight = true;
+            }
+        }
+        
+        // 3. 판별 결과를 "isDomestic" 라는 이름으로 Model에 추가
+        model.addAttribute("isDomestic", isDomesticFlight);
+        
+        // ▲▲▲ [ ⭐️ 여기까지 ⭐️ ] ▲▲▲
+        
+        // 4. (기존) 로그 출력
+        System.out.println("--- PsgInfo 페이지로 전달되는 데이터 ---");
+        System.out.println("가는 편: " + psgInfoRequestDto.getDepartureFlight().getId());
+        System.out.println("국내선 여부: " + isDomesticFlight); // ⭐️ 확인용 로그 추가
+        if (psgInfoRequestDto.getReturnFlight() != null) {
+            System.out.println("오는 편: " + psgInfoRequestDto.getReturnFlight().getId());
+        }
+        System.out.println("승객: 성인 " + psgInfoRequestDto.getAdults());
+        System.out.println("------------------------------------");
+
+        // 5. (기존) 뷰 반환
+        return "/PsgInfo"; 
     }
 	
 }

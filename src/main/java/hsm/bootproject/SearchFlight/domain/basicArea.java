@@ -33,7 +33,7 @@ public class basicArea {
     // ▼ 5. @Column 어노테이션 추가 (가장 중요!)
 	@Column(name = "COUNTRY")
 	private String country;
-	
+ 	
 	public basicArea() {
 		
 	}

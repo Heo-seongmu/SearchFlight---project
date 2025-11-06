@@ -288,12 +288,12 @@
 				<a href="/revList"
 					class="link__booking-history sp_sd--after" th:if="${session.loginUser != null}">나의 예약내역</a> 
 				<a th:if="${session.loginUser == null}"
-					class="link__booking-history sp_sd--after" href="member/login">로그인</a>
+					class="link__booking-history sp_sd--after" href="/member/login">로그인</a>
 				<a th:if="${session.loginUser != null}"
 					th:text="${session.loginUser.UserName}"
 					class="link__booking-history sp_sd--after">허성무</a> 
 				<a  th:if="${session.loginUser != null}"
-					class="link__booking-history sp_sd--after" href="member/logout">로그아웃</a>
+					class="link__booking-history sp_sd--after" href="/member/logout">로그아웃</a>
 			</div>
 		</div>
 	</div>
