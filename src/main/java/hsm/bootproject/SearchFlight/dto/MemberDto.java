@@ -21,7 +21,7 @@ public class MemberDto {
 	}
 	
 	public MemberDto(Member member) {
-		this.userId = member.getUserId();
+		this.userId = member.getLoginId();
 		this.userName = member.getUserName();
 		this.web = member.getWeb();
 	}

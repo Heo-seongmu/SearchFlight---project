@@ -34,7 +34,7 @@ public class ChatHistoryController {
         }
 
         // 2. (로그인) DB에서 내역 조회 (loginUser의 userId 사용)
-        List<chatMessageDto> history = chatService.getChatHistory(loginUser.getUserId());
+        List<chatMessageDto> history = chatService.getChatHistory(loginUser.getLoginId());
 
         // 3. (로그인) 내역이 없다면, 환영 메시지 반환
         if (history.isEmpty()) { 

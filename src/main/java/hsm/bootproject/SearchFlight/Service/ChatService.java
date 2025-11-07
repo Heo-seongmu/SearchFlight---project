@@ -26,7 +26,7 @@ public class ChatService {
     @Transactional(readOnly = true)
     public List<chatMessageDto> getChatHistory(String userId) {
         // (기존 코드와 동일)
-        Member member = memberRepository.findByUserId(userId).orElse(null);
+        Member member = memberRepository.findByLoginId(userId).orElse(null);
         if (member == null) {
             return new ArrayList<>();
         }
@@ -53,7 +53,7 @@ public class ChatService {
 
         // 1. 사용자 식별 (로그인 여부) (기존 코드와 동일)
         if (userId != null) {
-            member = memberRepository.findByUserId(userId).orElse(null);
+            member = memberRepository.findByLoginId(userId).orElse(null);
         }
 
         // 2. Gemini에게 보낼 대화 내역 준비 (기존 코드와 동일)

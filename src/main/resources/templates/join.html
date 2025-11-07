@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>무성의 회원가입</title>
+<style type="text/css">
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+		"Malgun Gothic", "맑은 고딕", sans-serif;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	background-color: #f8f8f8;
+	color: #333;
+    padding: 40px 0; 
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.signup-container {
+	width: 100%;
+	max-width: 400px;
+	padding: 20px;
+}
+
+.signup-form {
+	text-align: center;
+}
+
+.logo {
+	font-size: 2.5rem;
+	font-weight: 900;
+	color: #3d5afe; 
+	margin-bottom: 20px;
+}
+
+.email-signup-form {
+    width: 100%;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 50px; 
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+    border-color: #3d5afe;
+}
+
+/* 카카오 정보로 채워진 필드 스타일 */
+.input-group input.prefilled {
+    background-color: #f0f0f0; 
+    color: #777;
+}
+
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    fill: #aaa; 
+}
+
+.input-icon-right {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    fill: #aaa;
+    cursor: pointer;
+}
+
+.password-message {
+    font-size: 0.85rem;
+    text-align: left;
+    padding-left: 10px;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    display: none; 
+}
+.password-message.success {
+    color: #3d5afe;
+    display: block;
+}
+.password-message.error {
+    color: #e53935;
+    display: block;
+}
+
+.btn-submit {
+	display: block;
+	width: 100%;
+	padding: 15px;
+    margin-top: 20px; 
+	background-color: #3d5afe; 
+    color: #fff;
+	border: none;
+	border-radius: 8px;
+	font-size: 1.1rem;
+    font-weight: 500;
+	cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+    background-color: #304ffe;
+}
+
+/* 회원가입 실패 메시지 */
+.error-message {
+    color: #e53935;
+    font-size: 0.9rem;
+    margin-top: 15px;
+    display: none; /* 평소에는 숨김 */
+}
+</style>
+</head>
+<body>
+	<div class="signup-container">
+		<main class="signup-form">
+			<div class="logo">MuSeonG</div>
+            
+            <form id="signup-form" class="email-signup-form" action="/member/signup" method="post">
+                
+                <div class="input-group" id="loginId-group">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2.5a5.5 5.5 0 0 1 5.5 5.5c0 3.038-2.462 5.5-5.5 5.5S6.5 11.038 6.5 8a5.5 5.5 0 0 1 5.5-5.5M12 1a7 7 0 1 0 0 14A7 7 0 0 0 12 1zm0 14.5a9.5 9.5 0 0 1-9.5 9.5v-2.003c0-2.61 3.14-4.997 9.5-4.997s9.5 2.387 9.5 4.997v2.003A9.5 9.5 0 0 1 12 15.5z"></path>
+                    </svg>
+                    <input type="text" id="loginId" name="loginId" placeholder="아이디" required>
+                </div>
+
+                <div class="input-group">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                    </svg>
+                    <input type="password" id="password" name="userPw" placeholder="비밀번호" required>
+                    <svg class="input-icon-right toggle-password" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" data-show-icon-id="togglePasswordShow1" data-hide-icon-id="togglePasswordHide1" style="display: block;">
+                        <path id="togglePasswordShow1" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 13c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path>
+                        <path id="togglePasswordHide1" d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L21.73 22 20.46 20.73 2.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" style="display: none;"></path>
+                    </svg>
+                </div>
+                
+                <div class="input-group">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                         <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                    </svg>
+                    <input type="password" id="password-confirm" placeholder="비밀번호 확인" required>
+                     <svg class="input-icon-right toggle-password" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" data-show-icon-id="togglePasswordShow2" data-hide-icon-id="togglePasswordHide2" style="display: block;">
+                        <path id="togglePasswordShow2" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 13c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path>
+                        <path id="togglePasswordHide2" d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L21.73 22 20.46 20.73 2.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" style="display: none;"></path>
+                    </svg>
+                </div>
+                <div id="password-message" class="password-message"></div>
+
+                <div class="input-group">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                    </svg>
+                    <input type="text" id="name" name="userName" placeholder="이름" required>
+                </div>
+
+                <div class="input-group">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path>
+                    </svg>
+                    <input type="email" id="email" name="email" placeholder="이메일" required>
+                </div>
+                
+                <div class="input-group">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path>
+                    </svg>
+                    <input type="tel" id="phone" name="phone" placeholder="전화번호" required>
+                </div>
+
+                <input type="hidden" id="kakaoIdInput" name="kakaoId">
+
+                <button type="submit" class="btn-submit">회원가입</button>
+            </form>
+            
+            <div th:if="${param.error}" class="error-message" style="display:block;">
+                이미 사용 중인 아이디 또는 이메일입니다.
+            </div>
+            
+		</main>
+	</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // ▼▼▼ [수정] 카카오 리다이렉트 시 URL 파라미터로 폼 채우기 ▼▼▼
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const emailFromKakao = urlParams.get('email');
+                const nameFromKakao = urlParams.get('name');
+                const kakaoIdFromKakao = urlParams.get('kakaoId'); // 카카오 ID 받기
+                
+                const emailInput = document.getElementById('email');
+                const nameInput = document.getElementById('name');
+                const kakaoIdInput = document.getElementById('kakaoIdInput'); // 히든 필드
+
+                if (emailFromKakao) {
+                    emailInput.value = emailFromKakao;
+                    emailInput.classList.add('prefilled'); // CSS 스타일 적용
+                    // emailInput.readOnly = true; // 선택: 수정 못하게 막기
+                }
+                if (nameFromKakao) {
+                    nameInput.value = nameFromKakao;
+                    nameInput.classList.add('prefilled'); // CSS 스타일 적용
+                    // nameInput.readOnly = true; // 선택: 수정 못하게 막기
+                }
+
+                // [추가] 카카오 ID가 URL에 있다면
+                if (kakaoIdFromKakao) {
+                    // 1. 숨겨진 필드에 카카오 ID를 값으로 넣어줍니다. (폼 전송용)
+                    kakaoIdInput.value = kakaoIdFromKakao;
+                    
+                    // 2. '아이디' 필드는 숨기지 않고, 사용자가 직접 입력하도록 합니다.
+                    //    (카카오 사용자가 일반 로그인에도 쓸 ID를 생성)
+                }
+                
+            } catch (e) {
+                console.error("Error parsing URL params: ", e);
+            }
+            // ▲▲▲▲▲ 스크립트 수정 끝 ▲▲▲▲▲
+
+
+            // --- (기존) 비밀번호 일치 확인 및 토글 스크립트 ---
+            const passwordInput = document.getElementById('password');
+            const passwordConfirmInput = document.getElementById('password-confirm');
+            const passwordMessage = document.getElementById('password-message');
+            const togglePasswordIcons = document.querySelectorAll('.toggle-password');
+
+            function togglePasswordVisibility(event) {
+                const icon = event.currentTarget;
+                let targetInput = icon.previousElementSibling;
+                
+                while (targetInput && targetInput.tagName !== 'INPUT') {
+                    targetInput = targetInput.previousElementSibling;
+                }
+                if (!targetInput) return;
+                
+                const type = targetInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                targetInput.setAttribute('type', type);
+
+                const showIcon = document.getElementById(icon.dataset.showIconId);
+                const hideIcon = document.getElementById(icon.dataset.hideIconId);
+
+                if (type === 'password') {
+                    showIcon.style.display = 'block';
+                    hideIcon.style.display = 'none';
+                } else {
+                    showIcon.style.display = 'none';
+                    hideIcon.style.display = 'block';
+                }
+            }
+
+
+            togglePasswordIcons.forEach(icon => {
+                icon.addEventListener('click', togglePasswordVisibility);
+            });
+
+            function validatePassword() {
+                const passVal = passwordInput.value;
+                const confirmVal = passwordConfirmInput.value;
+
+                if (passVal === '' && confirmVal === '') {
+                    passwordMessage.style.display = 'none';
+                    return;
+                }
+                if (passVal === confirmVal) {
+                    passwordMessage.textContent = '비밀번호가 일치합니다.';
+                    passwordMessage.className = 'password-message success';
+                } else {
+                    passwordMessage.textContent = '비밀번호가 일치하지 않습니다.';
+                    passwordMessage.className = 'password-message error';
+                }
+            }
+
+            passwordInput.addEventListener('keyup', validatePassword);
+            passwordConfirmInput.addEventListener('keyup', validatePassword);
+
+            const signupForm = document.getElementById('signup-form');
+            signupForm.addEventListener('submit', function(event) {
+                if (passwordInput.value !== passwordConfirmInput.value) {
+                    passwordMessage.textContent = '비밀번호가 일치하지 않습니다. 다시 확인해주세요.';
+                    passwordMessage.className = 'password-message error';
+                    passwordConfirmInput.focus(); 
+                    event.preventDefault(); 
+                }
+            });
+        });
+    </script>
+</body>
+</html>

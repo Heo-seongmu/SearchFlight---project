@@ -73,7 +73,7 @@ public class ChatController {
         try {
             Member loginUser = (Member) headerAccessor.getSessionAttributes().get("loginUser");
             if (loginUser != null) {
-                userId = loginUser.getUserId();
+                userId = loginUser.getLoginId();
             }
         } catch (Exception e) {
             System.err.println("WebSocket 세션에서 사용자 정보를 가져오지 못했습니다: " + e.getMessage());
