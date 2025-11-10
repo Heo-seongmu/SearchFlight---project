@@ -1,14 +1,18 @@
 package hsm.bootproject.SearchFlight.controller;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,9 +24,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import hsm.bootproject.SearchFlight.Service.AirService;
 import hsm.bootproject.SearchFlight.Service.BookingService;
+import hsm.bootproject.SearchFlight.domain.Booking;
 import hsm.bootproject.SearchFlight.domain.Member;
-import hsm.bootproject.SearchFlight.dto.BookingRequestDto;
-import hsm.bootproject.SearchFlight.dto.BookingResponseDto;
+import hsm.bootproject.SearchFlight.dto.BookingConfirmationDto;
+import hsm.bootproject.SearchFlight.dto.BookingFormDto;
 import hsm.bootproject.SearchFlight.dto.PsgInfoRequestDto;
 import hsm.bootproject.SearchFlight.dto.ReturnFlightDto;
 import hsm.bootproject.SearchFlight.dto.airParmDto;
@@ -30,7 +35,7 @@ import hsm.bootproject.SearchFlight.dto.airportDto;
 import hsm.bootproject.SearchFlight.dto.searchAirDto;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
-
+import org.springframework.http.HttpStatus;
 @Controller
 @RequestMapping("/air")
 public class AirController {
@@ -93,36 +98,6 @@ public String searchAirport(airParmDto airparmDto, Model model, HttpSession sess
 		return "redirect:/oneAirList";
 	}
 	
-	@PostMapping("/bookings")
-	public ResponseEntity<?> createBookingDirect(@RequestBody BookingRequestDto requestDto) {
-        try {
-            // 👇 [추가] 세션에서 현재 로그인한 사용자 정보를 가져옵니다.
-            Member loginUser = (Member) session.getAttribute("loginUser");
-            
-            // 👇 [추가] 로그인 상태를 확인합니다.
-            if (loginUser == null) {
-                // 401 Unauthorized: 인증되지 않은 사용자의 요청
-                return ResponseEntity.status(401).body(Map.of("message", "로그인이 필요합니다."));
-            }
-
-            if (requestDto == null || requestDto.getDepartureFlight() == null) {
-                return ResponseEntity.badRequest().body(Map.of("message", "필수 항공편 정보가 누락되었습니다."));
-            }
-
-            // 👇 [수정] 서비스 호출 시 로그인 사용자 정보를 함께 전달합니다.
-            Long bookingId = bookingService.createBookingFromDetails(requestDto, loginUser);
-            
-            return ResponseEntity.ok(new BookingResponseDto(bookingId, "Booking created successfully."));
-        
-        } catch (IllegalArgumentException | IllegalStateException e) { // IllegalStateException 처리 추가
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-        
-        } catch (Exception e) {
-            e.printStackTrace(); 
-            return ResponseEntity.internalServerError().body(Map.of("message", "예약 생성 중 서버 오류가 발생했습니다."));
-        }
-    }
-	
 	@GetMapping("/api/return-flights")
     @ResponseBody
     public List<ReturnFlightDto> getReturnFlights(
@@ -181,7 +156,7 @@ public String searchAirport(airParmDto airparmDto, Model model, HttpSession sess
         // 1. (기존) DTO를 모델에 추가
         model.addAttribute("bookingInfo", psgInfoRequestDto);
         
-        // ▼▼▼ [ ⭐️ 여기가 수정/추가된 부분 ⭐️ ] ▼▼▼
+     
         
         // 2. 국내선/국제선 여부 판별
         boolean isDomesticFlight = false;
@@ -196,10 +171,7 @@ public String searchAirport(airParmDto airparmDto, Model model, HttpSession sess
         }
         
         // 3. 판별 결과를 "isDomestic" 라는 이름으로 Model에 추가
-        model.addAttribute("isDomestic", isDomesticFlight);
-        
-        // ▲▲▲ [ ⭐️ 여기까지 ⭐️ ] ▲▲▲
-        
+        model.addAttribute("isDomestic", isDomesticFlight);      
         // 4. (기존) 로그 출력
         System.out.println("--- PsgInfo 페이지로 전달되는 데이터 ---");
         System.out.println("가는 편: " + psgInfoRequestDto.getDepartureFlight().getId());
@@ -212,6 +184,91 @@ public String searchAirport(airParmDto airparmDto, Model model, HttpSession sess
 
         // 5. (기존) 뷰 반환
         return "/PsgInfo"; 
+    }
+	
+	@PostMapping("/confirmBooking")
+    public String confirmBooking(
+            @ModelAttribute BookingFormDto bookingForm, // 1. 폼 데이터가 DTO에 자동 바인딩됨
+            // HttpSession session, // (이미 @Autowired 되어 있으므로 파라미터로 안 받아도 됨)
+            Model model) {           // 2. 다음 페이지로 데이터 전달할 Model
+
+        Member loginUser = (Member) session.getAttribute("loginUser");
+
+        if (loginUser == null) {
+            // 로그인 페이지로 리다이렉트
+            return "redirect:/member/login"; 
+        }
+
+        BookingConfirmationDto confirmationDto = new BookingConfirmationDto();
+
+        // 3-1. 회원 정보 매핑
+        confirmationDto.setMemberId(loginUser.getId());
+        confirmationDto.setMemberName(loginUser.getUserName());
+        confirmationDto.setMemberEmail(loginUser.getEmail());
+
+        // 3-2. 예약자 정보 매핑 (폼에서 받은 값)
+        confirmationDto.setBookerName(bookingForm.getBookerName());
+        confirmationDto.setBookerEmail(bookingForm.getBookerEmail());
+        confirmationDto.setBookerPhone(bookingForm.getBookerPhone());
+
+        // 3-3. 항공/탑승객 상세 정보 매핑 (폼 DTO 통째로 전달)
+        confirmationDto.setBookingDetails(bookingForm);
+
+        // 3-4. 최종 결제 금액 계산
+        BigDecimal totalPrice = bookingForm.getDepartureFlight().getTotalPrice();
+
+        confirmationDto.setFinalTotalPrice(totalPrice);
+        confirmationDto.setDomestic(bookingForm.isDomestic());
+        session.setAttribute("pendingBooking", confirmationDto);
+        model.addAttribute("confirmationData", confirmationDto);
+
+        return "revPage"; 
+    }
+
+	@PostMapping("/processPayment")
+    @ResponseBody //
+    public ResponseEntity<Map<String, Object>> processPayment() {
+        
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // --- 1. 데이터 검증 ---
+            Member loginUser = (Member) session.getAttribute("loginUser");
+            if (loginUser == null) {
+                throw new IllegalStateException("로그인이 만료되었습니다. 다시 로그인해주세요.");
+            }
+            
+            BookingConfirmationDto confirmationDto = 
+                    (BookingConfirmationDto) session.getAttribute("pendingBooking");
+            if (confirmationDto == null) {
+                throw new IllegalStateException("예약 정보가 만료되었습니다. 항공편 검색부터 다시 시도해주세요.");
+            }
+
+            // --- 2. DB에 저장 (핵심 로직) ---
+            Booking savedBooking = bookingService.createBookingFromDetails(confirmationDto, loginUser);
+
+            // --- 3. 세션 정리 ---
+            session.removeAttribute("pendingBooking");
+
+            // --- 4. 성공 JSON 응답 반환 ---
+            response.put("success", true);
+            response.put("message", "예약이 성공적으로 완료되었습니다.");
+            response.put("bookingId", savedBooking.getId());
+            response.put("arrivalKoLocation", confirmationDto.getBookingDetails().getArrivalKoLocation());
+            response.put("arrivalAirportCode", confirmationDto.getBookingDetails().getDepartureFlight().getDestinationCode());
+            
+            return ResponseEntity.ok(response); // 200 OK (성공)
+
+        } catch (Exception e) {
+            // --- 5. 모든 종류의 오류 발생 시 ---
+            e.printStackTrace(); // 서버 로그에 오류 기록
+            
+            response.put("success", false);
+            // e.getMessage()를 사용해 자바스크립트 alert/modal에 오류 원인을 전달
+            response.put("message", "예약 처리 중 오류가 발생했습니다: " + e.getMessage()); 
+            
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR); // 500 Error
+        }
     }
 	
 }

@@ -455,7 +455,7 @@ body {
 				th:text="${viewType == 'cancelled' ? '취소된 예약 내역' : '나의 예약 내역'}">
 				나의 예약 내역</h2>
 
-			<a th:if="${viewType == 'confirmed'}" href="/revCancelList"
+			<a th:if="${viewType == 'RESERVED'}" href="/revCancelList"
 				style="text-decoration: none; color: #555; font-weight: 500;">
 				취소된 내역 보기 &gt; </a> <a th:if="${viewType == 'cancelled'}"
 				href="/revList"
@@ -464,7 +464,7 @@ body {
 		</div>
 
 		<div th:if="${#lists.isEmpty(bookingList)}" class="no-booking-message">
-			<p th:if="${viewType == 'confirmed'}">아직 예약 내역이 없습니다.</p>
+			<p th:if="${viewType == 'RESERVED'}">아직 예약 내역이 없습니다.</p>
 			<p th:if="${viewType == 'cancelled'}">취소된 예약 내역이 없습니다.</p>
 			<a href="/" class="btn-home">항공권 검색하러 가기</a>
 		</div>
@@ -482,8 +482,8 @@ body {
 						class="trip-type-badge roundtrip">왕복</span>
 				</div>
 				<span class="status-badge"
-					th:text="${booking.bookingStatus == 'CONFIRMED' ? '예약 확정' : '예약 취소'}"
-					th:classappend="${booking.bookingStatus == 'CONFIRMED' ? 'status-confirmed' : 'status-cancelled'}">
+					th:text="${booking.bookingStatus == 'RESERVED' ? '예약 확정' : '예약 취소'}"
+					th:classappend="${booking.bookingStatus == 'RESERVED' ? 'status-confirmed' : 'status-cancelled'}">
 					예약 확정 </span>
 			</div>
 
@@ -537,14 +537,14 @@ body {
 
 			<div class="card-footer">
 
-				<th:block th:if="${viewType == 'confirmed'}">
+				<th:block th:if="${viewType == 'RESERVED'}">
 					<div class="total-price">
 						<span>총 결제 금액</span> <strong
 							th:text="${#numbers.formatInteger(booking.totalPrice, 0, 'COMMA')} + '원'">183,579원</strong>
 					</div>
 					<div class="action-buttons">
 						<button class="btn-cancel"
-							th:if="${booking.bookingStatus == 'CONFIRMED'}"
+							th:if="${booking.bookingStatus == 'RESERVED'}"
 							th:onclick="openCancelModal([[${booking.id}]])">예약 취소</button>
 					</div>
 				</th:block>

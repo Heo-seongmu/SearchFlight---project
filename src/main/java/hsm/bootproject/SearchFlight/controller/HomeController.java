@@ -49,7 +49,7 @@ public class HomeController {
         }
         List<Booking> bookingList = bookingService.getMyBookings(loginUser.getId());
         model.addAttribute("bookingList", bookingList);
-        model.addAttribute("viewType", "confirmed");
+        model.addAttribute("viewType", "RESERVED");
 		
         // 5. 뷰 템플릿의 이름을 반환합니다.
 		return "revList";

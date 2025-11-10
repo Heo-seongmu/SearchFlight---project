@@ -483,23 +483,6 @@ body {
 	    transform: rotate(360deg);
     }
 }
-  
-.booking-details-section h5 {
-	margin-bottom: 0.25rem;
-}
-
-.booking-details-section small {
-	font-size: 0.9rem;
-}
-
-.modal-footer {
-	justify-content: space-between;
-}
-
-#finalBookingBtn {
-	width: 60%;
-	font-weight: bold;
-}
 
 /* --- [새로 추가] 예약 단계 표시 (Progress Bar) --- */
 .step-icon {
@@ -604,7 +587,7 @@ body {
 						th:data-departure-ko-location="${airparmDto.departureKoLocation}"
 						th:data-arrival-ko-location="${airparmDto.arrivalKoLocation}">
 						<div
-							class="d-flex justify-content-between align-items-center mb-2">
+							class="d-flex justify-content-between align-items: center mb-2">
 							<span
 								class="badge bg-primary-subtle text-primary-emphasis rounded-pill"
 								th:if="${airparmDto.tripType} == 'round-trip'" th:text="왕복">왕복</span>
@@ -913,77 +896,6 @@ body {
 		<p>항공권을 재검색중입니다...</p>
 	</div>
 
-	<div class="modal fade" id="bookingConfirmationModal" tabindex="-1"
-		aria-labelledby="bookingConfirmationModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="bookingConfirmationModalLabel">나의
-						예약 내역 확인</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<div class="booking-details-section">
-						<span class="badge bg-primary mb-2">가는 편</span>
-						<h5 class="fw-bold" id="confirm-dep-route">ICN → NRT</h5>
-						<small class="text-muted d-block" id="confirm-dep-schedule">2025-10-18
-							(토) 09:30 ~ 11:45</small> <small class="text-muted d-block"
-							id="confirm-dep-airline">대한항공 (KE123)</small>
-					</div>
-
-					<hr class="my-3">
-
-					<div class="booking-details-section">
-						<span class="badge bg-success mb-2">오는 편</span>
-						<h5 class="fw-bold" id="confirm-ret-route">NRT → ICN</h5>
-						<small class="text-muted d-block" id="confirm-ret-schedule">2025-10-25
-							(토) 14:00 ~ 16:20</small> <small class="text-muted d-block"
-							id="confirm-ret-airline">대한항공 (KE456)</small>
-					</div>
-
-					<hr class="my-3">
-
-					<div class="d-flex justify-content-between align-items-center mt-3">
-						<h6 class="mb-0">총 결제 예정 금액</h6>
-						<span class="price-display text-danger" id="confirm-total-price">542,000원</span>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary"
-						data-bs-dismiss="modal">취소</button>
-
-					<button type="button" class="btn btn-primary" id="finalBookingBtn"
-						data-bs-toggle="modal" data-bs-target="#hotelPromptModal"
-						data-bs-dismiss="modal">예약 확정하기</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade" id="hotelPromptModal" tabindex="-1"
-		aria-labelledby="hotelPromptModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="hotelPromptModalLabel">예약 완료!</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<p class="fs-5 text-center">
-						예약이 곧 완료됩니다. <br> <strong>근처 호텔</strong>도 함께 보시겠어요?
-					</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary"
-						onclick="confirmAndBook(this, '/')">아니요</button>
-					<button type="button" class="btn btn-primary"
-						onclick="confirmAndBookAndSeeHotels(this)">예</button>
-				</div>
-			</div>
-		</div>
-	</div>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 

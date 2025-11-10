@@ -75,8 +75,21 @@ public class MemberController {
 				airParmDto lastSearchParams = (airParmDto) session.getAttribute("searchParams");
 				if (lastSearchParams != null) {
 					session.removeAttribute("searchParams");
+
 					String redirectUrl = UriComponentsBuilder.fromPath("/air/searchAirport")
-							.toUriString();
+                            .queryParam("tripType", lastSearchParams.getTripType())
+                            .queryParam("departureCode", lastSearchParams.getDepartureCode())
+                            .queryParam("arrivalCode", lastSearchParams.getArrivalCode())
+                            .queryParam("departureDate", lastSearchParams.getDepartureDate())
+                            .queryParam("returnDate", lastSearchParams.getReturnDate())
+                            .queryParam("adults", lastSearchParams.getAdults())
+                            .queryParam("children", lastSearchParams.getChildren())
+                            .queryParam("infants", lastSearchParams.getInfants())
+                            .queryParam("travelClass", lastSearchParams.getTravelClass())
+                            .queryParam("departureKoLocation", lastSearchParams.getDepartureKoLocation())
+                            .queryParam("arrivalKoLocation", lastSearchParams.getArrivalKoLocation())
+                            .toUriString();
+
 
 					return "redirect:" + redirectUrl;
 				}
@@ -94,6 +107,7 @@ public class MemberController {
 			return "redirect:/member/login?error=true";
 		}
 	}
+
 	
 	@GetMapping("/kakaoLogin")
 	public String kakaoLogin() {

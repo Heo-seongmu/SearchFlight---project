@@ -1,8 +1,8 @@
 package hsm.bootproject.SearchFlight.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +10,11 @@ import org.springframework.stereotype.Service;
 
 import hsm.bootproject.SearchFlight.domain.Booking;
 import hsm.bootproject.SearchFlight.domain.Member;
-import hsm.bootproject.SearchFlight.dto.BookingRequestDto;
-import hsm.bootproject.SearchFlight.dto.FlightDetailDto;
+import hsm.bootproject.SearchFlight.domain.Passenger;
+import hsm.bootproject.SearchFlight.dto.BookingConfirmationDto;
+import hsm.bootproject.SearchFlight.dto.BookingFormDto;
+import hsm.bootproject.SearchFlight.dto.FlightFormDto;
+import hsm.bootproject.SearchFlight.dto.PassengerFormDto;
 import hsm.bootproject.SearchFlight.repository.BookingRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -23,86 +26,111 @@ public class BookingService {
 	private BookingRepository bookingRepository;
 	
 	@Transactional
-    public Long createBookingFromDetails(BookingRequestDto requestDto, Member member) {
+    public Booking createBookingFromDetails(BookingConfirmationDto dto, Member member) {
         
-        // 1. DTO에서 가는 편, 오는 편 정보 추출
-        FlightDetailDto departureFlightDto = requestDto.getDepartureFlight();
-        FlightDetailDto returnFlightDto = requestDto.getReturnFlight(); // 편도면 null
+        // 1. DTO에서 상세 정보 추출
+        BookingFormDto details = dto.getBookingDetails();
+        FlightFormDto depFlight = details.getDepartureFlight();
+        FlightFormDto retFlight = details.getReturnFlight(); // 편도면 null
 
-        // 2. 데이터 유효성 검사 (수정됨: 가는 편만 필수)
-        if (departureFlightDto == null) {
-            throw new IllegalArgumentException("필수 항공편 정보가 누락되었습니다.");
+        // 2. 데이터 유효성 검사
+        if (depFlight == null) {
+            throw new IllegalArgumentException("필수 (가는 편) 항공편 정보가 누락되었습니다.");
         }
         if (member == null) {
             throw new IllegalStateException("예약을 위해서는 로그인이 필요합니다.");
         }
-        
-        // --- [수정] 중복 검사 로직 (편도/왕복 분기 처리) ---
+        if (details.getPassengers() == null || details.getPassengers().isEmpty()) {
+            throw new IllegalArgumentException("필수 탑승객 정보가 누락되었습니다.");
+        }
+
+        // 3. [기존 로직] 중복 예약 검사 (편도/왕복 분기 처리)
         boolean isDuplicate;
-        if (returnFlightDto != null) {
+        if (retFlight != null) {
             // 왕복일 경우
             isDuplicate = bookingRepository.existsDuplicateBooking(
                 member,
-                departureFlightDto.getCarrierCode(),
-                parseDateTime(departureFlightDto.getDepartureTime()),
-                returnFlightDto.getCarrierCode(),
-                parseDateTime(returnFlightDto.getDepartureTime())
+                depFlight.getCarrierCode(),
+                LocalDateTime.parse(depFlight.getDepartureTime()), // String -> LocalDateTime
+                retFlight.getCarrierCode(),
+                LocalDateTime.parse(retFlight.getDepartureTime())
             );
         } else {
             // 편도일 경우 (오는 편 정보를 null로 전달)
             isDuplicate = bookingRepository.existsDuplicateBooking(
                 member,
-                departureFlightDto.getCarrierCode(),
-                parseDateTime(departureFlightDto.getDepartureTime()),
+                depFlight.getCarrierCode(),
+                LocalDateTime.parse(depFlight.getDepartureTime()),
                 null, // returnCarrierCode
                 null  // returnDepartureTime
             );
         }
 
         if (isDuplicate) {
-            // 중복된 예약이 있으면 예외를 발생시켜 저장을 막습니다.
             throw new IllegalStateException("이미 동일한 항공권 예약이 존재합니다.");
         }
-                
-        // 3. Booking 엔티티 생성 및 기본 정보 설정
+
+        // --- 4. Booking 엔티티 생성 및 데이터 매핑 ---
         Booking newBooking = new Booking();
         
-        newBooking.setDepartureKoLocation(requestDto.getDepartureKoLocation());
-        newBooking.setArrivalKoLocation(requestDto.getArrivalKoLocation());
-        newBooking.setMember(member);
-        newBooking.setBookingStatus("CONFIRMED"); // 초기 상태 설정
+        newBooking.setMember(member); // 회원 연결
+        newBooking.setBookingStatus("RESERVED"); // "예약 완료" 상태
+        
+        // ⭐️ [수정] 가격은 DTO에 이미 계산된 최종 가격을 사용
+        newBooking.setTotalPrice(dto.getFinalTotalPrice());
 
-        // --- 가는 편 정보 설정 (필수) ---
-        newBooking.setDepartureAirline(departureFlightDto.getCarrierCode());
-        newBooking.setDepartureOriginCode(departureFlightDto.getOriginCode());
-        newBooking.setDepartureDestinationCode(departureFlightDto.getDestinationCode());
-        newBooking.setDepartureTime(parseDateTime(departureFlightDto.getDepartureTime()));
-        newBooking.setDepartureArrivalTime(parseDateTime(departureFlightDto.getArrivalTime()));
+        // 한글 위치 정보
+        newBooking.setDepartureKoLocation(details.getDepartureKoLocation());
+        newBooking.setArrivalKoLocation(details.getArrivalKoLocation());
 
-        // --- [수정] 가격 계산 (편도/왕복 분기 처리) ---
-        BigDecimal totalPrice = BigDecimal.valueOf(departureFlightDto.getTotalPrice());
-
-        // --- [수정] 오는 편 정보 설정 (왕복일 경우에만) ---
-        if (returnFlightDto != null) {
-            // 왕복일 경우
-            newBooking.setReturnAirline(returnFlightDto.getCarrierCode());
-            newBooking.setReturnOriginCode(returnFlightDto.getOriginCode());
-            newBooking.setReturnDestinationCode(returnFlightDto.getDestinationCode());
-            newBooking.setReturnTime(parseDateTime(returnFlightDto.getDepartureTime()));
-            newBooking.setReturnArrivalTime(parseDateTime(returnFlightDto.getArrivalTime()));
-            
-            // 왕복 가격 합산
-            //totalPrice = totalPrice.add(BigDecimal.valueOf(returnFlightDto.getTotalPrice()));
+        // 가는 편 정보 (필수)
+        newBooking.setDepartureAirline(depFlight.getCarrierCode());
+        newBooking.setDepartureOriginCode(depFlight.getOriginCode());
+        newBooking.setDepartureDestinationCode(depFlight.getDestinationCode());
+        newBooking.setDepartureTime(LocalDateTime.parse(depFlight.getDepartureTime()));
+        newBooking.setDepartureArrivalTime(LocalDateTime.parse(depFlight.getArrivalTime()));
+        
+        // 오는 편 정보 (왕복일 경우에만)
+        if (retFlight != null) {
+            newBooking.setReturnAirline(retFlight.getCarrierCode());
+            newBooking.setReturnOriginCode(retFlight.getOriginCode());
+            newBooking.setReturnDestinationCode(retFlight.getDestinationCode());
+            newBooking.setReturnTime(LocalDateTime.parse(retFlight.getDepartureTime()));
+            newBooking.setReturnArrivalTime(LocalDateTime.parse(retFlight.getArrivalTime()));
         }
-        // (편도일 경우 오는 편 정보는 null로 유지됩니다 - 엔티티에서 nullable=true로 설정했음)
 
-        newBooking.setTotalPrice(totalPrice); // 최종 가격 설정
+        // --- 5. [⭐️ 신규 ⭐️] Passenger 엔티티 목록 생성 ---
+        List<Passenger> passengerEntities = new ArrayList<>();
+        for (PassengerFormDto paxDto : details.getPassengers()) {
+            Passenger passenger = new Passenger();
+            passenger.setFirstName(paxDto.getFirstName());
+            passenger.setLastName(paxDto.getLastName());
+            passenger.setGender(paxDto.getGender());
+            passenger.setBirthDate(paxDto.getBirthDate());
+            passenger.setPassengerType(paxDto.getPassengerType());
+            
+            // 국제선 정보 (isDomestic 값에 따라)
+            if (!dto.isDomestic()) {
+                passenger.setPassportNumber(paxDto.getPassportNumber());
+                passenger.setPassportIssuingCountry(paxDto.getPassportIssuingCountry());
+                passenger.setPassportExpiryDate(paxDto.getPassportExpiryDate());
+            }
+            
+            // [가장 중요] 연관관계 설정 (Passenger -> Booking)
+            passenger.setBooking(newBooking); 
+            
+            passengerEntities.add(passenger);
+        }
+        
+        // [가장 중요] 연관관계 설정 (Booking -> Passenger)
+        newBooking.setPassengers(passengerEntities);
 
-        // 4. 리포지토리를 통해 엔티티를 데이터베이스에 저장
+        // --- 6. DB에 저장 ---
+        // 1단계에서 Booking 엔티티에 cascade = CascadeType.ALL 설정을 했기 때문에,
+        // booking만 저장해도 passengerEntities가 함께 저장됩니다.
         Booking savedBooking = bookingRepository.save(newBooking);
-
-        // 5. 저장된 예약의 ID를 반환
-        return savedBooking.getId();
+        
+        return savedBooking; // 컨트롤러에서 ID와 위치 정보를 사용하기 위해 Booking 객체 반환
     }
 	    
 	    private LocalDateTime parseDateTime(String dateTimeStr) {
@@ -119,7 +147,7 @@ public class BookingService {
 	    
 	    public List<Booking> getMyBookings(Long memberId) {
 	        // 리포지토리를 호출하여 DB에서 예약 목록을 가져와 그대로 반환합니다.
-	    	return bookingRepository.findByMemberIdAndBookingStatusOrderByCreatedAtDesc(memberId, "CONFIRMED");
+	    	return bookingRepository.findByMemberIdAndBookingStatusOrderByCreatedAtDesc(memberId, "RESERVED");
 	    }
 	    
 	    public List<Booking> getMyCancelledBookings(Long memberId) {
@@ -153,7 +181,7 @@ public class BookingService {
 	        }
 	        
 	        // 3. 상태를 "CONFIRMED"로 변경합니다.
-	        booking.setBookingStatus("CONFIRMED");
+	        booking.setBookingStatus("RESERVED");
 	    }
 	
 }

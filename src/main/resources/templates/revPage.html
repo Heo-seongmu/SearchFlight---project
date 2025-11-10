@@ -1,0 +1,646 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>무성의 여행 - 예약 및 결제</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link
+	href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800"
+	rel="stylesheet">
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style type="text/css">
+/* --- [기존] 헤더 및 기본 스타일 --- */
+.moana_gnb {
+	background-color: #5ac4c9;
+	color: #fff;
+	padding: 10px 0;
+}
+
+.gnb_container {
+	max-width: 1200px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 20px;
+}
+
+.moana_gnb h1 {
+	margin: 0;
+	display: flex;
+	align-items: center;
+}
+
+.box__inner h1 a {
+	color: #fff;
+	text-decoration: none;
+	font-size: 22px;
+	font-weight: bold;
+}
+
+.list__tab {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	gap: 20px;
+}
+
+.list__tab .list-item a {
+	color: #fff;
+	text-decoration: none;
+	font-weight: bold;
+	padding: 5px 0;
+	position: relative;
+	transition: color 0.3s ease;
+}
+
+.link-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.link__booking-history {
+	background-color: transparent;
+	border: 1px solid #fff;
+	color: #fff;
+	padding: 8px 15px;
+	border-radius: 20px;
+	text-decoration: none;
+	font-size: 14px;
+	transition: background-color 0.3s ease, color 0.3s ease;
+	white-space: nowrap;
+}
+
+.link__booking-history:hover {
+	background-color: #fff;
+	color: #5ac4c9;
+}
+
+.box__inner {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+body {
+	margin: 0;
+	background-color: #f8f9fa; /* 전체 페이지 배경색 */
+}
+
+/* --- 3-Step Progress Bar --- */
+.progress-steps-container {
+	position: relative;
+	width: 100%;
+	margin-bottom: 3rem; /* 콘텐츠와의 간격 */
+	padding: 0 5%; /* 좌우 여백 */
+	box-sizing: border-box;
+}
+
+.progress-steps-line {
+	position: absolute;
+	top: 18px; /* 원 높이(36px)의 절반 */
+	left: 10%; /* 첫 원 이후부터 */
+	right: 10%; /* 마지막 원 이전까지 */
+	height: 2px;
+	background-color: #5ac4c9; /* 3단계이므로 채워진 상태 */
+}
+
+.progress-steps {
+	display: flex;
+	justify-content: space-between;
+	position: relative;
+	z-index: 2;
+}
+
+.progress-step {
+	width: 100px;
+	text-align: center;
+}
+
+.progress-step .step-circle {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background-color: #f8f9fa;
+	border: 2px solid #dee2e6;
+	color: #6c757d;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 0.5rem auto;
+}
+
+.progress-step.active .step-circle, .progress-step.completed .step-circle
+	{
+	background-color: #5ac4c9;
+	border-color: #5ac4c9;
+	color: #fff;
+}
+
+.progress-step .step-label {
+	font-size: 0.9rem;
+	color: #6c757d;
+}
+
+.progress-step.active .step-label, .progress-step.completed .step-label
+	{
+	color: #5ac4c9;
+	font-weight: 500;
+}
+
+/* --- 결제 페이지 전용 스타일 --- */
+.form-section-card {
+	margin-bottom: 2rem;
+}
+
+.price-label {
+	font-weight: 700;
+	color: #d91f29;
+	font-size: 1.1rem;
+	white-space: nowrap;
+	margin-left: 1rem;
+}
+
+.btn-payment-final {
+	background-color: #5ac4c9;
+	border-color: #5ac4c9;
+	padding: 0.75rem;
+	font-size: 1.1rem;
+	font-weight: bold;
+}
+
+.btn-payment-final:hover {
+	background-color: #4ba9af;
+	border-color: #4ba9af;
+}
+
+.itinerary-card {
+	border-left: 4px solid #5ac4c9;
+	background-color: #fdfdfe;
+	padding: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+
+.itinerary-card .badge {
+	font-size: 0.9em;
+}
+
+.itinerary-card .route {
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: #333;
+}
+
+.itinerary-card .time-details {
+	font-size: 1.1rem;
+	font-weight: 500;
+	color: #495057;
+}
+
+.itinerary-card .sub-details {
+	font-size: 0.95rem;
+	color: #6c757d;
+}
+
+/* [ ⭐️ 수정 ⭐️ ] 간소화된 결제 수단 스타일 */
+.list-group-item {
+	cursor: pointer;
+	font-weight: 500;
+}
+
+.list-group-item:hover {
+	background-color: #f8f9fa;
+}
+
+.list-group-item .form-check-input {
+	margin-top: 0.2rem;
+}
+
+/* --- [ ⭐️ (신규 추가) 스피너 CSS ⭐️ ] --- */
+#loadingModal {
+    position: fixed; /* 화면 전체에 고정 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* 반투명 검은색 배경 */
+    /* 부트스트랩 모달(1055)과 그 배경(1050)보다 높게 설정 */
+    z-index: 1060; 
+    display: none; /* 평소에는 숨김 */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* 아이콘과 텍스트를 세로로 정렬 */
+    color: white;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #5ac4c9; /* GNB 색상과 통일 */
+    border-radius: 50%;
+    animation: spin 1s linear infinite; /* 회전 애니메이션 */
+    margin-bottom: 20px;
+}
+
+#loadingModal p {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 스피너 회전 애니메이션 */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+</head>
+<body>
+	<div class="moana_gnb" role="complementary">
+		<div class="gnb_container">
+			<div class="box__inner">
+				<h1>
+					<a href="/">무성의 여행</a>
+				</h1>
+			</div>
+			<ul class="list__tab">
+				<li class="list-item"><a class="link__tab" href="/">항공</a></li>
+				<li class="list-item"><a class="link__tab" href="/chat">추천챗</a></li>
+			</ul>
+			<div class="link-container">
+				<a href="/revList" class="link__booking-history sp_sd--after"
+					th:if="${session.loginUser != null}">나의 예약내역</a> <a
+					th:if="${session.loginUser == null}"
+					class="link__booking-history sp_sd--after" href="/member/login">로그인</a>
+				<a th:if="${session.loginUser != null}"
+					th:text="${session.loginUser.UserName}"
+					class="link__booking-history sp_sd--after">허성무</a> <a
+					th:if="${session.loginUser != null}"
+					class="link__booking-history sp_sd--after" href="/member/logout">로그아웃</a>
+			</div>
+		</div>
+	</div>
+
+	<main class="container py-5" th:object="${confirmationData}"
+		th:with="totalPrice=*{finalTotalPrice}">
+
+		<div class="progress-steps-container">
+			<div class="progress-steps-line"></div>
+			<div class="progress-steps">
+				<div class="progress-step completed">
+					<div class="step-circle">1</div>
+					<div class="step-label">항공 선택</div>
+				</div>
+				<div class="progress-step completed">
+					<div class="step-circle">2</div>
+					<div class="step-label">탑승객 정보</div>
+				</div>
+				<div class="progress-step active">
+					<div class="step-circle">3</div>
+					<div class="step-label">예약 및 결제</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row g-4">
+			<div class="col-lg-8">
+
+				<form id="paymentForm" action="/air/processPayment" method="POST">
+
+					<h3 class="fw-bold mb-3">
+						<i class="bi bi-airplane-fill me-2" style="color: #5ac4c9;"></i>예약
+						항공권 정보
+					</h3>
+					<div class="card shadow-sm form-section-card">
+						<div class="card-body p-4">
+
+							<div class="itinerary-card"
+								th:with="depFlight = *{bookingDetails.departureFlight}">
+								<span class="badge bg-primary mb-2">가는 편</span>
+								<div class="route"
+									th:text="${depFlight.originCode} + ' → ' + ${depFlight.destinationCode}">ICN
+									→ FUK</div>
+								<div class="time-details"
+									th:text="${#strings.substring(depFlight.departureTime, 11, 16)} + ' - ' + ${#strings.substring(depFlight.arrivalTime, 11, 16)}">
+									10:10 - 11:35</div>
+								<div class="sub-details"
+									th:text="${#strings.substring(depFlight.departureTime, 0, 10)} + ' (' + ${depFlight.carrierCode} + ')'">
+									2025-11-27 (TW)</div>
+							</div>
+
+							<div class="itinerary-card"
+								th:if="*{bookingDetails.returnFlight != null}"
+								th:with="retFlight = *{bookingDetails.returnFlight}">
+								<span class="badge bg-success mb-2">오는 편</span>
+								<div class="route"
+									th:text="${retFlight.originCode} + ' → ' + ${retFlight.destinationCode}">FUK
+									→ ICN</div>
+								<div class="time-details"
+									th:text="${#strings.substring(retFlight.departureTime, 11, 16)} + ' - ' + ${#strings.substring(retFlight.arrivalTime, 11, 16)}">
+									12:30 - 14:00</div>
+								<div class="sub-details"
+									th:text="${#strings.substring(retFlight.departureTime, 0, 10)} + ' (' + ${retFlight.carrierCode} + ')'">
+									2025-12-04 (TW)</div>
+							</div>
+						</div>
+					</div>
+
+
+					<h3 class="fw-bold mb-3">
+						<i class="bi bi-people-fill me-2" style="color: #5ac4c9;"></i>탑승객
+						정보
+					</h3>
+					<div class="card shadow-sm form-section-card">
+						<div class="card-body p-4">
+							<div class="table-responsive">
+								<table class="table align-middle mb-0" style="min-width: 600px;">
+									<thead class="table-light">
+										<tr>
+											<th>구분</th>
+											<th
+												th:text="*{isDomestic} ? '한글 성명' : '영문 성명 (Last/First Name)'">영문
+												성명</th>
+											<th>성별</th>
+											<th>생년월일</th>
+											<th th:if="*{!isDomestic}">여권번호</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="pax : *{bookingDetails.passengers}">
+											<td><span class="badge"
+												th:classappend="(${pax.passengerType} == 'ADULT' ? 'bg-primary-subtle text-primary-emphasis' : 
+                                                (${pax.passengerType} == 'CHILD' ? 'bg-success-subtle text-success-emphasis' : 
+                                                'bg-warning-subtle text-warning-emphasis'))"
+												th:text="(${pax.passengerType} == 'ADULT' ? '성인' : 
+                                                (${pax.passengerType} == 'CHILD' ? '소아' : '유아'))">성인</span>
+											</td>
+											<td class="fw-bold"
+												th:text="${pax.lastName} + ' ' + ${pax.firstName}">HONG
+												GILDONG</td>
+											<td th:text="(${pax.gender} == 'MALE' ? '남성' : '여성')">남성</td>
+											<td th:text="${pax.birthDate}">1990-01-01</td>
+											<td th:if="*{!isDomestic}" th:text="${pax.passportNumber}">M12345678</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+
+					<h3 class="fw-bold mb-3">
+						<i class="bi bi-credit-card-fill me-2" style="color: #5ac4c9;"></i>결제
+						수단
+					</h3>
+					<div class="card shadow-sm form-section-card">
+						<div class="card-body p-4">
+							<p class="text-muted">
+								테스트 예약이므로, 실제 결제는 진행되지 않습니다. <br> 사용할 결제 방식을 선택하고 '결제하기'
+								버튼을 눌러 예약을 완료하세요.
+							</p>
+
+							<div class="list-group">
+								<label class="list-group-item list-group-item-action"> <input
+									class="form-check-input me-2" type="radio" name="paymentMethod"
+									value="CARD" checked> <i
+									class="bi bi-credit-card-2-front-fill me-1"></i> 신용/체크카드 (테스트)
+								</label> <label class="list-group-item list-group-item-action">
+									<input class="form-check-input me-2" type="radio"
+									name="paymentMethod" value="KAKAOPAY"> <i
+									class="bi bi-chat-fill me-1" style="color: #FEE500;"></i> 카카오페이
+									(테스트)
+								</label> <label class="list-group-item list-group-item-action">
+									<input class="form-check-input me-2" type="radio"
+									name="paymentMethod" value="TRANSFER"> <i
+									class="bi bi-bank me-1"></i> 무통장 입금 (테스트)
+								</label>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="form-check form-check-lg mb-4">
+						<input class="form-check-input" type="checkbox" id="finalAgree"
+							required style="width: 1.5em; height: 1.5em;"> <label
+							class="form-check-label fw-bold" for="finalAgree"
+							style="padding-top: 4px; padding-left: 8px;"> (필수) 주문내역을
+							확인하였으며, 결제에 동의합니다. </label>
+					</div>
+
+
+					<input type="hidden" name="finalAmount" th:value="${totalPrice}">
+
+				</form>
+			</div>
+
+			<div class="col-lg-4">
+				<div class="card shadow-sm form-section-card"
+					style="position: sticky; top: 2rem;">
+					<div class="card-header bg-white p-4">
+						<h3 class="fw-bold mb-0">최종 결제 금액</h3>
+					</div>
+					<div class="card-body p-4">
+						<div
+							class="d-flex justify-content-between align-items-center mb-2">
+							<span class="text-muted">총 항공권 요금</span> <span class="fw-bold"
+								th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + '원'">63,344원</span>
+						</div>
+						<div
+							class="d-flex justify-content-between align-items-center mb-2">
+							<span class="text-muted">유류할증료</span> <span class="fw-bold">포함</span>
+						</div>
+						<div
+							class="d-flex justify-content-between align-items: center mb-3">
+							<span class="text-muted">제세공과금</span> <span class="fw-bold">포함</span>
+						</div>
+
+						<hr class="my-3">
+
+						<div
+							class="d-flex justify-content-between align-items-center mb-3">
+							<h5 class="mb-0 fw-bold">총 결제 예정 금액</h5>
+							<span class="price-label text-danger" style="font-size: 1.75rem;"
+								th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + '원'">
+								63,344원 </span>
+						</div>
+
+						<div class="d-grid">
+							<button type="button" id="submitPaymentButton"
+								class="btn btn-primary btn-payment-final">
+								<span
+									th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + '원 결제하기'">63,344원
+									결제하기</span>
+							</button>
+						</div>
+
+						<small class="text-muted d-block text-center mt-3"> 결제와
+							동시에 항공사 규정에 따라 <br> 취소/환불 수수료가 부과될 수 있습니다.
+						</small>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<div class="modal fade" id="hotelModal" tabindex="-1"
+		aria-labelledby="hotelModalLabel" aria-hidden="true"
+		data-bs-backdrop="static">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header border-0">
+					<h5 class="modal-title fw-bold" id="hotelModalLabel">
+						<i class="bi bi-check-circle-fill me-2 text-success"></i> 예약 완료
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body text-center py-4">
+					<p class="fs-5 mb-3" style="line-height: 1.6;">항공권 예약이 성공적으로
+						완료되었습니다!</p>
+					<p class="fs-5 fw-bold" style="color: #5ac4c9;">
+						<span id="modalArrivalLocation"
+							th:text="${confirmationData.bookingDetails?.arrivalKoLocation}">도착지</span>
+						근처의<br> 호텔을 추천해 드릴까요?
+					</p>
+				</div>
+				<div class="modal-footer border-0 justify-content-center">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">아니요, 괜찮습니다</button>
+					<button type="button" class="btn btn-primary" id="findHotelButton">
+						<i class="bi bi-building me-1"></i> 네, 호텔 보여주세요
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="loadingModal">
+	    <div class="spinner"></div>
+	    <p>호텔 목록을 불러오는 중입니다...</p>
+	</div>
+
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+	<script th:inline="javascript">
+		
+		// 1. 필요한 모달 객체들을 미리 준비
+		const hotelModalElement = document.getElementById('hotelModal');
+		const hotelModal = new bootstrap.Modal(hotelModalElement);
+		
+		// ⭐️ (신규) 'index.html'에서 가져온 커스텀 로딩 모달
+		const customLoadingModal = document.getElementById('loadingModal');
+		
+		// ⭐️ (신규) '네' 버튼 클릭 여부를 저장할 플래그
+		let isFindingHotel = false;
+
+		// 2. '결제하기' 버튼(#submitPaymentButton) 클릭 이벤트
+		document.getElementById('submitPaymentButton').addEventListener(
+			'click',
+			function(event) {
+				
+				// (필수 동의) 체크박스 검사
+				const finalAgreeCheckbox = document.getElementById('finalAgree');
+				if (!finalAgreeCheckbox.checked) {
+					alert('주문내역 확인 및 결제 동의 항목에 체크해야 합니다.');
+					finalAgreeCheckbox.focus();
+					return; // 함수 종료 (결제 진행 안 함)
+				}
+				
+				// ⭐️ (수정) 결제 시에는 스피너를 띄우지 않음 (사용자 요청)
+
+				// 3. fetch를 사용해 AJAX로 폼 데이터 전송
+				fetch('/air/processPayment', {
+					method: 'POST'
+				})
+				.then(response => {
+					// 4. 서버 응답(JSON) 받기
+					if (!response.ok) {
+						return response.json().then(err => {
+						   throw new Error(err.message || '서버 응답이 올바지 않습니다.');
+						});
+					}
+					return response.json(); // 성공 응답을 JSON으로 파싱
+				})
+				.then(data => {
+					// 5. JSON 데이터(data) 처리
+					if (data.success) {
+						// ⭐️ 성공! '근처 호텔' 모달 띄우기
+						document.getElementById('modalArrivalLocation').textContent = data.arrivalKoLocation;
+						document.getElementById('findHotelButton').dataset.arrivalCode = data.arrivalAirportCode;
+						hotelModal.show();
+						
+					} else {
+						// ⭐️ 실패 (서버가 success: false를 보냄)
+						alert('예약 실패: ' + data.message);
+					}
+				})
+				.catch(error => {
+					// 6. fetch 자체에서 오류 발생 (네트워크 단절 등)
+					console.error('Error:', error);
+					alert('예약 처리 중 심각한 오류가 발생했습니다: ' + error.message);
+				});
+			}
+		);
+
+		// 7. [⭐️ 수정 ⭐️] '네, 호텔 보여주세요' 버튼 클릭 이벤트
+		document.getElementById('findHotelButton').addEventListener('click', function() {
+			const arrivalCode = this.dataset.arrivalCode;
+			
+			if (arrivalCode) {
+				// ⭐️ 1. '네' 버튼을 눌렀다고 플래그 설정
+				isFindingHotel = true;
+				
+				// ⭐️ 2. 커스텀 로딩 스피너를 띄웁니다.
+				// (z-index가 높아서 hotelModal 위에 겹쳐 보일 것입니다)
+				customLoadingModal.style.display = 'flex';
+				
+				// ⭐️ 3. (부트스트랩) 호텔 모달을 숨깁니다.
+				//    (이 코드가 실행되면 8번의 'hidden.bs.modal' 이벤트가 발생합니다)
+				hotelModal.hide();
+				
+			} else {
+				// 혹시 모를 예외 상황
+				alert('도착지 코드 정보를 가져오지 못했습니다. 메인 페이지로 이동합니다.');
+				window.location.href = '/';
+			}
+		});
+		
+		// 8. [⭐️ 수정 ⭐️] (부트스트랩) 호텔 모달이 '완전히 닫힌 후' 실행되는 이벤트
+		hotelModalElement.addEventListener('hidden.bs.modal', function () {
+			
+			// ⭐️ '네' 버튼을 눌러서 닫힌 것인지('isFindingHotel' 플래그) 확인
+			if (isFindingHotel) {
+				// '네' 버튼을 눌렀음 -> 스피너가 이미 화면에 떠 있는 상태
+				const arrivalCode = document.getElementById('findHotelButton').dataset.arrivalCode;
+				
+				// ⭐️ 호텔 API를 호출하는 페이지로 리다이렉트
+				window.location.href = '/hotel/List?destination=' + arrivalCode;
+				
+			} else {
+				// '아니요' / 'X' 버튼을 눌렀음
+				// ⭐️ 스피너 띄우지 않고 메인 페이지로 리다이렉트
+				window.location.href = '/';
+			}
+			
+			// 플래그 초기화
+			isFindingHotel = false; 
+		});
+
+	</script>
+</body>
+</html>
