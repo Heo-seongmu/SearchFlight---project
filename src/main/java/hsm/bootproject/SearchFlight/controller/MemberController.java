@@ -48,10 +48,6 @@ public class MemberController {
 		return "login";
 	}
 	
-	/**
-	 * [수정됨]
-	 * 이메일(아이디)/비밀번호 기반 일반 로그인 처리
-	 */
 	@PostMapping("/login")
 	public String loginProcess(@RequestParam("loginId") String loginId, // login.html의 name="loginId"
 							   @RequestParam("password") String password) {

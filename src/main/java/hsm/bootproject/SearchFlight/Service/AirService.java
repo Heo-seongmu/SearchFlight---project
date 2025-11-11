@@ -272,7 +272,7 @@ public class AirService {
 				JsonArray flightOffersArray = rootObject.getAsJsonArray("data");
 
 				int offerCount = 0;
-				final int MAX_OFFERS = 10;
+				final int MAX_OFFERS = 15;
 
 				for (JsonElement offerElement : flightOffersArray) {
 					if (offerCount >= MAX_OFFERS) {
