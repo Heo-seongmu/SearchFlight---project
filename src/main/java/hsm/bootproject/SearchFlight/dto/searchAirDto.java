@@ -37,5 +37,8 @@ public class searchAirDto {
 	private String returnArrivalCode; // 오는 편 도착 공항
 	private String returnCarrierCode; // 오는 편 항공사 코드
 	private boolean isReturnDirectFlight; // 오는 편 직항 여부
+	
+	private String arrivalDate;
+	private String returnArrivalDate;
 
 }

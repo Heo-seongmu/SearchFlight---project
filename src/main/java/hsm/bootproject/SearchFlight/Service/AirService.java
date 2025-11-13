@@ -309,6 +309,7 @@ public class AirService {
 					String arrivalAt = lastDepartureSegment.getAsJsonObject("arrival").get("at").getAsString();
 					dto.setArrivalTime(arrivalAt.substring(11, 16));
 					dto.setArrivalCode(lastDepartureSegment.getAsJsonObject("arrival").get("iataCode").getAsString());
+					dto.setArrivalDate(arrivalAt.substring(0, 10));
 
 					// ## 오는 편 정보 처리 ##
 					if (itineraryCount > 1) {
@@ -331,6 +332,7 @@ public class AirService {
 						dto.setReturnArrivalTime(returnArrivalAt.substring(11, 16));
 						dto.setReturnArrivalCode(
 								lastReturnSegment.getAsJsonObject("arrival").get("iataCode").getAsString());
+						dto.setReturnArrivalDate(returnArrivalAt.substring(0, 10));
 					}
 
 					// ## 나머지 정보 처리 ##
@@ -397,7 +399,10 @@ public class AirService {
 				returnDto.setReturnDepartureTime(offer.getReturnDepartureTime());
 				returnDto.setReturnArrivalTime(offer.getReturnArrivalTime());
 				returnDto.setReturnDirectFlight(offer.isReturnDirectFlight());
-
+				
+				returnDto.setReturnDepartureDate(offer.getReturnDepartureDate());
+	            returnDto.setReturnArrivalDate(offer.getReturnArrivalDate());
+				
 				// 중요: searchAirDto의 rawTotalPrice는 왕복 총액입니다.
 				// 여기서는 편의상 그대로 사용하지만, 편도 가격을 별도로 계산해야 할 수도 있습니다.
 				returnDto.setReturnTotalPrice(offer.getRawTotalPrice());

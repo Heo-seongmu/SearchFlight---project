@@ -15,4 +15,6 @@ public class ReturnFlightDto {
 	private long returnTotalPrice;
 	private String returnDepartureCode; // 오는 편 출발 공항 코드
 	private String returnArrivalCode;   // 오는 편 도착 공항 코드
+	private String returnDepartureDate; 
+    private String returnArrivalDate;
 }

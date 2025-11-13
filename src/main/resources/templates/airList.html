@@ -18,7 +18,9 @@
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" rel="stylesheet">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css"
+	rel="stylesheet">
 
 <style type="text/css">
 /* --- 🟢 모든 CSS 코드 시작 🟢 --- */
@@ -27,6 +29,7 @@
 	color: #fff;
 	padding: 10px 0;
 }
+
 .gnb_container {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -35,9 +38,28 @@
 	justify-content: space-between;
 	padding: 0 20px;
 }
-.moana_gnb h1 { margin: 0; display: flex; align-items: center; }
-.box__inner h1 a { color: #fff; text-decoration: none; font-size: 22px; font-weight: bold; }
-.list__tab { list-style: none; margin: 0; padding: 0; display: flex; gap: 20px; }
+
+.moana_gnb h1 {
+	margin: 0;
+	display: flex;
+	align-items: center;
+}
+
+.box__inner h1 a {
+	color: #fff;
+	text-decoration: none;
+	font-size: 22px;
+	font-weight: bold;
+}
+
+.list__tab {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	gap: 20px;
+}
+
 .list__tab .list-item a {
 	color: #fff;
 	text-decoration: none;
@@ -46,7 +68,12 @@
 	position: relative;
 	transition: color 0.3s ease;
 }
-.list__tab .list-item a:hover, .list__tab .list-item a.link__tab--active { color: #eee; }
+
+.list__tab .list-item a:hover, .list__tab .list-item a.link__tab--active
+	{
+	color: #eee;
+}
+
 .list__tab .list-item a.link__tab--active::after {
 	content: '';
 	position: absolute;
@@ -56,7 +83,13 @@
 	height: 2px;
 	background-color: #fff;
 }
-.link-container { display: flex; align-items: center; gap: 10px; }
+
+.link-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
 .link__booking-history {
 	background-color: transparent;
 	border: 1px solid #fff;
@@ -68,9 +101,23 @@
 	transition: background-color 0.3s ease, color 0.3s ease;
 	white-space: nowrap;
 }
-.link__booking-history:hover { background-color: #fff; color: #5ac4c9; }
-.box__inner { display: flex; align-items: center; gap: 20px; }
-body { margin: 0; background-color: #f8f9fa; }
+
+.link__booking-history:hover {
+	background-color: #fff;
+	color: #5ac4c9;
+}
+
+.box__inner {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+body {
+	margin: 0;
+	background-color: #f8f9fa;
+}
+
 .filter-card-button {
 	text-align: left;
 	width: 100%;
@@ -80,19 +127,57 @@ body { margin: 0; background-color: #f8f9fa; }
 	padding: 1.25rem;
 	transition: box-shadow .15s ease-in-out;
 }
-.filter-card-button:hover { box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); }
+
+.filter-card-button:hover {
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
 .flight-card-button {
 	text-align: left;
 	border-width: 1px;
 	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
-.flight-card-button:hover { border-color: #5ac4c9; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); }
-.flight-card-button .card-body { padding: 1.5rem; }
-.price-display { font-size: 1.5rem; font-weight: 700; letter-spacing: -1px; }
-.flight-search-form .form-label { display: block; font-size: 0.875rem; color: #6c757d; margin-bottom: 0.3rem; }
-.flight-search-form .nav-tabs { border-bottom: 1px solid #dee2e6; }
-.flight-search-form .nav-tabs .nav-link-label { padding: 0.5rem 0.8rem; cursor: pointer; border-bottom: 3px solid transparent; color: #6c757d; margin-bottom: -1px; }
-.flight-search-form input[type="radio"]:checked+.nav-link-label { border-color: #0d6efd; color: #0d6efd; font-weight: 500; }
+
+.flight-card-button:hover {
+	border-color: #5ac4c9;
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.flight-card-button .card-body {
+	padding: 1.5rem;
+}
+
+.price-display {
+	font-size: 1.5rem;
+	font-weight: 700;
+	letter-spacing: -1px;
+}
+
+.flight-search-form .form-label {
+	display: block;
+	font-size: 0.875rem;
+	color: #6c757d;
+	margin-bottom: 0.3rem;
+}
+
+.flight-search-form .nav-tabs {
+	border-bottom: 1px solid #dee2e6;
+}
+
+.flight-search-form .nav-tabs .nav-link-label {
+	padding: 0.5rem 0.8rem;
+	cursor: pointer;
+	border-bottom: 3px solid transparent;
+	color: #6c757d;
+	margin-bottom: -1px;
+}
+
+.flight-search-form input[type="radio"]:checked+.nav-link-label {
+	border-color: #0d6efd;
+	color: #0d6efd;
+	font-weight: 500;
+}
+
 .flight-search-form .form-control-like-button {
 	display: block;
 	width: 100%;
@@ -107,9 +192,24 @@ body { margin: 0; background-color: #f8f9fa; }
 	text-align: left;
 	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
-.flight-search-form .form-control-like-button:hover { border-color: #86b7fe; }
-#modalDepartureBtn, #modalArrivalBtn { text-align: center; font-weight: bold; font-size: 1.25rem; }
-.flight-search-form .btn-submit { padding-top: 0.8rem; padding-bottom: 0.8rem; font-size: 1.1rem; font-weight: bold; }
+
+.flight-search-form .form-control-like-button:hover {
+	border-color: #86b7fe;
+}
+
+#modalDepartureBtn, #modalArrivalBtn {
+	text-align: center;
+	font-weight: bold;
+	font-size: 1.25rem;
+}
+
+.flight-search-form .btn-submit {
+	padding-top: 0.8rem;
+	padding-bottom: 0.8rem;
+	font-size: 1.1rem;
+	font-weight: bold;
+}
+
 .swap-button {
 	border: 1px solid #ddd;
 	border-radius: 50%;
@@ -123,6 +223,7 @@ body { margin: 0; background-color: #f8f9fa; }
 	color: #555;
 	flex-grow: 0;
 }
+
 .modal-overlay {
 	display: none;
 	position: fixed;
@@ -135,6 +236,7 @@ body { margin: 0; background-color: #f8f9fa; }
 	align-items: center;
 	z-index: 1060;
 }
+
 .modal-overlay .modal-content {
 	background-color: white;
 	padding: 24px;
@@ -145,9 +247,26 @@ body { margin: 0; background-color: #f8f9fa; }
 	overflow-y: auto;
 	position: relative;
 }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-header h2 { margin: 0; font-size: 20px; }
-.close-button { background: none; border: none; font-size: 24px; cursor: pointer; }
+
+.modal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.modal-header h2 {
+	margin: 0;
+	font-size: 20px;
+}
+
+.close-button {
+	background: none;
+	border: none;
+	font-size: 24px;
+	cursor: pointer;
+}
+
 .modal-search-input {
 	width: 100%;
 	padding: 12px;
@@ -157,8 +276,20 @@ body { margin: 0; background-color: #f8f9fa; }
 	box-sizing: border-box;
 	margin-bottom: 24px;
 }
-.popular-searches h3 { font-size: 16px; color: #555; margin-top: 20px; margin-bottom: 12px; }
-.tags-container { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.popular-searches h3 {
+	font-size: 16px;
+	color: #555;
+	margin-top: 20px;
+	margin-bottom: 12px;
+}
+
+.tags-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
 .tag {
 	background-color: #f0f0f0;
 	color: #333;
@@ -168,19 +299,76 @@ body { margin: 0; background-color: #f8f9fa; }
 	cursor: pointer;
 	transition: background-color 0.2s;
 }
-.tag:hover { background-color: #e0e0e0; }
-.search-result-item { padding: 10px 5px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
-.search-result-item:hover { background-color: #f5f5f5; }
-.location-main { font-weight: bold; font-size: 16px; }
-.location-sub { font-size: 14px; color: #888; }
-.no-results { padding: 20px; text-align: center; color: #999; }
-.flatpickr-calendar { z-index: 1061 !important; }
-.passenger-section, .seat-class-section { margin-bottom: 24px; }
-.passenger-section h4, .seat-class-section h4 { margin-top: 0; margin-bottom: 12px; font-size: 16px; color: #333; }
-.passenger-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.passenger-label small { color: #888; font-size: 12px; }
-.passenger-controls { display: flex; align-items: center; gap: 15px; }
-.passenger-controls .count { font-size: 18px; width: 25px; text-align: center; }
+
+.tag:hover {
+	background-color: #e0e0e0;
+}
+
+.search-result-item {
+	padding: 10px 5px;
+	cursor: pointer;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.search-result-item:hover {
+	background-color: #f5f5f5;
+}
+
+.location-main {
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.location-sub {
+	font-size: 14px;
+	color: #888;
+}
+
+.no-results {
+	padding: 20px;
+	text-align: center;
+	color: #999;
+}
+
+.flatpickr-calendar {
+	z-index: 1061 !important;
+}
+
+.passenger-section, .seat-class-section {
+	margin-bottom: 24px;
+}
+
+.passenger-section h4, .seat-class-section h4 {
+	margin-top: 0;
+	margin-bottom: 12px;
+	font-size: 16px;
+	color: #333;
+}
+
+.passenger-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 16px;
+}
+
+.passenger-label small {
+	color: #888;
+	font-size: 12px;
+}
+
+.passenger-controls {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+}
+
+.passenger-controls .count {
+	font-size: 18px;
+	width: 25px;
+	text-align: center;
+}
+
 .control-btn {
 	width: 32px;
 	height: 32px;
@@ -191,9 +379,25 @@ body { margin: 0; background-color: #f8f9fa; }
 	cursor: pointer;
 	color: #3d5aee;
 }
-.control-btn:disabled { color: #ccc; cursor: not-allowed; }
-.seat-class-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.seat-class-options label { display: flex; align-items: center; gap: 5px; font-size: 14px; }
+
+.control-btn:disabled {
+	color: #ccc;
+	cursor: not-allowed;
+}
+
+.seat-class-options {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+}
+
+.seat-class-options label {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 14px;
+}
+
 .confirm-btn {
 	width: 100%;
 	padding: 14px;
@@ -205,6 +409,7 @@ body { margin: 0; background-color: #f8f9fa; }
 	font-weight: bold;
 	cursor: pointer;
 }
+
 #loadingModal {
 	display: none;
 	position: fixed;
@@ -219,6 +424,7 @@ body { margin: 0; background-color: #f8f9fa; }
 	flex-direction: column;
 	color: white;
 }
+
 .spinner {
 	width: 50px;
 	height: 50px;
@@ -228,8 +434,21 @@ body { margin: 0; background-color: #f8f9fa; }
 	animation: spin 1s linear infinite;
 	margin-bottom: 20px;
 }
-#loadingModal p { font-size: 18px; font-weight: bold; }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+#loadingModal p {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .step-icon {
 	width: 36px;
 	height: 36px;
@@ -242,7 +461,12 @@ body { margin: 0; background-color: #f8f9fa; }
 	font-weight: bold;
 	margin: 0 auto 8px auto;
 }
-.step-icon-active { background-color: #5ac4c9; color: #fff; }
+
+.step-icon-active {
+	background-color: #5ac4c9;
+	color: #fff;
+}
+
 .step-connector {
 	flex-grow: 1;
 	height: 3px;
@@ -254,96 +478,109 @@ body { margin: 0; background-color: #f8f9fa; }
 
 /* --- ⭐ 필터 카드 & 슬라이더 CSS (수정됨) ⭐ --- */
 .filter-card {
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem;
-    background-color: #fff;
-    padding: 1.25rem;
+	border: 1px solid #dee2e6;
+	border-radius: 0.375rem;
+	background-color: #fff;
+	padding: 1.25rem;
 }
+
 .filter-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #555;
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.9rem;
+	font-weight: 500;
+	color: #555;
 }
+
 .noUi-target {
-    background: #f0f0f0;
-    border-radius: 4px;
-    border: none;
-    box-shadow: none;
+	background: #f0f0f0;
+	border-radius: 4px;
+	border: none;
+	box-shadow: none;
 }
+
 .noUi-connect {
-    background: #0d6efd; /* 파란색 */
+	background: #0d6efd; /* 파란색 */
 }
+
 .noUi-handle {
-    border: 3px solid #fff;
-    border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    cursor: pointer;
+	border: 3px solid #fff;
+	border-radius: 50%;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
 }
-.noUi-handle:focus { outline: none; }
+
+.noUi-handle:focus {
+	outline: none;
+}
 
 /* 툴팁 숨기기 */
 .noUi-tooltip {
-    display: none !important;
+	display: none !important;
 }
 
 /* ⭐ [수정] 시간 필터 버튼 그룹 스타일 (checkbox용) */
 .btn-group-time-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
 }
+
 .btn-group-time-filter .btn {
-    border-radius: 20px;
-    padding: 0.25rem 0.75rem;
-    font-size: 0.9rem;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    color: #6c757d;
-    box-shadow: none !important;
+	border-radius: 20px;
+	padding: 0.25rem 0.75rem;
+	font-size: 0.9rem;
+	background-color: #f8f9fa;
+	border: 1px solid #dee2e6;
+	color: #6c757d;
+	box-shadow: none !important;
 }
 /* ⭐ [수정] radio -> checkbox */
-.btn-group-time-filter input[type="checkbox"]:checked + .btn {
-    background-color: #e7f1ff;
-    border-color: #0d6efd;
-    color: #0d6efd;
-    font-weight: 500;
+.btn-group-time-filter input[type="checkbox"]:checked+.btn {
+	background-color: #e7f1ff;
+	border-color: #0d6efd;
+	color: #0d6efd;
+	font-weight: 500;
 }
 
 /* ⭐ [신규] 아코디언 스타일 커스텀 */
 .accordion-item {
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem !important;
-    margin-bottom: 1rem;
+	border: 1px solid #dee2e6;
+	border-radius: 0.375rem !important;
+	margin-bottom: 1rem;
 }
+
 .accordion-button {
-    font-weight: bold;
-    color: #212529;
-    background-color: #fff;
-    border-radius: 0.375rem !important;
+	font-weight: bold;
+	color: #212529;
+	background-color: #fff;
+	border-radius: 0.375rem !important;
 }
+
 .accordion-button:not(.collapsed) {
-    background-color: #f8f9fa;
-    box-shadow: none;
-    color: #0d6efd;
+	background-color: #f8f9fa;
+	box-shadow: none;
+	color: #0d6efd;
 }
+
 .accordion-button:focus {
-    box-shadow: none;
-    border-color: rgba(0,0,0,.125);
+	box-shadow: none;
+	border-color: rgba(0, 0, 0, .125);
 }
+
 .accordion-body {
-    padding: 1rem 1.25rem;
+	padding: 1rem 1.25rem;
 }
 
 /* ⭐ [신규] 항공사 필터 체크박스 스타일 */
 .airline-filter-item {
-    display: block;
-    margin-bottom: 0.5rem;
+	display: block;
+	margin-bottom: 0.5rem;
 }
+
 .airline-filter-item label {
-    margin-left: 8px;
-    cursor: pointer;
+	margin-left: 8px;
+	cursor: pointer;
 }
 </style>
 </head>
@@ -363,14 +600,12 @@ body { margin: 0; background-color: #f8f9fa; }
 
 			<div class="link-container">
 				<a href="/revList" class="link__booking-history sp_sd--after"
-					th:if="${session.loginUser != null}">나의 예약내역</a> 
-                <a
+					th:if="${session.loginUser != null}">나의 예약내역</a> <a
 					th:if="${session.loginUser == null}"
 					class="link__booking-history sp_sd--after" href="/member/login">로그인</a>
 				<a th:if="${session.loginUser != null}"
 					th:text="${session.loginUser.UserName}"
-					class="link__booking-history sp_sd--after"></a> 
-                <a
+					class="link__booking-history sp_sd--after"></a> <a
 					th:if="${session.loginUser != null}"
 					class="link__booking-history sp_sd--after" href="/member/logout">로그아웃</a>
 			</div>
@@ -401,10 +636,10 @@ body { margin: 0; background-color: #f8f9fa; }
 		</div>
 		<div class="row g-4">
 
-            <div class="col-lg-3">
+			<div class="col-lg-3">
 				<div class="vstack gap-3">
-                    
-                    <button class="filter-card-button" data-bs-toggle="modal"
+
+					<button class="filter-card-button" data-bs-toggle="modal"
 						data-bs-target="#researchModal"
 						th:data-trip-type="${airparmDto.tripType}"
 						th:data-departure-code="${airparmDto.departureCode}"
@@ -436,108 +671,125 @@ body { margin: 0; background-color: #f8f9fa; }
 						</h4>
 						<small class="text-body-secondary"
 							th:if="${#strings.isEmpty(#strings.trim(airparmDto.returnDate))}"
-							th:text="${airparmDto.departureDate}">11.6(목) - 11.8(토)</small> 
-                        <small class="text-body-secondary"
+							th:text="${airparmDto.departureDate}">11.6(목) - 11.8(토)</small> <small
+							class="text-body-secondary"
 							th:if="${not #strings.isEmpty(#strings.trim(airparmDto.returnDate))}"
 							th:text="${airparmDto.departureDate} + '~' + ${airparmDto.returnDate}">11.6(목)
-							- 11.8(토)</small> <br> 
-                        <small class="text-body-secondary"
+							- 11.8(토)</small> <br> <small class="text-body-secondary"
 							th:text="'성인 ' + ${airparmDto.adults} + ' 어린이 ' + ${airparmDto.children} + ' 유아 '
 							 + ${airparmDto.infants} + ' · ' + ${airparmDto.travelClass} +' class'">성인
 							1 · 일반석</small>
 					</button>
 
-                    <div class="accordion" id="filterAccordion">
+					<div class="accordion" id="filterAccordion">
 
-                        <div class="accordion-item shadow-sm">
-                            <h2 class="accordion-header" id="headingTime">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTime" aria-expanded="true" aria-controls="collapseTime">
-                                    출발 시간대 설정
-                                </button>
-                            </h2>
-                            <div id="collapseTime" class="accordion-collapse collapse show" aria-labelledby="headingTime">
-                                <div class="accordion-body">
-                                    <div class="btn-group-time-filter" role="group" aria-label="출발 시간 필터">
-                                        <input type="checkbox" class="btn-check" name="timeFilter" id="time-all" autocomplete="off" checked data-min="0" data-max="1439">
-                                        <label class="btn" for="time-all">전체</label>
-                                        
-                                        <input type="checkbox" class="btn-check time-filter-option" name="timeFilter" id="time-00-04" autocomplete="off" data-min="0" data-max="240">
-                                        <label class="btn" for="time-00-04">00시 ~ 04시</label>
-                                        
-                                        <input type="checkbox" class="btn-check time-filter-option" name="timeFilter" id="time-04-08" autocomplete="off" data-min="240" data-max="480">
-                                        <label class="btn" for="time-04-08">04시 ~ 08시</label>
-                                        
-                                        <input type="checkbox" class="btn-check time-filter-option" name="timeFilter" id="time-08-12" autocomplete="off" data-min="480" data-max="720">
-                                        <label class="btn" for="time-08-12">08시 ~ 12시</label>
-                                        
-                                        <input type="checkbox" class="btn-check time-filter-option" name="timeFilter" id="time-12-16" autocomplete="off" data-min="720" data-max="960">
-                                        <label class="btn" for="time-12-16">12시 ~ 16시</label>
-                                        
-                                        <input type="checkbox" class="btn-check time-filter-option" name="timeFilter" id="time-16-20" autocomplete="off" data-min="960" data-max="1200">
-                                        <label class="btn" for="time-16-20">16시 ~ 20시</label>
-                                        
-                                        <input type="checkbox" class="btn-check time-filter-option" name="timeFilter" id="time-20-24" autocomplete="off" data-min="1200" data-max="1439">
-                                        <label class="btn" for="time-20-24">20시 ~ 24시</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+						<div class="accordion-item shadow-sm">
+							<h2 class="accordion-header" id="headingTime">
+								<button class="accordion-button" type="button"
+									data-bs-toggle="collapse" data-bs-target="#collapseTime"
+									aria-expanded="true" aria-controls="collapseTime">출발
+									시간대 설정</button>
+							</h2>
+							<div id="collapseTime" class="accordion-collapse collapse show"
+								aria-labelledby="headingTime">
+								<div class="accordion-body">
+									<div class="btn-group-time-filter" role="group"
+										aria-label="출발 시간 필터">
+										<input type="checkbox" class="btn-check" name="timeFilter"
+											id="time-all" autocomplete="off" checked data-min="0"
+											data-max="1439"> <label class="btn" for="time-all">전체</label>
 
-                        <div class="accordion-item shadow-sm">
-                            <h2 class="accordion-header" id="headingAirline">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAirline" aria-expanded="false" aria-controls="collapseAirline">
-                                    항공사
-                                </button>
-                            </h2>
-                            <div id="collapseAirline" class="accordion-collapse collapse" aria-labelledby="headingAirline">
-                                <div class="accordion-body">
-                                    <div id="airline-filter-list"></div>
-                                </div>
-                            </div>
-                        </div>
+										<input type="checkbox" class="btn-check time-filter-option"
+											name="timeFilter" id="time-00-04" autocomplete="off"
+											data-min="0" data-max="240"> <label class="btn"
+											for="time-00-04">00시 ~ 04시</label> <input type="checkbox"
+											class="btn-check time-filter-option" name="timeFilter"
+											id="time-04-08" autocomplete="off" data-min="240"
+											data-max="480"> <label class="btn" for="time-04-08">04시
+											~ 08시</label> <input type="checkbox"
+											class="btn-check time-filter-option" name="timeFilter"
+											id="time-08-12" autocomplete="off" data-min="480"
+											data-max="720"> <label class="btn" for="time-08-12">08시
+											~ 12시</label> <input type="checkbox"
+											class="btn-check time-filter-option" name="timeFilter"
+											id="time-12-16" autocomplete="off" data-min="720"
+											data-max="960"> <label class="btn" for="time-12-16">12시
+											~ 16시</label> <input type="checkbox"
+											class="btn-check time-filter-option" name="timeFilter"
+											id="time-16-20" autocomplete="off" data-min="960"
+											data-max="1200"> <label class="btn" for="time-16-20">16시
+											~ 20시</label> <input type="checkbox"
+											class="btn-check time-filter-option" name="timeFilter"
+											id="time-20-24" autocomplete="off" data-min="1200"
+											data-max="1439"> <label class="btn" for="time-20-24">20시
+											~ 24시</label>
+									</div>
+								</div>
+							</div>
+						</div>
 
-                        <div class="accordion-item shadow-sm">
-                            <h2 class="accordion-header" id="headingDuration">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDuration" aria-expanded="false" aria-controls="collapseDuration">
-                                    총 소요시간
-                                </button>
-                            </h2>
-                            <div id="collapseDuration" class="accordion-collapse collapse" aria-labelledby="headingDuration">
-                                <div class="accordion-body">
-                                    <div class="filter-label mb-2">
-                                        <span id="duration-min">0시간 0분</span>
-                                        <span id="duration-max">0시간 0분</span>
-                                    </div>
-                                    <div id="duration-slider" class="mx-1"></div>
-                                </div>
-                            </div>
-                        </div>
+						<div class="accordion-item shadow-sm">
+							<h2 class="accordion-header" id="headingAirline">
+								<button class="accordion-button collapsed" type="button"
+									data-bs-toggle="collapse" data-bs-target="#collapseAirline"
+									aria-expanded="false" aria-controls="collapseAirline">
+									항공사</button>
+							</h2>
+							<div id="collapseAirline" class="accordion-collapse collapse"
+								aria-labelledby="headingAirline">
+								<div class="accordion-body">
+									<div id="airline-filter-list"></div>
+								</div>
+							</div>
+						</div>
 
-                        <div class="accordion-item shadow-sm">
-                            <h2 class="accordion-header" id="headingPrice">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrice" aria-expanded="false" aria-controls="collapsePrice">
-                                    가격
-                                </button>
-                            </h2>
-                            <div id="collapsePrice" class="accordion-collapse collapse" aria-labelledby="headingPrice">
-                                <div class="accordion-body">
-                                    <div class="filter-label mb-2">
-                                        <span id="price-min">0원</span>
-                                        <span id="price-max">0원</span>
-                                    </div>
-                                    <div id="price-slider" class="mx-1"></div>
-                                </div>
-                            </div>
-                        </div>
+						<div class="accordion-item shadow-sm">
+							<h2 class="accordion-header" id="headingDuration">
+								<button class="accordion-button collapsed" type="button"
+									data-bs-toggle="collapse" data-bs-target="#collapseDuration"
+									aria-expanded="false" aria-controls="collapseDuration">
+									총 소요시간</button>
+							</h2>
+							<div id="collapseDuration" class="accordion-collapse collapse"
+								aria-labelledby="headingDuration">
+								<div class="accordion-body">
+									<div class="filter-label mb-2">
+										<span id="duration-min">0시간 0분</span> <span id="duration-max">0시간
+											0분</span>
+									</div>
+									<div id="duration-slider" class="mx-1"></div>
+								</div>
+							</div>
+						</div>
 
-                    </div> </div>
+						<div class="accordion-item shadow-sm">
+							<h2 class="accordion-header" id="headingPrice">
+								<button class="accordion-button collapsed" type="button"
+									data-bs-toggle="collapse" data-bs-target="#collapsePrice"
+									aria-expanded="false" aria-controls="collapsePrice">
+									가격</button>
+							</h2>
+							<div id="collapsePrice" class="accordion-collapse collapse"
+								aria-labelledby="headingPrice">
+								<div class="accordion-body">
+									<div class="filter-label mb-2">
+										<span id="price-min">0원</span> <span id="price-max">0원</span>
+									</div>
+									<div id="price-slider" class="mx-1"></div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
 			</div>
 
 			<div class="col-lg-9">
 				<h4 class="fw-bold">가는편을 선택해 주세요</h4>
 				<p class="text-body-secondary mb-4">성인 1인 기준, 발권대행수수료 포함</p>
 
-                <div class="vstack gap-3 flight-item-container" th:each="searchAir : ${searchairDto}">
+				<div class="vstack gap-3 flight-item-container"
+					th:each="searchAir : ${searchairDto}">
 					<button class="card flight-card-button w-100"
 						th:data-offer-id="${searchAir.id}"
 						th:data-departure-time="${searchAir.departureTime}"
@@ -565,9 +817,15 @@ body { margin: 0; background-color: #f8f9fa; }
 										남음</small>
 									<div class="d-flex align-items-center mt-1">
 										<div>
-											<h6 class="fw-bold mb-0"
-												th:text="${searchAir.departureTime} + ' - ' + ${searchAir.arrivalTime}">16:00
-												- 17:40</h6>
+											<h6 class="fw-bold mb-0 d-flex align-items-center">
+												<span
+													th:text="${searchAir.departureTime} + ' - ' + ${searchAir.arrivalTime}">16:00
+													- 17:40</span> <span
+													th:if="${searchAir.arrivalDate != null and searchAir.arrivalDate != searchAir.departureDate}"
+													class="badge bg-danger-subtle text-danger-emphasis rounded-pill ms-2"
+													style="font-size: 0.7rem;"> +1일 </span>
+											</h6>
+
 											<small class="text-body-secondary"
 												th:text="${searchAir.departureCode} + ' → ' + ${searchAir.arrivalCode} + ' · ' + ${searchAir.carrierCode} + ' 항공'">CJU-KIX
 												· 티웨이항공</small>
@@ -592,10 +850,205 @@ body { margin: 0; background-color: #f8f9fa; }
 		</div>
 	</main>
 
-	<div class="modal fade" id="researchModal" tabindex="-1" aria-labelledby="researchModalLabel" aria-hidden="true"> <div class="modal-dialog"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title" id="researchModalLabel">재검색</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div> <div class="modal-body"> <form action="/air/searchAirport" method="POST" class="flight-search-form"> <div class="d-flex nav-tabs mb-4"> <div> <input type="radio" name="tripType" value="round-trip" id="modal-round-trip" checked style="display: none;"> <label for="modal-round-trip" class="nav-link-label">왕복</label> </div> <div> <input type="radio" name="tripType" value="one-way" id="modal-one-way" style="display: none;"> <label for="modal-one-way" class="nav-link-label">편도</label> </div> </div> <div class="d-flex align-items-end justify-content-between mb-4"> <div class="flex-grow-1"> <label for="modalDepartureBtn" class="form-label">출발지</label> <button type="button" id="modalDepartureBtn" class="form-control-like-button">SEL</button> </div> <button type="button" class="swap-button">↔</button> <div class="flex-grow-1"> <label for="modalArrivalBtn" class="form-label">도착지</label> <button type="button" id="modalArrivalBtn" class="form-control-like-button">CJU</button> </div> </div> <div class="mb-4"> <label for="modalDateRangeBtn" class="form-label">날짜</label> <button type="button" id="modalDateRangeBtn" class="form-control-like-button">2025-10-13 ~ 2025-10-14</button> </div> <div class="mb-4"> <label for="passengerBtn" class="form-label">탑승객</label> <button type="button" id="passengerBtn" class="form-control-like-button">성인 1 어린이 0 유아 0 · ECONOMY class</button> </div> <input type="hidden" name="departureCode" id="modalDepartureCodeInput"> <input type="hidden" name="arrivalCode" id="modalArrivalCodeInput"> <input type="hidden" name="departureDate" id="modalDepartureDateInput"> <input type="hidden" name="returnDate" id="modalReturnDateInput"> <input type="hidden" name="adults" id="adultsInput"> <input type="hidden" name="children" id="childrenInput"> <input type="hidden" name="infants" id="infantsInput"> <input type="hidden" name="travelClass" id="travelClassInput"> <input type="hidden" name="departureKoLocation" id="modalDepartureKoLocationInput"> <input type="hidden" name="arrivalKoLocation" id="modalArrivalKoLocationInput"> <div class="d-grid mt-2"> <button type="submit" class="btn btn-primary btn-lg btn-submit">검색하기</button> </div> </form> </div> </div> </div> </div>
-    <div class="modal fade" id="returnFlightListModal" tabindex="-1" aria-hidden="true"> <div class="modal-dialog modal-dialog-scrollable modal-xl"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title">오는 편 항공권을 선택해주세요</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div> <div class="modal-body"> <div id="modal-return-flight-list"> <div class="d-flex justify-content-center"> <div class="spinner-border" role="status"> <span class="visually-hidden">Loading...</span> </div> <p class="ms-3">오는 편 항공권을 조회중입니다...</p> </div> </div> </div> <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button> </div> </div> </div> </div>
-    <div id="locationModal" class="modal-overlay"> <div class="modal-content"> <div class="modal-header"> <h2 id="modalTitle">출발지 선택</h2> <button id="closeModalBtn" class="close-button">&times;</button> </div> <input type="text" id="searchAir" class="modal-search-input" placeholder="국가, 도시 또는 공항으로 찾아보세요"> <div class="popular-searches"> <h3>국내 인기 검색</h3> <div class="tags-container"> <span class="tag" data-iata="ICN">서울/인천</span> <span class="tag" data-iata="CJU">제주</span> <span class="tag" data-iata="PUS">부산</span> <span class="tag" data-iata="GMP">서울/김포</span> <span class="tag" data-iata="RSU">여수</span> </div> <h3>동남아 인기 검색</h3> <div class="tags-container"> <span class="tag" data-iata="DAD">다낭</span> <span class="tag" data-iata="BKK">방콕</span> <span class="tag" data-iata="TPE">타이페이</span> <span class="tag" data-iata="HKG">홍콩</span> <span class="tag" data-iata="DPS">발리</span> </div> <h3>일본 인기 검색</h3> <div class="tags-container"> <span class="tag" data-iata="NRT">도쿄/나리타</span> <span class="tag" data-iata="KIX">오사카</span> <span class="tag" data-iata="FUK">후쿠오카</span> <span class="tag" data-iata="CTS">삿포로/산치토세</span> <span class="tag" data-iata="OKA">오키나와</span> </div> <h3>유럽 인기 검색</h3> <div class="tags-container"> <span class="tag" data-iata="CDG">파리</span> <span class="tag" data-iata="LHR">런던</span> <span class="tag" data-iata="FCO">로마</span> <span class="tag" data-iata="MAD">마드리드</span> <span class="tag" data-iata="BCN">바르셀로나</span> </div> <h3>북미 및 기타</h3> <div class="tags-container"> <span class="tag" data-iata="JEK">뉴욕</span> <span class="tag" data-iata="SYD">시드니</span> <span class="tag" data-iata="LAX">로스앤젤레스</span> <span class="tag" data-iata="SFO">샌프란시스코</span> <span class="tag" data-iata="GUM">괌</span> </div> </div> </div> </div>
-    <div id="passengerModal" class="modal-overlay"> <div class="modal-content"> <div class="modal-header"> <h2>인원 및 좌석 등급</h2> <button class="close-button">&times;</button> </div> <div class="passenger-section"> <h4>인원</h4> <div class="passenger-row" data-type="adult"> <div class="passenger-label"> <div>성인</div> <small>만 12세 이상</small> </div> <div class="passenger-controls"> <button type="button" class="control-btn minus" disabled>-</button> <span class="count">1</span> <button type="button" class="control-btn plus">+</button> </div> </div> <div class="passenger-row" data-type="child"> <div class="passenger-label"> <div>소아</div> <small>만 2~12세 미만</small> </div> <div class="passenger-controls"> <button type="button" class="control-btn minus" disabled>-</button> <span class="count">0</span> <button type="button" class="control-btn plus">+</button> </div> </div> <div class="passenger-row" data-type="infant"> <div class="passenger-label"> <div>유아</div> <small>만 2세 미만 (보호자와 동반 착석)</small> </div> <div class="passenger-controls"> <button type="button" class="control-btn minus" disabled>-</button> <span class="count">0</span> <button type="button" class="control-btn plus">+</button> </div> </div> </div> <div class="seat-class-section"> <h4>좌석등급</h4> <div class="seat-class-options"> <label><input type="radio" name="travelClassModal" value="ECONOMY" checked> 일반석</label> <label><input type="radio" name="travelClassModal" value="PREMIUM_ECONOMY"> 프리미엄 일반석</label> <label><input type="radio" name="travelClassModal" value="BUSINESS"> 비즈니스석</label> <label><input type="radio" name="travelClassModal" value="FIRST"> 일등석</label> </div> </div> <button type="button" id="confirmPassengerBtn" class="confirm-btn">선택 완료</button> </div> </div>
+	<div class="modal fade" id="researchModal" tabindex="-1"
+		aria-labelledby="researchModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="researchModalLabel">재검색</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form action="/air/searchAirport" method="POST"
+						class="flight-search-form">
+						<div class="d-flex nav-tabs mb-4">
+							<div>
+								<input type="radio" name="tripType" value="round-trip"
+									id="modal-round-trip" checked style="display: none;"> <label
+									for="modal-round-trip" class="nav-link-label">왕복</label>
+							</div>
+							<div>
+								<input type="radio" name="tripType" value="one-way"
+									id="modal-one-way" style="display: none;"> <label
+									for="modal-one-way" class="nav-link-label">편도</label>
+							</div>
+						</div>
+						<div class="d-flex align-items-end justify-content-between mb-4">
+							<div class="flex-grow-1">
+								<label for="modalDepartureBtn" class="form-label">출발지</label>
+								<button type="button" id="modalDepartureBtn"
+									class="form-control-like-button">SEL</button>
+							</div>
+							<button type="button" class="swap-button">↔</button>
+							<div class="flex-grow-1">
+								<label for="modalArrivalBtn" class="form-label">도착지</label>
+								<button type="button" id="modalArrivalBtn"
+									class="form-control-like-button">CJU</button>
+							</div>
+						</div>
+						<div class="mb-4">
+							<label for="modalDateRangeBtn" class="form-label">날짜</label>
+							<button type="button" id="modalDateRangeBtn"
+								class="form-control-like-button">2025-10-13 ~
+								2025-10-14</button>
+						</div>
+						<div class="mb-4">
+							<label for="passengerBtn" class="form-label">탑승객</label>
+							<button type="button" id="passengerBtn"
+								class="form-control-like-button">성인 1 어린이 0 유아 0 ·
+								ECONOMY class</button>
+						</div>
+						<input type="hidden" name="departureCode"
+							id="modalDepartureCodeInput"> <input type="hidden"
+							name="arrivalCode" id="modalArrivalCodeInput"> <input
+							type="hidden" name="departureDate" id="modalDepartureDateInput">
+						<input type="hidden" name="returnDate" id="modalReturnDateInput">
+						<input type="hidden" name="adults" id="adultsInput"> <input
+							type="hidden" name="children" id="childrenInput"> <input
+							type="hidden" name="infants" id="infantsInput"> <input
+							type="hidden" name="travelClass" id="travelClassInput"> <input
+							type="hidden" name="departureKoLocation"
+							id="modalDepartureKoLocationInput"> <input type="hidden"
+							name="arrivalKoLocation" id="modalArrivalKoLocationInput">
+						<div class="d-grid mt-2">
+							<button type="submit" class="btn btn-primary btn-lg btn-submit">검색하기</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="returnFlightListModal" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">오는 편 항공권을 선택해주세요</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div id="modal-return-flight-list">
+						<div class="d-flex justify-content-center">
+							<div class="spinner-border" role="status">
+								<span class="visually-hidden">Loading...</span>
+							</div>
+							<p class="ms-3">오는 편 항공권을 조회중입니다...</p>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="locationModal" class="modal-overlay">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 id="modalTitle">출발지 선택</h2>
+				<button id="closeModalBtn" class="close-button">&times;</button>
+			</div>
+			<input type="text" id="searchAir" class="modal-search-input"
+				placeholder="국가, 도시 또는 공항으로 찾아보세요">
+			<div class="popular-searches">
+				<h3>국내 인기 검색</h3>
+				<div class="tags-container">
+					<span class="tag" data-iata="ICN">서울/인천</span> <span class="tag"
+						data-iata="CJU">제주</span> <span class="tag" data-iata="PUS">부산</span>
+					<span class="tag" data-iata="GMP">서울/김포</span> <span class="tag"
+						data-iata="RSU">여수</span>
+				</div>
+				<h3>동남아 인기 검색</h3>
+				<div class="tags-container">
+					<span class="tag" data-iata="DAD">다낭</span> <span class="tag"
+						data-iata="BKK">방콕</span> <span class="tag" data-iata="TPE">타이페이</span>
+					<span class="tag" data-iata="HKG">홍콩</span> <span class="tag"
+						data-iata="DPS">발리</span>
+				</div>
+				<h3>일본 인기 검색</h3>
+				<div class="tags-container">
+					<span class="tag" data-iata="NRT">도쿄/나리타</span> <span class="tag"
+						data-iata="KIX">오사카</span> <span class="tag" data-iata="FUK">후쿠오카</span>
+					<span class="tag" data-iata="CTS">삿포로/산치토세</span> <span class="tag"
+						data-iata="OKA">오키나와</span>
+				</div>
+				<h3>유럽 인기 검색</h3>
+				<div class="tags-container">
+					<span class="tag" data-iata="CDG">파리</span> <span class="tag"
+						data-iata="LHR">런던</span> <span class="tag" data-iata="FCO">로마</span>
+					<span class="tag" data-iata="MAD">마드리드</span> <span class="tag"
+						data-iata="BCN">바르셀로나</span>
+				</div>
+				<h3>북미 및 기타</h3>
+				<div class="tags-container">
+					<span class="tag" data-iata="JEK">뉴욕</span> <span class="tag"
+						data-iata="SYD">시드니</span> <span class="tag" data-iata="LAX">로스앤젤레스</span>
+					<span class="tag" data-iata="SFO">샌프란시스코</span> <span class="tag"
+						data-iata="GUM">괌</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="passengerModal" class="modal-overlay">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>인원 및 좌석 등급</h2>
+				<button class="close-button">&times;</button>
+			</div>
+			<div class="passenger-section">
+				<h4>인원</h4>
+				<div class="passenger-row" data-type="adult">
+					<div class="passenger-label">
+						<div>성인</div>
+						<small>만 12세 이상</small>
+					</div>
+					<div class="passenger-controls">
+						<button type="button" class="control-btn minus" disabled>-</button>
+						<span class="count">1</span>
+						<button type="button" class="control-btn plus">+</button>
+					</div>
+				</div>
+				<div class="passenger-row" data-type="child">
+					<div class="passenger-label">
+						<div>소아</div>
+						<small>만 2~12세 미만</small>
+					</div>
+					<div class="passenger-controls">
+						<button type="button" class="control-btn minus" disabled>-</button>
+						<span class="count">0</span>
+						<button type="button" class="control-btn plus">+</button>
+					</div>
+				</div>
+				<div class="passenger-row" data-type="infant">
+					<div class="passenger-label">
+						<div>유아</div>
+						<small>만 2세 미만 (보호자와 동반 착석)</small>
+					</div>
+					<div class="passenger-controls">
+						<button type="button" class="control-btn minus" disabled>-</button>
+						<span class="count">0</span>
+						<button type="button" class="control-btn plus">+</button>
+					</div>
+				</div>
+			</div>
+			<div class="seat-class-section">
+				<h4>좌석등급</h4>
+				<div class="seat-class-options">
+					<label><input type="radio" name="travelClassModal"
+						value="ECONOMY" checked> 일반석</label> <label><input
+						type="radio" name="travelClassModal" value="PREMIUM_ECONOMY">
+						프리미엄 일반석</label> <label><input type="radio"
+						name="travelClassModal" value="BUSINESS"> 비즈니스석</label> <label><input
+						type="radio" name="travelClassModal" value="FIRST"> 일등석</label>
+				</div>
+			</div>
+			<button type="button" id="confirmPassengerBtn" class="confirm-btn">선택
+				완료</button>
+		</div>
+	</div>
 
 	<div id="loadingModal">
 		<div class="spinner"></div>
@@ -608,7 +1061,8 @@ body { margin: 0; background-color: #f8f9fa; }
 		src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 	<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
 
 	<script>
     // 🟢 (기존 JS - 'airList.html' 용) 🟢
@@ -682,34 +1136,65 @@ body { margin: 0; background-color: #f8f9fa; }
                 const isDirectText = flight.returnDirectFlight ? '직항' : '경유';
                 const rawPrice = flight.returnTotalPrice;
                 const formattedPrice = new Intl.NumberFormat('ko-KR').format(rawPrice);
-    
+
+                // 1. 날짜 포맷팅 (YYYY-MM-DD -> MM.DD 형태로 변환)
+                // 예: 2025-11-29 -> 11.29
+                let dateRangeStr = "";
+                if (flight.returnDepartureDate && flight.returnArrivalDate) {
+                    const depDate = flight.returnDepartureDate.substring(5).replace('-', '.');
+                    const arrDate = flight.returnArrivalDate.substring(5).replace('-', '.');
+                    dateRangeStr = `${depDate} - ${arrDate}`;
+                }
+
+                // 2. +1일 뱃지 로직 (기존 유지)
+                let dateBadgeHtml = '';
+                if (flight.returnArrivalDate && flight.returnDepartureDate && 
+                    flight.returnArrivalDate !== flight.returnDepartureDate) {
+                    dateBadgeHtml = `<span class="badge bg-danger-subtle text-danger-emphasis rounded-pill ms-2" style="font-size: 0.7rem;">+1일</span>`;
+                }
+
                 const flightHtml = `
                     <div class="card flight-card-button mb-2">
-                        <div class="card-body"> <div class="row align-items-center">
-                            <div class="col-md-5">
-                                <h6 class="fw-bold mb-0">${flight.returnDepartureTime} - ${flight.returnArrivalTime}</h6>
-                                <small class="text-body-secondary">${flight.returnDepartureCode} → ${flight.returnArrivalCode} · ${flight.returnCarrierCode} 항공</small>
-                            </div>
-                            <div class="col-md-3 text-md-center">
-                                <span class="fw-bold">${isDirectText}</span>
-                            </div>
-                            <div class="col-md-4 text-md-end">
-                                <div class="d-flex flex-column align-items-end">
-                                    <span class="price-display mb-1">${formattedPrice}원</span>                                  
-                                    <button class="btn btn-primary btn-sm"
-                                            data-id="${flight.id}"
-                                            data-carrier-code="${flight.returnCarrierCode}"
-                                            data-departure-time="${flight.returnDepartureTime}"
-                                            data-arrival-time="${flight.returnArrivalTime}"
-                                            data-total-price="${rawPrice}"
-                                            data-origin-code="${flight.returnDepartureCode}"
-                                            data-destination-code="${flight.returnArrivalCode}"
-                                            onclick="selectReturnFlight(this)">
-                                        선택
-                                    </button>
+                        <div class="card-body"> 
+                            <div class="row align-items-center">
+                                <div class="col-md-5">
+                                    
+                                    <span class="d-block text-secondary fw-bold mb-1" style="font-size: 0.85rem;">
+                                        ${dateRangeStr}
+                                    </span>
+
+                                    <h6 class="fw-bold mb-0 d-flex align-items-center">
+                                        ${flight.returnDepartureTime} - ${flight.returnArrivalTime}
+                                        ${dateBadgeHtml} 
+                                    </h6>
+                                    
+                                    <small class="text-body-secondary">
+                                        ${flight.returnDepartureCode} → ${flight.returnArrivalCode} · ${flight.returnCarrierCode} 항공
+                                    </small>
                                 </div>
-                            </div>
-                        </div> </div> </div>`;
+                                <div class="col-md-3 text-md-center">
+                                    <span class="fw-bold">${isDirectText}</span>
+                                </div>
+                                <div class="col-md-4 text-md-end">
+                                    <div class="d-flex flex-column align-items-end">
+                                        <span class="price-display mb-1">${formattedPrice}원</span>                                  
+                                        <button class="btn btn-primary btn-sm"
+                                                data-id="${flight.id}"
+                                                data-carrier-code="${flight.returnCarrierCode}"
+                                                data-departure-time="${flight.returnDepartureTime}"
+                                                data-arrival-time="${flight.returnArrivalTime}"
+                                                data-total-price="${rawPrice}"
+                                                data-origin-code="${flight.returnDepartureCode}"
+                                                data-destination-code="${flight.returnArrivalCode}"
+                                                onclick="selectReturnFlight(this)">
+                                            선택
+                                        </button>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div> 
+                    </div>`;
+                
                 listContainer.insertAdjacentHTML('beforeend', flightHtml);
             });
         } catch (error) {
