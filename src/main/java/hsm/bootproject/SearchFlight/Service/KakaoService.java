@@ -83,20 +83,24 @@ public class KakaoService {
 		
 		String tokenResponse = kakao_request_token(code);
 		System.out.println("카카오 토큰 응답: " + tokenResponse);
+		
 		if (tokenResponse == null || tokenResponse.isEmpty()) {
 			System.out.println("카카오로부터 토큰 응답을 받지 못했습니다.");
 			return null;
 		}
+		
 		JsonObject tokenObj = JsonParser.parseString(tokenResponse).getAsJsonObject();
 		if (!tokenObj.has("access_token")) {
 			System.out.println("응답에 액세스 토큰이 없습니다.");
 			return null;
 		}
+		
 		String access_token = tokenObj.get("access_token").getAsString();
 
 		// 2. 발급받은 토큰으로 사용자 정보를 요청합니다.
 		String userInfoResponse = kakao_request_userInfo(access_token);
 		System.out.println("카카오 사용자 정보 응답: " + userInfoResponse);
+		
 		if (userInfoResponse == null || userInfoResponse.isEmpty()) {
 			System.out.println("카카오로부터 사용자 정보 응답을 받지 못했습니다.");
 			return null;

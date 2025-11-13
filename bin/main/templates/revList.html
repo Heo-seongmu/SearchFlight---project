@@ -420,6 +420,39 @@ body {
 .btn-modal-primary:hover {
 	background-color: #4aa0a5;
 }
+
+.spinner {
+	width: 50px;
+	height: 50px;
+	border: 5px solid #f0f0f0; /* 스피너 트랙 (옅은 회색) */
+	border-top: 5px solid #5ac4c9; /* 스피너 색상 (테마색) */
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.spinner-container {
+	display: flex;
+	flex-direction: column; /* 세로 정렬 */
+	align-items: center;    /* 가로 중앙 정렬 */
+	gap: 16px;              /* 스피너와 텍스트 사이 간격 */
+}
+
+/* ⭐️ (신규) 스피너 텍스트 스타일 ⭐️ */
+.spinner-text {
+	font-size: 18px;
+	font-weight: bold;
+	color: #ffffff; /* 어두운 오버레이 위에서 잘 보이도록 흰색 */
+	margin: 0; /* 불필요한 여백 제거 */
+}
 </style>
 </head>
 <body>
@@ -542,10 +575,14 @@ body {
 						<span>총 결제 금액</span> <strong
 							th:text="${#numbers.formatInteger(booking.totalPrice, 0, 'COMMA')} + '원'">183,579원</strong>
 					</div>
-					<div class="action-buttons">
+					
+					<div class="action-buttons" style="display: flex; gap: 8px;">
 						<button class="btn-cancel"
 							th:if="${booking.bookingStatus == 'RESERVED'}"
 							th:onclick="openCancelModal([[${booking.id}]])">예약 취소</button>
+						
+						<button type="button" class="btn-rebook"
+							th:onclick="showNearbyHotels([[${booking.departureDestinationCode}]])">근천 호텔</button>
 					</div>
 				</th:block>
 
@@ -601,6 +638,17 @@ body {
 			</div>
 		</div>
 	</div>
+	
+	<div id="spinnerModal" class="modal-overlay" style="display: none;">
+		
+		<div class="spinner-container">
+			
+			<div class="spinner"></div>
+			
+			<p class="spinner-text">근처 호텔 찾는 중...</p>
+			
+		</div>
+	</div>
 
 	<script type="text/javascript">
 		// '예약 취소 확인' 모달 열기
@@ -625,11 +673,55 @@ body {
 		function closeModal(modalId) {
 			document.getElementById(modalId).style.display = 'none';
 		}
+		
+		function showSpinner() {
+			document.getElementById('spinnerModal').style.display = 'flex';
+		}
 
-		/* '처리 완료' 모달은 
-		   Thymeleaf가 th:style="display:flex"로 띄워주기 때문에
-		   별도 JS 리스너가 필요 없습니다.
+		// 스피너를 숨기는 함수
+		function hideSpinner() {
+			document.getElementById('spinnerModal').style.display = 'none';
+		}
+
+		/**
+		 * '근처 호텔' 버튼 클릭 시 실행되는 비동기 함수
+		 * @param {string} destinationCode - 도착지 IATA 코드 (예: 'KIX')
 		 */
+		async function showNearbyHotels(destinationCode) {
+			
+			// 1. 스피너 표시
+			showSpinner();
+
+			try {
+				// 2. API 요청 (fetch 사용)
+				// (이전 오류 메시지에 따라 파라미터 이름을 'destination'으로 했습니다.)
+				const response = await fetch('/hotel/List?destination=' + destinationCode);
+
+				// 3. 응답 확인
+				if (!response.ok) {
+					// 서버가 4xx, 5xx 등의 오류 코드를 반환한 경우
+					throw new Error('서버 응답 오류 (상태: ' + response.status + ')');
+				}
+
+				// 4. 요청 성공
+				console.log('API 요청 성공. 호텔 페이지로 이동합니다.');
+				
+				// 5. (중요) 진짜 페이지로 이동
+				// fetch가 성공했으므로, 이제 원하는 페이지로 이동시킵니다.
+				window.location.href = '/hotel/List?destination=' + destinationCode;
+
+				// (페이지가 이동되면 스피너는 자동으로 사라지므로 
+				//  성공 시에는 hideSpinner()를 굳이 호출할 필요가 없습니다.)
+
+			} catch (error) {
+				// 6. 에러 처리
+				console.error('호텔 정보 요청 중 오류 발생:', error);
+				alert('페이지를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.');
+				
+				// 7. (중요) 실패 시에는 스피너를 반드시 숨겨야 합니다.
+				hideSpinner();
+			}
+		}
 	</script>
 </body>
 </html>

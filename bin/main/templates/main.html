@@ -11,9 +11,9 @@
 /* --- 기본 페이지 스타일 --- */
 body {
 	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-	background-color: #f0f2f5; /* 페이지 전체 배경색 */
-	margin: 0; /* body의 기본 마진 제거 */
-	padding: 0; /* body의 기본 패딩 제거 */
+	background-color: #f0f2f5;
+	margin: 0;
+	padding: 0;
 }
 
 /* --- 헤더 (GNB) 스타일 --- */
@@ -44,19 +44,25 @@ body {
 	margin: 0;
 }
 
+.box__inner h1 a {
+	color: #fff;
+	text-decoration: none;
+	font-size: 22px;
+	font-weight: bold;
+}
 
 /* 상단 메뉴 (항공, 호텔 등) 스타일 */
 .list__tab {
-	list-style: none; /* 리스트 점 제거 */
+	list-style: none;
 	margin: 0;
 	padding: 0;
-	display: flex; /* 메뉴 아이템들을 가로로 정렬 */
-	gap: 20px; /* 메뉴 아이템 간 간격 */
+	display: flex;
+	gap: 20px;
 }
 
 .list__tab .list-item a {
-	color: #fff; /* 메뉴 글자색 흰색 */
-	text-decoration: none; /* 밑줄 제거 */
+	color: #fff;
+	text-decoration: none;
 	font-weight: bold;
 	padding: 5px 0;
 	position: relative;
@@ -65,17 +71,17 @@ body {
 
 .list__tab .list-item a:hover, .list__tab .list-item a.link__tab--active
 	{
-	color: #eee; /* 호버 또는 활성화 시 글자색 변경 */
+	color: #eee;
 }
 
 .list__tab .list-item a.link__tab--active::after {
 	content: '';
 	position: absolute;
 	left: 0;
-	bottom: -5px; /* 밑줄 위치 조정 */
+	bottom: -5px;
 	width: 100%;
 	height: 2px;
-	background-color: #fff; /* 활성화 메뉴 밑줄 */
+	background-color: #fff;
 }
 
 .link-container {
@@ -99,32 +105,31 @@ main {
 	width: 100%;
 }
 
-/* --- 배경 이미지와 검색창을 감싸는 hero 섹션 --- */
+/* --- Hero 섹션 --- */
 .hero-section {
-	position: relative; /* 자식 요소인 검색창을 위치시킬 기준점 */
+	position: relative;
 	width: 100%;
-	margin-bottom: 100px; /* 검색창이 차지하는 공간 확보 */
+	margin-bottom: 100px;
 }
 
 .bg-image-full {
-	background-image: url(/image/самолётик.png); /* 이미지 경로를 실제 경로로 바꿔주세요 */
+	background-image: url(/image/самолётик.png);
 	background-size: 100%;
 	background-position: center;
-	height: 30vh; /* 원하는 높이로 조절하세요 */
+	height: 30vh;
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
+	background-color: #ddd;
 }
 
-/* --- 검색 위젯 컨테이너 (위치 조정) --- */
+/* --- 검색 위젯 --- */
 .search-widget-container {
-	/* hero-section을 기준으로 절대 위치 지정 */
 	position: absolute;
-	bottom: -80px; /* 배경 이미지 아래쪽에 걸치도록 배치 */
+	bottom: -80px;
 	left: 50%;
 	transform: translateX(-50%);
 	z-index: 10;
-	/* 기존 스타일 유지 */
 	background-color: white;
 	border-radius: 16px;
 	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -134,7 +139,6 @@ main {
 	box-sizing: border-box;
 }
 
-/* --- 검색 위젯 내부 스타일 (기존과 동일) --- */
 .top-section {
 	display: flex;
 	justify-content: space-between;
@@ -222,7 +226,7 @@ main {
 	flex-grow: 0;
 }
 
-/* --- 모달 스타일 (기존과 동일) --- */
+/* --- 모달 공통 스타일 --- */
 .modal-overlay {
 	display: none;
 	position: fixed;
@@ -266,6 +270,95 @@ main {
 	cursor: pointer;
 }
 
+/* --- 여행지 추천 대형 모달 스타일 --- */
+.modal-large {
+	width: 800px;
+	max-width: 95%;
+	max-height: 90vh;
+	padding: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.modal-large .modal-header {
+	padding: 20px 24px;
+	border-bottom: 1px solid #eee;
+	background-color: #fff;
+	z-index: 10;
+	margin-bottom: 0;
+}
+
+.modal-large .modal-body {
+	padding: 24px;
+	overflow-y: auto;
+	background-color: #f9f9f9;
+}
+
+.dest-desc {
+	font-size: 16px;
+	color: #555;
+	margin-bottom: 30px;
+	line-height: 1.6;
+}
+
+.rec-title {
+	font-size: 18px;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 15px;
+}
+
+/* 추천 액티비티 그리드 */
+.activity-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 20px;
+}
+
+.activity-item {
+	background: white;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	transition: transform 0.2s;
+}
+
+.activity-item:hover {
+	transform: translateY(-3px);
+}
+
+.activity-img {
+	width: 100%;
+	height: 160px;
+	object-fit: cover;
+}
+
+.activity-info {
+	padding: 15px;
+}
+
+.activity-info h5 {
+	margin: 0 0 5px 0;
+	font-size: 16px;
+	font-weight: bold;
+	color: #333;
+}
+
+.activity-info p {
+	margin: 0;
+	font-size: 13px;
+	color: #666;
+	line-height: 1.4;
+}
+
+@media ( max-width : 600px) {
+	.activity-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* --- 검색 모달 내부 --- */
 .modal-search-input {
 	width: 100%;
 	padding: 12px;
@@ -303,7 +396,6 @@ main {
 	background-color: #e0e0e0;
 }
 
-/* 검색 결과 항목 스타일 */
 .search-result-item {
 	padding: 10px 5px;
 	cursor: pointer;
@@ -420,71 +512,81 @@ main {
 }
 
 #alertModal .modal-content {
-    width: 320px;
-    padding: 30px;
-    text-align: center;
+	width: 320px;
+	padding: 30px;
+	text-align: center;
 }
+
 #alertModal p {
-    font-size: 16px;
-    line-height: 1.6;
-    margin: 0 0 20px 0;
-    font-weight: bold;
-    color: #333;
+	font-size: 16px;
+	line-height: 1.6;
+	margin: 0 0 20px 0;
+	font-weight: bold;
+	color: #333;
 }
+
 #alertModal button {
-    width: 100%;
-    padding: 12px;
-    background-color: #3d5aee;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
+	width: 100%;
+	padding: 12px;
+	background-color: #3d5aee;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-size: 16px;
+	font-weight: bold;
+	cursor: pointer;
 }
 
 #loadingModal {
-    position: fixed; /* 화면 전체에 고정 */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* 반투명 검은색 배경 */
-    z-index: 2000; /* 다른 모달보다 위에 표시 */
-    display: none; /* 평소에는 숨김 */
-    justify-content: center;
-    align-items: center;
-    flex-direction: column; /* 아이콘과 텍스트를 세로로 정렬 */
-    color: white;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	z-index: 2000;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	color: white;
 }
 
 .spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #5ac4c9; /* GNB 색상과 통일 */
-    border-radius: 50%;
-    animation: spin 1s linear infinite; /* 회전 애니메이션 */
-    margin-bottom: 20px;
+	width: 50px;
+	height: 50px;
+	border: 5px solid #f3f3f3;
+	border-top: 5px solid #5ac4c9;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+	margin-bottom: 20px;
 }
 
 #loadingModal p {
-    font-size: 18px;
-    font-weight: bold;
+	font-size: 18px;
+	font-weight: bold;
 }
 
-/* 스피너 회전 애니메이션 */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+@
+keyframes spin { 0% {
+	transform: rotate(0deg);
 }
 
+100
+%
+{
+transform
+:
+rotate(
+360deg
+);
+}
+}
 .popular-destinations-section {
 	padding: 40px 0;
 	margin-top: 100px;
 }
 
-/* GNB(헤더)와 동일한 최대 너비를 적용하기 위한 컨테이너 */
 .content-container {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -492,7 +594,6 @@ main {
 	box-sizing: border-box;
 }
 
-/* 메인 타이틀 (예: 대한민국 출발 최저가 항공권) */
 .popular-destinations-section h2 {
 	font-size: 24px;
 	font-weight: bold;
@@ -501,53 +602,48 @@ main {
 	margin-bottom: 8px;
 }
 
-/* 서브 타이틀 (예: 가장 저렴한 가격의...) */
 .popular-destinations-section p {
 	font-size: 16px;
 	color: #777;
 	margin-bottom: 30px;
 }
 
-/* 섹션 제목 (예: 국내 인기 여행지) */
 .popular-destinations-section h3 {
 	font-size: 20px;
 	font-weight: bold;
 	color: #333;
 	margin-top: 40px;
 	margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
 }
 
-/* 카드 그리드 (3열) */
 .destination-grid {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr); /* 3열 그리드 */
-	gap: 24px; /* 카드 사이의 간격 */
+	grid-template-columns: repeat(3, 1fr);
+	gap: 24px;
 }
 
-/* 여행지 카드 */
 .destination-card {
 	background-color: #fff;
-	border-radius: 12px; /* 둥근 모서리 */
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 은은한 그림자 */
-	overflow: hidden; /* 이미지가 모서리를 삐져나가지 않도록 */
-	transition: all 0.3s ease; /* 부드러운 호버 효과 */
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+	overflow: hidden;
+	transition: all 0.3s ease;
+	cursor: pointer;
 }
 
 .destination-card:hover {
-	transform: translateY(-5px); /* 호버 시 살짝 위로 이동 */
+	transform: translateY(-5px);
 	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* 카드 이미지 */
 .destination-card img {
 	width: 100%;
-	height: 200px; /* 이미지 높이 고정 */
-	object-fit: cover; /* 이미지가 잘리지 않고 꽉 차도록 */
+	height: 200px;
+	object-fit: cover;
 }
 
-/* 카드 텍스트 영역 */
 .card-details {
 	padding: 16px;
 }
@@ -565,52 +661,40 @@ main {
 }
 
 .activities-preview {
-    margin-top: 12px; /* 위쪽 제목과의 간격 */
-    display: flex; /* 태그들을 가로로 나열 */
-    flex-wrap: wrap; /* 태그가 많아지면 줄바꿈 */
-    gap: 6px; /* 태그 사이 간격 */
+	margin-top: 12px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
 }
 
 .activity-tag {
-    background-color: #f0f2f5; /* 메인 배경색과 비슷하게 */
-    color: #555;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 20px; /* 동그란 태그 */
-    white-space: nowrap; /* 태그 내용이 줄바꿈되지 않도록 */
+	background-color: #f0f2f5;
+	color: #555;
+	font-size: 12px;
+	padding: 4px 8px;
+	border-radius: 20px;
+	white-space: nowrap;
 }
 
-
-
-/* 태블릿 사이즈 (992px 이하) */
-@media (max-width: 992px) {
+@media ( max-width : 992px) {
 	.destination-grid {
-		grid-template-columns: repeat(2, 1fr); 
+		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
-/* 모바일 사이즈 (576px 이하) */
-@media (max-width: 576px) {
+@media ( max-width : 576px) {
 	.destination-grid {
 		grid-template-columns: 1fr;
 	}
-    
-    .popular-destinations-section h2 {
-        font-size: 20px;
-    }
-    .popular-destinations-section p {
-        font-size: 14px;
-    }
-    .popular-destinations-section h3 {
-        font-size: 18px;
-    }
-}
-
-.box__inner h1 a {
-    color: #fff;             /* 텍스트 색상 (헤더와 동일한 흰색) */
-    text-decoration: none;  /* 링크 밑줄 제거 */
-    font-size: 22px;        /* 폰트 크기 (원하는 크기로 조절하세요) */
-    font-weight: bold;      /* 폰트 굵기 */
+	.popular-destinations-section h2 {
+		font-size: 20px;
+	}
+	.popular-destinations-section p {
+		font-size: 14px;
+	}
+	.popular-destinations-section h3 {
+		font-size: 18px;
+	}
 }
 </style>
 </head>
@@ -621,7 +705,7 @@ main {
 			<div class="box__inner">
 				<h1>
 					<a href="/">무성의 여행</a>
-				</h1>		
+				</h1>
 			</div>
 			<ul class="list__tab">
 				<li class="list-item"><a class="link__tab link__tab--active"
@@ -630,14 +714,14 @@ main {
 				</li>
 			</ul>
 			<div class="link-container">
-				<a href="/revList"
-					class="link__booking-history sp_sd--after" th:if="${session.loginUser != null}">나의 예약내역</a> 
-				<a th:if="${session.loginUser == null}"
+				<a href="/revList" class="link__booking-history sp_sd--after"
+					th:if="${session.loginUser != null}">나의 예약내역</a> <a
+					th:if="${session.loginUser == null}"
 					class="link__booking-history sp_sd--after" href="member/login">로그인</a>
 				<a th:if="${session.loginUser != null}"
 					th:text="${session.loginUser.UserName}"
-					class="link__booking-history sp_sd--after">허성무</a> 
-				<a  th:if="${session.loginUser != null}"
+					class="link__booking-history sp_sd--after">허성무</a> <a
+					th:if="${session.loginUser != null}"
 					class="link__booking-history sp_sd--after" href="member/logout">로그아웃</a>
 			</div>
 		</div>
@@ -646,21 +730,22 @@ main {
 	<main>
 		<section class="hero-section">
 			<div class="bg-image-full"></div>
-			<form class="search-widget-container" action="/air/searchAirport" method="post">
+			<form class="search-widget-container" action="/air/searchAirport"
+				method="post">
 				<div class="top-section">
 					<div class="tabs">
 						<input type="radio" name="tripType" value="round-trip"
 							id="round-trip" checked style="display: none;"> <label
-							for="round-trip" class="tab-label">왕복</label> 
-						<input type="radio" name="tripType" value="one-way" id="one-way"
+							for="round-trip" class="tab-label">왕복</label> <input type="radio"
+							name="tripType" value="one-way" id="one-way"
 							style="display: none;"> <label for="one-way"
 							class="tab-label">편도</label>
 					</div>
 					<div class="direct-flight-option">
-    					<input type="hidden" name="directFlight" id="directFlightInput" value="false"> 
-    
-   						 <input type="checkbox" id="direct-flight-checkbox"> 
-   						 <label for="direct-flight-checkbox">직항</label>
+						<input type="hidden" name="directFlight" id="directFlightInput"
+							value="false"> <input type="checkbox"
+							id="direct-flight-checkbox"> <label
+							for="direct-flight-checkbox">직항</label>
 					</div>
 				</div>
 				<div class="search-fields">
@@ -674,180 +759,68 @@ main {
 						떠나시나요?</button>
 					<input type="hidden" name="departureDate" id="departureDateInput">
 					<input type="hidden" name="returnDate" id="returnDateInput">
-					
+
 					<button type="button" id="passengerBtn" class="field-placeholder">👤
 						탑승객 1명, 일반석</button>
-						
-					<input type="hidden" name="departureCode" id="departureCode" value="SEL"> 
-					<input type="hidden" name="departureKoLocation" id="departureKoLocation" value="서울">
-					<input type="hidden" name="arrivalCode" id="arrivalCode" value=""> 
-					<input type="hidden" name="arrivalKoLocation" id="arrivalKoLocation" value="">
-					<input type="hidden" name="adults" id="adultsInput" value="1"> 
-					<input type="hidden" name="children" id="childrenInput" value="0">
+
+					<input type="hidden" name="departureCode" id="departureCode"
+						value="SEL"> <input type="hidden"
+						name="departureKoLocation" id="departureKoLocation" value="서울">
+					<input type="hidden" name="arrivalCode" id="arrivalCode" value="">
+					<input type="hidden" name="arrivalKoLocation"
+						id="arrivalKoLocation" value=""> <input type="hidden"
+						name="adults" id="adultsInput" value="1"> <input
+						type="hidden" name="children" id="childrenInput" value="0">
 					<input type="hidden" name="infants" id="infantsInput" value="0">
-					<input type="hidden" name="travelClass" id="travelClassInput" value="ECONOMY">
+					<input type="hidden" name="travelClass" id="travelClassInput"
+						value="ECONOMY">
 					<button type="submit" class="submit-button">최저가로 검색</button>
 				</div>
 			</form>
 		</section>
-        
-       <section class="popular-destinations-section">
-            <div class="content-container">
-                <h2>대한민국 출발 인기 항공권</h2>
 
-                <h3>국내 인기 여행지</h3>
-                
-                <div class="destination-grid">
-                    
-                    <div class="destination-card">
-                        <img src="https://afroflix.com.br/wp-content/uploads/2022/12/10-dicas-para-visitar-a-Ilha-de-Jeju-Coreia-do.jpg" alt="제주">
-                        <div class="card-details">
-                            <h4>제주</h4>
-                            <small>대한민국</small>
-                            <div class="activities-preview">
-                                <span class="activity-tag">우도 잠수함</span>
-                                <span class="activity-tag">난타 공연</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="destination-card">
-                        <img src="https://th.bing.com/th/id/R.a6adc43cb36a3dc595b61a274daf97ee?rik=JN1TW6JmvEBV2Q&riu=http%3a%2f%2fwww.sajinlove.com%2fv2%2ffiles%2fattach%2fimages%2f41862%2f048%2f938%2fb521f185fa8ae34d7cce8ef41f0b468b.JPG&ehk=mtVYPQ1mpW3%2fq4gg25JtvEtTRuY8a4jq5GNTustaoho%3d&risl=&pid=ImgRaw&r=0" alt="부산">
-                        <div class="card-details">
-                            <h4>부산</h4>
-                            <small>대한민국</small>
-                            <div class="activities-preview">
-                                <span class="activity-tag">해운대 요트 투어</span>
-                                <span class="activity-tag">더베이 101</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="destination-card">
-                        <img src="https://cdn.nbn-news.co.kr/news/photo/202303/56827_56985_4310.jpg" alt="여수">
-                        <div class="card-details">
-                            <h4>여수</h4>
-                            <small>대한민국</small>
-                            <div class="activities-preview">
-                                <span class="activity-tag">해상 케이블카</span>
-                                <span class="activity-tag">아르떼뮤지엄</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="destination-card">
-                        <img src="https://media-cdn.tripadvisor.com/media/photo-c/1280x250/10/a5/50/da/photo5jpg.jpg" alt="양양">
-                        <div class="card-details">
-                            <h4>양양</h4>
-                            <small>대한민국</small>
-                            <div class="activities-preview">
-                                <span class="activity-tag">서핑 강습</span>
-                                <span class="activity-tag">낙산사</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="destination-card">
-                        <img src="https://a.cdn-hotels.com/gdcs/production102/d1023/e3c18663-14e2-49e3-b9f0-bd7a029a661f.jpg" alt="광주">
-                        <div class="card-details">
-                            <h4>광주</h4>
-                            <small>대한민국</small>
-                            <div class="activities-preview">
-                                <span class="activity-tag">펭귄마을</span>
-                                <span class="activity-tag">무등산 투어</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="destination-card">
-                        <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_656CD683ECA603597F9EFD04DDC41801.jpg" alt="포항">
-                        <div class="card-details">
-                            <h4>포항</h4>
-                            <small>대한민국</small>
-                            <div class="activities-preview">
-                                <span class="activity-tag">스페이스워크</span>
-                                <span class="activity-tag">구룡포</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+		<section class="popular-destinations-section">
+			<div class="content-container">
+				<h2>대한민국 출발 인기 항공권</h2>
 
-               <h3>해외 인기 여행지</h3>
-                
-                <div class="destination-grid">
-                    
-                    <div class="destination-card">
-                        <img src="https://www.agoda.com/wp-content/uploads/2018/10/City-guides_things-to-do-in-Osaka_Japan_Osaka-Castle_cherry-blossoms_sakura.jpg" alt="오사카">
-                        <div class="card-details">
-                            <h4>오사카</h4>
-                            <small>일본</small>
-                            <div class="activities-preview">
-                                <span class="activity-tag">유니버설 스튜디오</span>
-                                <span class="activity-tag">오사카성</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="destination-card">
-                        <img src="https://tse2.mm.bing.net/th/id/OIP.wAJbuI75Vrd5TNfAgqmnSQHaE8?rs=1&pid=ImgDetMain&o=7&rm=3" alt="파리">
-                        <div class="card-details">
-                            <h4>파리</h4>
-                            <small>프랑스</small>
-                            <div class="activities-preview">
-                                <span class="activity-tag">에펠탑 입장권</span>
-                                <span class="activity-tag">루브르 박물관</span>
-                            </div>
-                        </div>
-                    </div>
+				<h3>국내 인기 여행지</h3>
 
-                    <div class="destination-card">
-                        <img src="https://th.bing.com/th/id/R.d0005be20219596334e4427fcdcef9ed?rik=QbbI0k61bctCoA&riu=http%3a%2f%2fwww.aseanexpress.co.kr%2fdata%2fphotos%2f20201042%2fart_16024538052164_b3d553.jpg&ehk=8ZDlSxOlsTcHm29cT9BVoMLtNUmEGZlwE3oyF9PUbU4%3d&risl=&pid=ImgRaw&r=0" alt="다낭">
-                        <div class="card-details">
-                            <h4>다낭</h4>
-                            <small>베트남</small>
-                            <div class="activities-preview">
-                                <span class="activity-tag">바나힐 투어</span>
-                                <span class="activity-tag">마사지</span>
-                            </div>
-                        </div>
-                    </div>
+				<div class="destination-grid">
+					<div class="destination-card" th:each="dest : ${domesticList}"
+						th:data-city="${dest.cityName}">
+						<img th:src="${dest.mainImageUrl}" th:alt="${dest.cityName}">
+						<div class="card-details">
+							<h4 th:text="${dest.cityName}">도시이름</h4>
+							<small th:text="${dest.country}">국가</small>
+							<div class="activities-preview">
+								<span class="activity-tag"
+									th:each="act, iStat : ${dest.activities}"
+									th:if="${iStat.index < 2}" th:text="${act.title}">액티비티</span>
+							</div>
+						</div>
+					</div>
+				</div>
 
-                    <div class="destination-card">
-                        <img src="https://a.cdn-hotels.com/gdcs/production59/d1143/fc0453c0-e10c-4c4b-b31e-2a95179ddca3.jpg" alt="방콕">
-                        <div class="card-details">
-                            <h4>방콕</h4>
-                            <small>태국</small>
-                            <div class="activities-preview">
-                                <span class="activity-tag">왕궁 투어</span>
-                                <span class="activity-tag">카오산로드</span>
-                            </div>
-                        </div>
-                    </div>
+				<h3>해외 인기 여행지</h3>
 
-                    <div class="destination-card">
-                        <img src="https://tse1.mm.bing.net/th/id/OIP.pU1BrWzAOPeu4XvVbeyAQQHaE8?rs=1&pid=ImgDetMain&o=7&rm=3" alt="괌">
-                        <div class="card-details">
-                            <h4>괌</h4>
-                            <small>미국</small>
-                            <div class="activities-preview">
-                                <span class="activity-tag">돌핀 크루즈</span>
-                                <span class="activity-tag">렌터카</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="destination-card">
-                        <img src="https://ak-d.tripcdn.com/images/0100w120008c1v67b2474_C_800_10000.jpg" alt="타이베이">
-                        <div class="card-details">
-                            <h4>타이베이</h4>
-                            <small>대만</small>
-                             <div class="activities-preview">
-                                <span class="activity-tag">예스진지 투어</span>
-                                <span class="activity-tag">타이베이 101</span>
-                            </div>
-                        </div> 
-                    </div>
-                    
-                </div>
-                
-            </div>
-        </section>
-        </main>
+				<div class="destination-grid">
+					<div class="destination-card" th:each="dest : ${overseasList}"
+						th:data-city="${dest.cityName}">
+						<img th:src="${dest.mainImageUrl}" th:alt="${dest.cityName}">
+						<div class="card-details">
+							<h4 th:text="${dest.cityName}">도시이름</h4>
+							<small th:text="${dest.country}">국가</small>
+							<div class="activities-preview">
+								<span class="activity-tag"
+									th:each="act, iStat : ${dest.activities}"
+									th:if="${iStat.index < 2}" th:text="${act.title}">액티비티</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
 
 	<div id="locationModal" class="modal-overlay">
 		<div class="modal-content">
@@ -860,41 +833,42 @@ main {
 			<div class="popular-searches">
 				<h3>국내 인기 검색</h3>
 				<div class="tags-container">
-					<span class="tag" data-iata="ICN" data-kolocation="서울/인천">서울/인천</span> 
-					<span class="tag" data-iata="CJU" data-kolocation="제주">제주</span> 
-					<span class="tag" data-iata="PUS" data-kolocation="부산">부산</span>
-					<span class="tag" data-iata="GMP" data-kolocation="서울/김포">서울/김포</span> 
-					<span class="tag" data-iata="RSU" data-kolocation="여수">여수</span>
+					<span class="tag" data-iata="ICN" data-kolocation="서울/인천">서울/인천</span>
+					<span class="tag" data-iata="CJU" data-kolocation="제주">제주</span> <span
+						class="tag" data-iata="PUS" data-kolocation="부산">부산</span> <span
+						class="tag" data-iata="GMP" data-kolocation="서울/김포">서울/김포</span> <span
+						class="tag" data-iata="RSU" data-kolocation="여수">여수</span>
 				</div>
 				<h3>동남아 인기 검색</h3>
 				<div class="tags-container">
-					<span class="tag" data-iata="DAD" data-kolocation="다낭">다낭</span> 
-					<span class="tag" data-iata="BKK" data-kolocation="방콕">방콕</span> 
-					<span class="tag" data-iata="TPE" data-kolocation="타이페이">타이페이</span>
-					<span class="tag" data-iata="HKG" data-kolocation="홍콩">홍콩</span> 
-					<span class="tag" data-iata="DPS" data-kolocation="발리">발리</span>
+					<span class="tag" data-iata="DAD" data-kolocation="다낭">다낭</span> <span
+						class="tag" data-iata="BKK" data-kolocation="방콕">방콕</span> <span
+						class="tag" data-iata="TPE" data-kolocation="타이페이">타이페이</span> <span
+						class="tag" data-iata="HKG" data-kolocation="홍콩">홍콩</span> <span
+						class="tag" data-iata="DPS" data-kolocation="발리">발리</span>
 				</div>
 				<h3>일본 인기 검색</h3>
 				<div class="tags-container">
-					<span class="tag" data-iata="NRT" data-kolocation="도쿄/나리타">도쿄/나리타</span> 
-					<span class="tag" data-iata="KIX" data-kolocation="오사카">오사카</span> 
+					<span class="tag" data-iata="NRT" data-kolocation="도쿄/나리타">도쿄/나리타</span>
+					<span class="tag" data-iata="KIX" data-kolocation="오사카">오사카</span>
 					<span class="tag" data-iata="FUK" data-kolocation="후쿠오카">후쿠오카</span>
-					<span class="tag" data-iata="CTS" data-kolocation="삿포로/산치토세">삿포로/산치토세</span> 
+					<span class="tag" data-iata="CTS" data-kolocation="삿포로/산치토세">삿포로/산치토세</span>
 					<span class="tag" data-iata="OKA" data-kolocation="오키나와">오키나와</span>
 				</div>
 				<h3>유럽 인기 검색</h3>
 				<div class="tags-container">
-					<span class="tag" data-iata="CDG" data-kolocation="파리">파리</span> 
-					<span class="tag" data-iata="LHR" data-kolocation="런던">런던</span> 
-					<span class="tag" data-iata="FCO" data-kolocation="로마">로마</span>
-					<span class="tag" data-iata="MAD" data-kolocation="마드리드">마드리드</span> 
-					<span class="tag" data-iata="BCN" data-kolocation="바르셀로나">바르셀로나</span>
+					<span class="tag" data-iata="CDG" data-kolocation="파리">파리</span> <span
+						class="tag" data-iata="LHR" data-kolocation="런던">런던</span> <span
+						class="tag" data-iata="FCO" data-kolocation="로마">로마</span> <span
+						class="tag" data-iata="MAD" data-kolocation="마드리드">마드리드</span> <span
+						class="tag" data-iata="BCN" data-kolocation="바르셀로나">바르셀로나</span>
 				</div>
 				<h3>북미 및 기타</h3>
 				<div class="tags-container">
-					<span class="tag" data-iata="JFK" data-kolocation="뉴욕">뉴욕</span>  <span class="tag" data-iata="SYD" data-kolocation="시드니">시드니</span> 
-					<span class="tag" data-iata="LAX" data-kolocation="로스앤젤레스">로스앤젤레스</span>
-					<span class="tag" data-iata="SFO" data-kolocation="샌프란시스코">샌프란시스코</span> 
+					<span class="tag" data-iata="JFK" data-kolocation="뉴욕">뉴욕</span> <span
+						class="tag" data-iata="SYD" data-kolocation="시드니">시드니</span> <span
+						class="tag" data-iata="LAX" data-kolocation="로스앤젤레스">로스앤젤레스</span>
+					<span class="tag" data-iata="SFO" data-kolocation="샌프란시스코">샌프란시스코</span>
 					<span class="tag" data-iata="GUM" data-kolocation="괌">괌</span>
 				</div>
 			</div>
@@ -949,8 +923,9 @@ main {
 				<h4>좌석등급</h4>
 				<div class="seat-class-options">
 					<label><input type="radio" name="travelClassModal"
-						value="ECONOMY" checked> 일반석</label>  <label><input type="radio"
-						name="travelClassModal" value="BUSINESS"> 비즈니스석</label>
+						value="ECONOMY" checked> 일반석</label> <label><input
+						type="radio" name="travelClassModal" value="BUSINESS">
+						비즈니스석</label>
 				</div>
 			</div>
 
@@ -960,34 +935,53 @@ main {
 	</div>
 
 	<div id="alertModal" class="modal-overlay">
-    <div class="modal-content">
-        <p id="alertModalMessage">메시지가 여기에 표시됩니다.</p>
-        <button id="closeAlertModalBtn">닫기</button>
-    </div>
-</div>
+		<div class="modal-content">
+			<p id="alertModalMessage">메시지가 여기에 표시됩니다.</p>
+			<button id="closeAlertModalBtn">닫기</button>
+		</div>
+	</div>
 
-<div id="loadingModal">
-    <div class="spinner"></div>
-    <p>최저가 항공권을 검색중입니다...</p>
-</div>
-	
-	
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-	<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+	<div id="loadingModal">
+		<div class="spinner"></div>
+		<p>최저가 항공권을 검색중입니다...</p>
+	</div>
+
+	<div id="destinationModal" class="modal-overlay">
+		<div class="modal-content modal-large">
+			<div class="modal-header">
+				<h2 id="destModalTitle">여행지 이름</h2>
+				<button class="close-button" onclick="closeDestinationModal()">&times;</button>
+			</div>
+			<div class="modal-body">
+				<p id="destModalDesc" class="dest-desc">여행지 설명이 들어갑니다.</p>
+
+				<h3 class="rec-title">✨ 추천 즐길거리</h3>
+				<div id="activityGrid" class="activity-grid"></div>
+				<div
+					style="margin-top: 30px; text-align: center; padding-bottom: 10px;">
+					<button type="button" id="btnBookFlight" class="submit-button"
+						style="width: 100%; background-color: #ff7675; color: white; border: none; cursor: pointer;">
+						✈️ 항공권 검색하러 가기</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
-	<script>	
-	// --- ▼▼▼▼▼ 전체 수정된 스크립트 ▼▼▼▼▼ ---
-	
+		<script
+			src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+		<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+
+
+		<script>	
 	// --- 요소 선택 ---
 	const departureBtn = document.getElementById('departureBtn');
 	const arrivalBtn = document.getElementById('arrivalBtn');
 	const departureCodeInput = document.getElementById('departureCode');
 	const arrivalCodeInput = document.getElementById('arrivalCode');
-	const departureKoLocationInput = document.getElementById('departureKoLocation'); // [추가]
-	const arrivalKoLocationInput = document.getElementById('arrivalKoLocation');   // [추가]
+	const departureKoLocationInput = document.getElementById('departureKoLocation');
+	const arrivalKoLocationInput = document.getElementById('arrivalKoLocation');
 	const locationModal = document.getElementById('locationModal');
 	const modalContentDiv = locationModal.querySelector('.modal-content');
 	const popularSearchesContainer = modalContentDiv.querySelector('.popular-searches');
@@ -1048,21 +1042,20 @@ main {
 	    if (activeSelection === 'departure') {
 	        departureBtn.textContent = displayText;
 	        departureCodeInput.value = iataCode;
-	        departureKoLocationInput.value = kolocation; // [수정]
+	        departureKoLocationInput.value = kolocation;
 	    } else if (activeSelection === 'arrival') {
 	        arrivalBtn.textContent = displayText;
 	        arrivalCodeInput.value = iataCode;
-	        arrivalKoLocationInput.value = kolocation; // [수정]
+	        arrivalKoLocationInput.value = kolocation;
 	        arrivalBtn.classList.remove('field-placeholder');
 	        arrivalBtn.classList.add('field-location');
 	    }
 	    closeModal();
 	}
 	
-	// [수정] 태그 클릭 핸들러에서 data-kolocation 사용하도록 수정
 	function handleTagClick(event) {
 	    const clickedTag = event.currentTarget;
-	    const kolocation = clickedTag.dataset.kolocation || clickedTag.textContent; // data-kolocation 우선 사용
+	    const kolocation = clickedTag.dataset.kolocation || clickedTag.textContent;
 	    const iataCode = clickedTag.dataset.iata;
 	    selectLocation(kolocation, iataCode);
 	}
@@ -1108,7 +1101,6 @@ main {
 	
 	const swapBtn = document.querySelector('.swap-button');
     swapBtn.addEventListener('click', function() {
-        // [수정] kolocation 값까지 모두 교환하도록 로직 변경
         const departureText = departureBtn.textContent;
         const departureCode = departureCodeInput.value;
         const departureKo = departureKoLocationInput.value;
@@ -1343,9 +1335,116 @@ main {
     closeAlertModalBtn.addEventListener('click', function() {
         alertModal.style.display = 'none';
     });
-    
-   
-	</script>
 
+    // ==========================================
+    // [NEW] 여행지 추천 모달 (AJAX 연동 버전)
+    // ==========================================
+
+    const destModal = document.getElementById('destinationModal');
+    const destModalTitle = document.getElementById('destModalTitle');
+    const destModalDesc = document.getElementById('destModalDesc');
+    const activityGrid = document.getElementById('activityGrid');
+
+    // 여행지 카드 클릭 시 AJAX 호출
+    // (주의: 동적으로 생성된 요소가 아니므로 바로 이벤트 걸어도 됩니다. 
+    //  만약 동적 생성이라면 위임(delegation) 방식을 써야 합니다.)
+    const destCards = document.querySelectorAll('.destination-card');
+    destCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const city = this.getAttribute('data-city'); 
+            if(city) {
+                openDestinationModal(city);
+            }
+        });
+    });
+
+    function openDestinationModal(city) {
+        // AJAX 호출
+        $.ajax({
+            url: '/api/destination/detail',
+            type: 'GET',
+            data: { cityName: city },
+            dataType: 'json',
+            success: function(data) {
+                // 1. 모달 텍스트 채우기
+                destModalTitle.textContent = city;
+                destModalDesc.textContent = data.desc;
+                
+                // 2. 액티비티 그리드 생성
+                let html = '';
+                if (data.activities && data.activities.length > 0) {
+                    data.activities.forEach(item => {
+                        html += `
+                            <div class="activity-item">
+                                <img src="${item.img}" class="activity-img" alt="${item.title}">
+                                <div class="activity-info">
+                                    <h5>${item.title}</h5>
+                                    <p>${item.text}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html = '<p style="grid-column: 1 / -1; text-align: center;">등록된 추천 활동이 없습니다.</p>';
+                }
+                activityGrid.innerHTML = html;
+
+                // ====================================================
+                // 3. [추가] 항공권 검색 버튼 로직 연결
+                // ====================================================
+                const bookBtn = document.getElementById('btnBookFlight');
+                
+                // 버튼 텍스트를 해당 도시 이름으로 변경 (예: ✈️ 제주 항공권 검색하러 가기)
+                bookBtn.textContent = `✈️ ${city} 항공권 검색하러 가기`;
+
+                // 버튼 클릭 이벤트 설정
+               bookBtn.onclick = function() {
+                // (1) 도착지 UI 및 값 변경
+                const arrivalBtn = document.getElementById('arrivalBtn');
+                const arrivalKoInput = document.getElementById('arrivalKoLocation');
+                
+                arrivalBtn.textContent = city; 
+                arrivalBtn.classList.remove('field-placeholder');
+                arrivalBtn.classList.add('field-location');
+                arrivalKoInput.value = city; 
+
+                // (2) 모달 닫기
+                closeDestinationModal();
+
+                // (3) [NEW] 화면 스크롤 이동 (검색창 위치로 부드럽게)
+                // .hero-section(배경 이미지 있는 섹션)을 기준으로 이동합니다.
+                document.querySelector('.hero-section').scrollIntoView({ 
+                    behavior: 'smooth',  // 부드럽게 이동
+                    block: 'center'      // 검색창이 화면 중앙에 오도록
+                });
+
+                // (4) 날짜 선택창으로 포커스 이동
+                // 스크롤 이동 시간을 고려해서 딜레이를 조금(0.5초) 줍니다.
+                setTimeout(() => {
+                    datePicker.open(); 
+                }, 500); 
+            };
+
+                // 4. 모달 보여주기
+                destModal.style.display = 'flex';
+            },
+            error: function(err) {
+                console.error(err);
+                alert('정보를 불러오는데 실패했습니다.');
+            }
+        });
+    }
+
+    function closeDestinationModal() {
+        destModal.style.display = 'none';
+    }
+
+    // 모달 외부 클릭 시 닫기
+    destModal.addEventListener('click', function(event) {
+        if (event.target === destModal) {
+            closeDestinationModal();
+        }
+    });
+	</script>
 </body>
 </html>

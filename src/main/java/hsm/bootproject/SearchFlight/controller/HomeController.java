@@ -1,15 +1,21 @@
 package hsm.bootproject.SearchFlight.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import hsm.bootproject.SearchFlight.Service.BookingService;
 import hsm.bootproject.SearchFlight.domain.Booking;
 import hsm.bootproject.SearchFlight.domain.Member;
+import hsm.bootproject.SearchFlight.domain.popular;
+import hsm.bootproject.SearchFlight.dto.PopularResponseDto;
+import hsm.bootproject.SearchFlight.repository.PopularRepository;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -17,11 +23,41 @@ public class HomeController {
 	
 	@Autowired
     private BookingService bookingService;
+	
+	@Autowired
+	private PopularRepository popularRepository;
 		
 	@GetMapping("/")
-	public String home() { 	
+	public String home(Model model) { // 1. Model 파라미터 추가
+		
+		// 2. DB에서 모든 여행지 데이터 가져오기
+		List<popular> allPopulars = popularRepository.findAll();
+		
+		// 3. 국내 여행지(isDomestic = true) 필터링
+		List<popular> domesticList = allPopulars.stream()
+				.filter(p -> Boolean.TRUE.equals(p.getIsDomestic()))
+				.collect(Collectors.toList());
+		
+		// 4. 해외 여행지(isDomestic = false) 필터링
+		List<popular> overseasList = allPopulars.stream()
+				.filter(p -> Boolean.FALSE.equals(p.getIsDomestic()))
+				.collect(Collectors.toList());
+		
+		// 5. Model에 담아서 HTML로 전달 (키 이름은 HTML의 th:each="dest : ${키이름}" 과 같아야 함)
+		model.addAttribute("domesticList", domesticList);
+		model.addAttribute("overseasList", overseasList);
 
 		return "main";
+	}
+	
+	@GetMapping("/api/destination/detail")
+	@ResponseBody
+	public PopularResponseDto getDestinationDetail(@RequestParam("cityName") String cityName) {
+		// 도시 이름으로 DB 조회
+		popular p = popularRepository.findByCityName(cityName)
+				.orElseThrow(() -> new IllegalArgumentException("도시를 찾을 수 없습니다."));
+
+		return new PopularResponseDto(p);
 	}
 	
 	@GetMapping("/chat")
