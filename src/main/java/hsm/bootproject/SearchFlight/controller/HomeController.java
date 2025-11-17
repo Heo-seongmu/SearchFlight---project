@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +15,10 @@ import hsm.bootproject.SearchFlight.Service.BookingService;
 import hsm.bootproject.SearchFlight.domain.Booking;
 import hsm.bootproject.SearchFlight.domain.Member;
 import hsm.bootproject.SearchFlight.domain.popular;
+import hsm.bootproject.SearchFlight.dto.DestinationStatsDto;
 import hsm.bootproject.SearchFlight.dto.PopularResponseDto;
 import hsm.bootproject.SearchFlight.repository.PopularRepository;
+import hsm.bootproject.SearchFlight.repository.SearchLogRepository;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -26,9 +29,15 @@ public class HomeController {
 	
 	@Autowired
 	private PopularRepository popularRepository;
+	
+	@Autowired
+    private SearchLogRepository searchLogRepository;
 		
 	@GetMapping("/")
 	public String home(Model model) { // 1. Model 파라미터 추가
+		
+		List<DestinationStatsDto> trendList = searchLogRepository.findTopDestinations(PageRequest.of(0, 6));
+        model.addAttribute("trendList", trendList);
 		
 		// 2. DB에서 모든 여행지 데이터 가져오기
 		List<popular> allPopulars = popularRepository.findAll();
@@ -67,7 +76,7 @@ public class HomeController {
 	
 	@GetMapping("/main")
 	public String main() {
-		return "main";
+		return "redirect:/";
 	}
 	@GetMapping("/airList")
 	public String test() {

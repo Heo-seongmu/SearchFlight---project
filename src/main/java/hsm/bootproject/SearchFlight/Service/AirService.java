@@ -27,11 +27,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import hsm.bootproject.SearchFlight.domain.SearchLog;
 import hsm.bootproject.SearchFlight.domain.basicArea;
 import hsm.bootproject.SearchFlight.dto.ReturnFlightDto;
 import hsm.bootproject.SearchFlight.dto.airParmDto;
 import hsm.bootproject.SearchFlight.dto.airportDto;
 import hsm.bootproject.SearchFlight.dto.searchAirDto;
+import hsm.bootproject.SearchFlight.repository.SearchLogRepository;
 import hsm.bootproject.SearchFlight.repository.basicAreaRepository;
 
 @Service
@@ -39,6 +41,9 @@ public class AirService {
 
 	@Autowired
 	private basicAreaRepository basicareaRepository;
+	
+	@Autowired
+    private SearchLogRepository searchLogRepository;
 
 	public String Translation(String text) {
 		try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
@@ -234,7 +239,13 @@ public class AirService {
 
 	public List<searchAirDto> searchAirPort(airParmDto airparmDto) throws IOException {
 		String auth = token();
-
+		
+		SearchLog log = new SearchLog();
+        log.setIataCode(airparmDto.getArrivalCode());         // 예: NRT
+        log.setCityName(airparmDto.getArrivalKoLocation());   // 예: 도쿄/나리타
+        
+        searchLogRepository.save(log);
+		
 		try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
 			String nonstop = "false";
 			if (airparmDto.isDirectFlight()) {

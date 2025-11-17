@@ -689,6 +689,83 @@ main {
 		font-size: 18px;
 	}
 }
+
+.trend-section {
+    padding: 20px 0 40px 0;
+    background-color: #fff;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+.trend-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 한 줄에 6개 */
+    gap: 15px;
+    margin-top: 20px;
+}
+.trend-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px 15px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.trend-card:hover {
+    transform: translateY(-5px);
+    border-color: #5ac4c9;
+    box-shadow: 0 5px 15px rgba(90, 196, 201, 0.2);
+}
+.trend-rank {
+    position: absolute;
+    top: -10px;
+    left: -5px;
+    background-color: #ff7675;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+/* 1,2,3등은 색상 다르게 강조 */
+.trend-card:nth-child(1) .trend-rank { background-color: #d63031; transform: scale(1.1); }
+.trend-card:nth-child(2) .trend-rank { background-color: #e17055; }
+.trend-card:nth-child(3) .trend-rank { background-color: #fdcb6e; color: #333; }
+
+.trend-city {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0 5px 0;
+    display: block;
+}
+.trend-code {
+    font-size: 13px;
+    color: #999;
+    background-color: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.trend-count {
+    display: block;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #5ac4c9;
+    font-weight: bold;
+}
+
+@media (max-width: 992px) {
+    .trend-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 576px) {
+    .trend-grid { grid-template-columns: repeat(2, 1fr); }
+}
 </style>
 </head>
 <body>
@@ -775,7 +852,20 @@ main {
 		<section class="popular-destinations-section">
 			<div class="content-container">
 				<h2>대한민국 출발 인기 항공권</h2>
-
+					<div style="margin-bottom: 50px;">
+            			<h3 style="border:none; margin-top:30px;">🔥 실시간 급상승 검색어 (Top 6)</h3>
+           			 <div class="trend-grid">
+               			 <div class="trend-card" th:each="item, stat : ${trendList}">
+                   			 <div class="trend-rank" th:text="${stat.count}">1</div>
+                  	  
+                   			 <span class="trend-city" th:text="${item.cityName}">제주</span>
+                    
+                    	     <span class="trend-code" th:text="${item.iataCode}">CJU</span>
+                    
+                    		 <span class="trend-count" th:text="|⚡ ${item.searchCount}회 검색|">123회</span>
+                	</div>
+            	</div>
+        	</div>
 				<h3>국내 인기 여행지</h3>
 
 				<div class="destination-grid">

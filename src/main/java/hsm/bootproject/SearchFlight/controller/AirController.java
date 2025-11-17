@@ -151,6 +151,17 @@ public String searchAirport(airParmDto airparmDto, Model model, HttpSession sess
 	
 	@PostMapping("/PsgInfo")
     public String showPsgInfoPage(PsgInfoRequestDto psgInfoRequestDto, Model model) {
+		
+		Member loginUser = (Member) session.getAttribute("loginUser");
+	    
+	    if (loginUser == null) {
+	        // 로그인이 안 되어 있다면 로그인 페이지로 리다이렉트합니다.
+	        // (MemberController 로직에 의해, 로그인 후 'searchParams'를 확인하고 검색 결과 리스트로 이동하게 됩니다)
+	        return "redirect:/member/login"; 
+	    }
+
+	    // [추가 2] 로그인 된 사용자 정보도 모델에 담아두면(선택사항), HTML에서 이름/이메일 자동채우기 편함
+	    model.addAttribute("loginUser", loginUser);
         
         // 1. (기존) DTO를 모델에 추가
         model.addAttribute("bookingInfo", psgInfoRequestDto);
@@ -195,7 +206,7 @@ public String searchAirport(airParmDto airparmDto, Model model, HttpSession sess
 
         if (loginUser == null) {
             // 로그인 페이지로 리다이렉트
-            return "redirect:/member/login"; 
+        	return "redirect:/member/login?redirectURL=/air/searchAirport";
         }
 
         BookingConfirmationDto confirmationDto = new BookingConfirmationDto();
