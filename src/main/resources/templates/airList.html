@@ -448,7 +448,7 @@ body {
     transform: rotate(360deg);
   }
 }
-
+ 
 .step-icon {
 	width: 36px;
 	height: 36px;
@@ -476,7 +476,7 @@ body {
 	margin-right: 1rem;
 }
 
-/* --- ⭐ 필터 카드 & 슬라이더 CSS (수정됨) ⭐ --- */
+/* --- ⭐ 필터 카드 & 슬라이더 CSS --- */
 .filter-card {
 	border: 1px solid #dee2e6;
 	border-radius: 0.375rem;
@@ -519,7 +519,7 @@ body {
 	display: none !important;
 }
 
-/* ⭐ [수정] 시간 필터 버튼 그룹 스타일 (checkbox용) */
+/* 시간 필터 버튼 그룹 스타일 (checkbox용) */
 .btn-group-time-filter {
 	display: flex;
 	flex-wrap: wrap;
@@ -535,7 +535,7 @@ body {
 	color: #6c757d;
 	box-shadow: none !important;
 }
-/* ⭐ [수정] radio -> checkbox */
+
 .btn-group-time-filter input[type="checkbox"]:checked+.btn {
 	background-color: #e7f1ff;
 	border-color: #0d6efd;
@@ -543,7 +543,7 @@ body {
 	font-weight: 500;
 }
 
-/* ⭐ [신규] 아코디언 스타일 커스텀 */
+/* 아코디언 스타일 커스텀 */
 .accordion-item {
 	border: 1px solid #dee2e6;
 	border-radius: 0.375rem !important;
@@ -572,7 +572,7 @@ body {
 	padding: 1rem 1.25rem;
 }
 
-/* ⭐ [신규] 항공사 필터 체크박스 스타일 */
+/* 항공사 필터 체크박스 스타일 */
 .airline-filter-item {
 	display: block;
 	margin-bottom: 0.5rem;
@@ -813,29 +813,67 @@ body {
 							<div class="row align-items-center">
 								<div class="col-md-5">
 									<small class="text-body-secondary"
-										th:text="${searchAir.numberOfBookableSeats} + '석 가능'">7석
-										남음</small>
+										th:text="${searchAir.numberOfBookableSeats} + '석 가능'">9석
+										가능</small>
+
 									<div class="d-flex align-items-center mt-1">
 										<div>
-											<h6 class="fw-bold mb-0 d-flex align-items-center">
-												<span
-													th:text="${searchAir.departureTime} + ' - ' + ${searchAir.arrivalTime}">16:00
-													- 17:40</span> <span
-													th:if="${searchAir.arrivalDate != null and searchAir.arrivalDate != searchAir.departureDate}"
+											<h6 class="fw-bold mb-0 d-flex align-items-center flex-wrap">
+
+												<span th:text="${searchAir.departureTime}">16:00</span> <small
+													class="text-secondary fw-normal ms-1 me-2"
+													style="font-size: 0.75rem;"
+													th:text="'(' + ${#strings.substring(searchAir.departureDate, 5).replace('-', '.')} + ')'">
+													(11.25) </small> <span class="me-2">-</span> <span
+													th:text="${searchAir.arrivalTime}">09:30</span> <small
+													class="text-secondary fw-normal ms-1"
+													style="font-size: 0.75rem;"
+													th:text="'(' + ${#strings.substring(searchAir.arrivalDate, 5).replace('-', '.')} + ')'">
+													(11.25) </small> <span th:if="${searchAir.dayDifference == 0}"
+													class="badge bg-light text-secondary border rounded-pill ms-2"
+													style="font-size: 0.7rem; font-weight: normal;"> 당일
+												</span> <small th:if="${searchAir.dayDifference == 0}"
+													class="text-secondary ms-1" style="font-size: 0.7rem;">
+													<i class="bi bi-info-circle"></i> 시차반영
+												</small> <span th:if="${searchAir.dayDifference > 0}"
 													class="badge bg-danger-subtle text-danger-emphasis rounded-pill ms-2"
-													style="font-size: 0.7rem;"> +1일 </span>
+													style="font-size: 0.7rem;"
+													th:text="'+' + ${searchAir.dayDifference} + '일'">
+													+1일 </span> <span th:if="${searchAir.dayDifference < 0}"
+													class="badge bg-primary-subtle text-primary-emphasis rounded-pill ms-2"
+													style="font-size: 0.7rem;"
+													th:text="${searchAir.dayDifference} + '일'"> -1일 </span> <small
+													th:if="${searchAir.dayDifference < 0}"
+													class="text-secondary ms-1" style="font-size: 0.7rem;">
+													<i class="bi bi-info-circle"></i> 시차반영
+												</small>
 											</h6>
 
 											<small class="text-body-secondary"
-												th:text="${searchAir.departureCode} + ' → ' + ${searchAir.arrivalCode} + ' · ' + ${searchAir.carrierCode} + ' 항공'">CJU-KIX
-												· 티웨이항공</small>
+												th:text="${searchAir.departureCode} + ' → ' + ${searchAir.arrivalCode} + ' · ' + ${searchAir.carrierCode} + ' 항공'">
+												ICN → SFO · UA 항공 </small>
 										</div>
 									</div>
 								</div>
+
 								<div class="col-md-3 text-md-end">
-									<span class="fw-bold"
-										th:text="${searchAir.directFlight ? '직항' : '경유'}">직항</span>
+									<div class="mb-1">
+										<small class="text-body-secondary"><i
+											class="bi bi-clock"></i> <span
+											th:text="${searchAir.totalDuration}">20시간 10분</span></small>
+									</div>
+
+									<span class="fw-bold text-primary"
+										th:if="${searchAir.directFlight}">직항</span>
+
+									<div th:unless="${searchAir.directFlight}">
+										<span class="fw-bold text-dark">경유</span> <small
+											class="text-danger d-block fw-bold"
+											style="font-size: 0.8rem;"
+											th:text="${searchAir.layoverNames} + ' 경유'">YVR 경유</small>
+									</div>
 								</div>
+
 								<div class="col-md-4 text-md-end">
 									<span class="price-display"
 										th:text="${#numbers.formatInteger(searchAir.rawTotalPrice, 0, 'COMMA')} + '원'">292,050원</span>
@@ -964,7 +1002,7 @@ body {
 				<h3>동남아 인기 검색</h3>
 				<div class="tags-container">
 					<span class="tag" data-iata="DAD">다낭</span> <span class="tag"
-						data-iata="BKK">방콕</span> <span class="tag" data-iata="TPE">타이페이</span>
+						data-iata="BKK">방콕</span> <span class="tag" data-iata="TPE">타이베이</span>
 					<span class="tag" data-iata="HKG">홍콩</span> <span class="tag"
 						data-iata="DPS">발리</span>
 				</div>
@@ -1065,8 +1103,6 @@ body {
 		src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
 
 	<script>
-    // 🟢 (기존 JS - 'airList.html' 용) 🟢
-    
     const returnModal = new bootstrap.Modal(document.getElementById('returnFlightListModal'));
     
     function createHiddenInput(form, name, value) {
@@ -1137,42 +1173,58 @@ body {
                 const rawPrice = flight.returnTotalPrice;
                 const formattedPrice = new Intl.NumberFormat('ko-KR').format(rawPrice);
 
-                // 1. 날짜 포맷팅 (YYYY-MM-DD -> MM.DD 형태로 변환)
-                // 예: 2025-11-29 -> 11.29
-                let dateRangeStr = "";
-                if (flight.returnDepartureDate && flight.returnArrivalDate) {
-                    const depDate = flight.returnDepartureDate.substring(5).replace('-', '.');
-                    const arrDate = flight.returnArrivalDate.substring(5).replace('-', '.');
-                    dateRangeStr = `${depDate} - ${arrDate}`;
-                }
+                // 1. 날짜 포맷팅 (YYYY-MM-DD -> MM.DD)
+                let depDateStr = flight.returnDepartureDate ? flight.returnDepartureDate.substring(5).replace('-', '.') : "";
+                let arrDateStr = flight.returnArrivalDate ? flight.returnArrivalDate.substring(5).replace('-', '.') : "";
 
-                // 2. +1일 뱃지 로직 (기존 유지)
-                let dateBadgeHtml = '';
-                if (flight.returnArrivalDate && flight.returnDepartureDate && 
-                    flight.returnArrivalDate !== flight.returnDepartureDate) {
-                    dateBadgeHtml = `<span class="badge bg-danger-subtle text-danger-emphasis rounded-pill ms-2" style="font-size: 0.7rem;">+1일</span>`;
-                }
+                // 2. 뱃지 HTML 생성 로직 (당일 vs +N일)
+                let badgeHtml = '';
 
+				if (flight.returnDayDifference === 0) {
+   			 // 당일 + 안내 문구
+   				 badgeHtml = `
+        			<span class="badge bg-light text-secondary border rounded-pill ms-2" style="font-size: 0.7rem; font-weight: normal;">당일</span>
+       				<small class="text-secondary ms-1" style="font-size: 0.7rem;"><i class="bi bi-info-circle"></i> 시차반영</small>
+  					  `;	
+				} else if (flight.returnDayDifference > 0) {
+  			  // +N일
+   					 badgeHtml = `<span class="badge bg-danger-subtle text-danger-emphasis rounded-pill ms-2" style="font-size: 0.7rem;">+${flight.returnDayDifference}일</span>`;
+				} else if (flight.returnDayDifference < 0) {
+    // -1일 + 안내 문구
+   					 badgeHtml = `
+      	 	 			<span class="badge bg-primary-subtle text-primary-emphasis rounded-pill ms-2" style="font-size: 0.7rem;">${flight.returnDayDifference}일</span>
+       					 <small class="text-secondary ms-1" style="font-size: 0.7rem;"><i class="bi bi-info-circle"></i> 시차반영</small>
+    				`;
+					}
+
+                // 3. HTML 생성 (디자인 통일)
                 const flightHtml = `
                     <div class="card flight-card-button mb-2">
                         <div class="card-body"> 
                             <div class="row align-items-center">
-                                <div class="col-md-5">
-                                    
-                                    <span class="d-block text-secondary fw-bold mb-1" style="font-size: 0.85rem;">
-                                        ${dateRangeStr}
-                                    </span>
+                                <div class="col-md-6"> <div class="d-flex align-items-center">
+                                        <div>
+                                            <h6 class="fw-bold mb-0 d-flex align-items-center flex-wrap">
+                                                
+                                                <span>${flight.returnDepartureTime}</span>
+                                                <small class="text-secondary fw-normal ms-1 me-2" style="font-size: 0.75rem;">(${depDateStr})</small>
+                                                
+                                                <span class="me-2">-</span>
+                                                
+                                                <span>${flight.returnArrivalTime}</span>
+                                                <small class="text-secondary fw-normal ms-1" style="font-size: 0.75rem;">(${arrDateStr})</small>
 
-                                    <h6 class="fw-bold mb-0 d-flex align-items-center">
-                                        ${flight.returnDepartureTime} - ${flight.returnArrivalTime}
-                                        ${dateBadgeHtml} 
-                                    </h6>
-                                    
-                                    <small class="text-body-secondary">
-                                        ${flight.returnDepartureCode} → ${flight.returnArrivalCode} · ${flight.returnCarrierCode} 항공
-                                    </small>
+                                                ${badgeHtml}
+                                            </h6>
+                                            
+                                            <small class="text-body-secondary mt-1 d-block">
+                                                ${flight.returnDepartureCode} → ${flight.returnArrivalCode} · ${flight.returnCarrierCode} 항공
+                                            </small>
+                                        </div>
+                                    </div>
+
                                 </div>
-                                <div class="col-md-3 text-md-center">
+                                <div class="col-md-2 text-md-center">
                                     <span class="fw-bold">${isDirectText}</span>
                                 </div>
                                 <div class="col-md-4 text-md-end">
@@ -1264,9 +1316,6 @@ body {
         form.submit();
     }
     
-    // ------------------------------------------------------------------
-    // (기존) 재검색, 장소선택, 탑승객 선택 모달 관련 스크립트 (기존 코드)
-    // ------------------------------------------------------------------
     const researchModal = document.getElementById('researchModal');
     const modalDateRangeBtn = document.getElementById('modalDateRangeBtn');
     const modalDepartureDateInput = document.getElementById('modalDepartureDateInput');
@@ -1546,22 +1595,15 @@ body {
         setTimeout(() => event.target.submit(), 100);
     });
 
-    // ------------------------------------------------------------------
-    // ⭐ [수정] 실시간 필터링 로직 (최종 수정)
-    // ------------------------------------------------------------------
     document.addEventListener('DOMContentLoaded', function() {
-        
-        // --- 1. DOM 요소 가져오기 ---
         const durSliderEl = document.getElementById('duration-slider');
         const priceSliderEl = document.getElementById('price-slider');
         const airlineListContainer = document.getElementById('airline-filter-list');
 
         if (!durSliderEl || !priceSliderEl || !airlineListContainer) {
-            console.log("필터 요소를 찾을 수 없습니다.");
             return; 
         }
 
-        // --- 2. 헬퍼 함수 정의 ---
         function parseTime(timeStr) {
             if (!timeStr || !timeStr.includes(':')) return 0; 
             const [hours, minutes] = timeStr.split(':').map(Number);
@@ -1588,7 +1630,6 @@ body {
             minimumFractionDigits: 0
         });
 
-        // 항공사 코드 <-> 이름 변환 맵
         const airlineNames = {
             '7C': '제주항공', 'LJ': '진에어', 'TW': '티웨이항공',
             'KE': '대한항공', 'OZ': '아시아나항공', 'RS': '에어서울',
@@ -1601,12 +1642,9 @@ body {
             return airlineNames[code] || code;
         }
 
-        // --- 3. 항공권 데이터 준비 및 Min/Max 값 찾기 ---
-        // ⭐ [수정] 셀렉터를 '.flight-item-container'로 변경
         const flightCards = document.querySelectorAll('.flight-item-container');
         
         if (flightCards.length === 0) {
-            console.log("필터링할 항공권이 없습니다.");
             document.getElementById('filterAccordion').style.display = 'none';
             return;
         }
@@ -1615,8 +1653,7 @@ body {
         let minDuration = Infinity, maxDuration = 0;
         const uniqueAirlines = new Set();
 
-        flightCards.forEach(card => { // card는 이제 <div.flight-item-container> 입니다
-            // ⭐ [수정] div의 자식인 button에서 data를 읽어옴
+        flightCards.forEach(card => { 
             const button = card.querySelector('.flight-card-button');
             if (!button) return; 
 
@@ -1624,7 +1661,6 @@ body {
             const arrTime = button.dataset.arrivalTime;
             const price = parseFloat(button.dataset.totalPrice);
             
-            // ⭐ [수정] 항공사 코드를 button에서 div(card)로 복사
             card.dataset.carrierCode = button.dataset.carrierCode;
 
             const depMinutes = parseTime(depTime);
@@ -1634,7 +1670,6 @@ body {
             card.dataset.depMinutes = depMinutes;
             card.dataset.durationMinutes = duration;
 
-            // NaN 체크 추가
             if (!isNaN(price)) {
                 if (price < minPrice) minPrice = price;
                 if (price > maxPrice) maxPrice = price;
@@ -1652,7 +1687,6 @@ body {
         if (maxPrice === 0) maxPrice = minPrice; 
         if (maxDuration === 0) maxDuration = minDuration; 
 
-        // --- 3-1. 항공사 필터 동적 생성 ---
         uniqueAirlines.forEach(code => {
             const airlineName = getAirlineName(code);
             const itemId = `airline-${code}`;
@@ -1667,7 +1701,6 @@ body {
             airlineListContainer.insertAdjacentHTML('beforeend', itemHtml);
         });
 
-        // --- 4. 슬라이더 생성 ---
         noUiSlider.create(durSliderEl, {
             range: { 'min': minDuration, 'max': maxDuration },
             start: [minDuration, maxDuration],
@@ -1683,7 +1716,6 @@ body {
             format: { to: v => Math.round(v), from: v => Math.round(v) }
         });
 
-        // --- 5. 이벤트 리스너 바인딩 ---
         const durMinLabel = document.getElementById('duration-min');
         const durMaxLabel = document.getElementById('duration-max');
         const priceMinLabel = document.getElementById('price-min');
@@ -1700,7 +1732,6 @@ body {
             filterFlights();
         });
         
-        // 시간 필터 (체크박스)
         const timeAllBtn = document.getElementById('time-all');
         const timeOptionBtns = document.querySelectorAll('.time-filter-option');
 
@@ -1726,14 +1757,11 @@ body {
             });
         });
         
-        // 항공사 체크박스
         document.querySelectorAll('#airline-filter-list input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', filterFlights);
         });
 
-        // --- 6. 핵심 필터링 함수 (⭐ 수정됨) ---
         function filterFlights() {
-            // 1. 현재 모든 필터 값 가져오기
             const checkedTimeBtns = document.querySelectorAll('input[name="timeFilter"]:checked');
             const timeRanges = Array.from(checkedTimeBtns).map(btn => ({
                 min: parseInt(btn.dataset.min, 10),
@@ -1746,21 +1774,17 @@ body {
                 document.querySelectorAll('#airline-filter-list input[type="checkbox"]:checked')
             ).map(cb => cb.value);
 
-            // 2. 모든 항공권 카드(div) 순회
             flightCards.forEach(card => {
-                // 3. div의 data- 속성에서 값 가져오기
                 const depMinutes = parseInt(card.dataset.depMinutes, 10);
                 const duration = parseInt(card.dataset.durationMinutes, 10);
                 const price = parseInt(card.dataset.priceNum, 10);
                 const carrier = card.dataset.carrierCode;
 
-                // 4. 범위에 맞는지 확인
                 const showByDep = timeRanges.some(range => (depMinutes >= range.min && depMinutes <= range.max));
                 const showByDur = (duration >= durMin && duration <= durMax);
                 const showByPrice = (price >= priceMin && price <= priceMax);
                 const showByAirline = (checkedAirlines.length === 0) || checkedAirlines.includes(carrier);
 
-                // 5. ⭐ <div> 자체를 숨기거나 보여줌
                 if (showByDep && showByDur && showByPrice && showByAirline) {
                     card.style.display = 'block';
                 } else {
@@ -1769,7 +1793,6 @@ body {
             });
         }
         
-        // 슬라이더 비활성화
         if (minDuration === maxDuration) {
             durSliderEl.setAttribute('disabled', true);
         }
@@ -1777,7 +1800,6 @@ body {
             priceSliderEl.setAttribute('disabled', true);
         }
         
-        // ⭐ 페이지 로드 시 초기 라벨 값 설정
         durMinLabel.textContent = formatDuration(minDuration);
         durMaxLabel.textContent = formatDuration(maxDuration);
         priceMinLabel.textContent = priceFormatter.format(minPrice);

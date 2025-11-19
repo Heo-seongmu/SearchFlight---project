@@ -36,8 +36,12 @@ public class HomeController {
 	@GetMapping("/")
 	public String home(Model model) { // 1. Model 파라미터 추가
 		
-		List<DestinationStatsDto> trendList = searchLogRepository.findTopDestinations(PageRequest.of(0, 6));
-        model.addAttribute("trendList", trendList);
+		List<DestinationStatsDto> domesticTrend = searchLogRepository.findTopDestinationsByCountry("국내", PageRequest.of(0, 6));
+	    model.addAttribute("domesticTrend", domesticTrend);
+
+	    // 2. [해외] 실시간 인기 검색어 Top 6
+	    List<DestinationStatsDto> overseasTrend = searchLogRepository.findTopDestinationsByCountry("해외", PageRequest.of(0, 6));
+	    model.addAttribute("overseasTrend", overseasTrend);
 		
 		// 2. DB에서 모든 여행지 데이터 가져오기
 		List<popular> allPopulars = popularRepository.findAll();

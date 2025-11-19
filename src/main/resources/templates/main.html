@@ -766,6 +766,70 @@ main {
 @media (max-width: 576px) {
     .trend-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+.trend-container {
+    margin-bottom: 50px;
+    position: relative;
+}
+
+/* 라디오 버튼 숨기기 */
+.trend-tab-input {
+    display: none;
+}
+
+/* 탭 메뉴 영역 */
+.trend-tabs {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+.trend-tab-label {
+    font-size: 20px;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+    padding-bottom: 10px;
+    position: relative;
+    transition: all 0.3s;
+}
+
+/* 선택된 탭 스타일 (라디오 버튼 체크 시) */
+#tab-domestic:checked ~ .trend-tabs label[for="tab-domestic"],
+#tab-overseas:checked ~ .trend-tabs label[for="tab-overseas"] {
+    color: #333;
+    border-bottom: 3px solid #ff7675; /* 포인트 컬러 */
+    margin-bottom: -2px;
+}
+
+/* 그리드 기본 숨김 */
+.trend-content {
+    display: none; 
+    grid-template-columns: repeat(6, 1fr);
+    gap: 15px;
+    animation: fadeIn 0.5s;
+}
+
+/* 선택된 탭의 그리드만 보이기 */
+#tab-domestic:checked ~ #content-domestic,
+#tab-overseas:checked ~ #content-overseas {
+    display: grid;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 반응형 (기존 trend-grid 미디어 쿼리와 동일) */
+@media (max-width: 992px) {
+    .trend-content { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 576px) {
+    .trend-content { grid-template-columns: repeat(2, 1fr); }
+}
 </style>
 </head>
 <body>
@@ -852,20 +916,40 @@ main {
 		<section class="popular-destinations-section">
 			<div class="content-container">
 				<h2>대한민국 출발 인기 항공권</h2>
-					<div style="margin-bottom: 50px;">
-            			<h3 style="border:none; margin-top:30px;">🔥 실시간 급상승 검색어 (Top 6)</h3>
-           			 <div class="trend-grid">
-               			 <div class="trend-card" th:each="item, stat : ${trendList}">
-                   			 <div class="trend-rank" th:text="${stat.count}">1</div>
-                  	  
-                   			 <span class="trend-city" th:text="${item.cityName}">제주</span>
-                    
-                    	     <span class="trend-code" th:text="${item.iataCode}">CJU</span>
-                    
-                    		 <span class="trend-count" th:text="|⚡ ${item.searchCount}회 검색|">123회</span>
-                	</div>
-            	</div>
-        	</div>
+
+        <div class="trend-container">
+            <input type="radio" id="tab-domestic" name="trendTabs" class="trend-tab-input" checked>
+            <input type="radio" id="tab-overseas" name="trendTabs" class="trend-tab-input">
+
+            <div class="trend-tabs">
+                <label for="tab-domestic" class="trend-tab-label">🔥 국내 급상승</label>
+                <label for="tab-overseas" class="trend-tab-label">✈️ 해외 급상승</label>
+            </div>
+
+            <div id="content-domestic" class="trend-content">
+                <div class="trend-card" th:each="item, stat : ${domesticTrend}">
+                    <div class="trend-rank" th:text="${stat.count}">1</div>
+                    <span class="trend-city" th:text="${item.cityName}">제주</span>
+                    <span class="trend-code" th:text="${item.iataCode}">CJU</span>
+                    <span class="trend-count" th:text="|⚡ ${item.searchCount}회 검색|">45회</span>
+                </div>
+                 <div th:if="${domesticTrend.empty}" style="grid-column: 1/-1; text-align: center; padding: 20px; color: #999;">
+                    아직 집계된 국내 검색 데이터가 없습니다.
+                </div>
+            </div>
+
+            <div id="content-overseas" class="trend-content">
+                <div class="trend-card" th:each="item, stat : ${overseasTrend}">
+                    <div class="trend-rank" th:text="${stat.count}">1</div>
+                    <span class="trend-city" th:text="${item.cityName}">오사카</span>
+                    <span class="trend-code" th:text="${item.iataCode}">KIX</span>
+                    <span class="trend-count" th:text="|⚡ ${item.searchCount}회 검색|">15회</span>
+                </div>
+                 <div th:if="${overseasTrend.empty}" style="grid-column: 1/-1; text-align: center; padding: 20px; color: #999;">
+                    아직 집계된 해외 검색 데이터가 없습니다.
+                </div>
+            </div>
+        </div>
 				<h3>국내 인기 여행지</h3>
 
 				<div class="destination-grid">
@@ -926,7 +1010,7 @@ main {
 				<div class="tags-container">
 					<span class="tag" data-iata="DAD" data-kolocation="다낭">다낭</span> <span
 						class="tag" data-iata="BKK" data-kolocation="방콕">방콕</span> <span
-						class="tag" data-iata="TPE" data-kolocation="타이페이">타이페이</span> <span
+						class="tag" data-iata="TPE" data-kolocation="타이베이">타이베이</span> <span
 						class="tag" data-iata="HKG" data-kolocation="홍콩">홍콩</span> <span
 						class="tag" data-iata="DPS" data-kolocation="발리">발리</span>
 				</div>

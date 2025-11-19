@@ -2,6 +2,8 @@ package hsm.bootproject.SearchFlight.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,9 +43,13 @@ public class AirService {
 
 	@Autowired
 	private basicAreaRepository basicareaRepository;
-	
+
 	@Autowired
-    private SearchLogRepository searchLogRepository;
+	private SearchLogRepository searchLogRepository;
+	
+	private static final List<String> DOMESTIC_AIRPORTS = Arrays.asList(
+		    "ICN", "GMP", "CJU", "PUS", "KWJ", "CJJ", "TAE", "RSU", "MWX", "YNY", "KPO", "USN", "HIN"
+		);
 
 	public String Translation(String text) {
 		try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
@@ -60,8 +66,7 @@ public class AirService {
 
 			// 3. 올바른 헤더 추가 방식으로 수정
 			httpPost.addHeader("x-ncp-apigw-api-key-id", "b3ledegk8h"); // 실제 Client ID로 교체하세요
-			httpPost.addHeader("x-ncp-apigw-api-key", "VdEN5oguqSgTezFnDBMaP1pbYK2YEjCPsvflM8KC"); // 실제 Client Secret으로
-																									// 교체하세요
+			httpPost.addHeader("x-ncp-apigw-api-key", "VdEN5oguqSgTezFnDBMaP1pbYK2YEjCPsvflM8KC"); // 실제 Client Secret으로 교체하세요
 
 			String data = httpclient.execute(httpPost, response -> {
 
@@ -72,8 +77,7 @@ public class AirService {
 				return resData;
 			});
 
-			JsonObject message = JsonParser.parseString(data).getAsJsonObject().get("message").getAsJsonObject(); // Element
-																													// 변환
+			JsonObject message = JsonParser.parseString(data).getAsJsonObject().get("message").getAsJsonObject(); // Element 변환
 
 			JsonObject result = message.get("result").getAsJsonObject();
 
@@ -101,8 +105,7 @@ public class AirService {
 
 			// 3. 올바른 헤더 추가 방식으로 수정
 			httpPost.addHeader("x-ncp-apigw-api-key-id", "b3ledegk8h"); // 실제 Client ID로 교체하세요
-			httpPost.addHeader("x-ncp-apigw-api-key", "VdEN5oguqSgTezFnDBMaP1pbYK2YEjCPsvflM8KC"); // 실제 Client Secret으로
-																									// 교체하세요
+			httpPost.addHeader("x-ncp-apigw-api-key", "VdEN5oguqSgTezFnDBMaP1pbYK2YEjCPsvflM8KC"); // 실제 Client Secret으로 교체하세요
 
 			String data = httpclient.execute(httpPost, response -> {
 
@@ -113,8 +116,7 @@ public class AirService {
 				return resData;
 			});
 
-			JsonObject message = JsonParser.parseString(data).getAsJsonObject().get("message").getAsJsonObject(); // Element
-																													// 변환
+			JsonObject message = JsonParser.parseString(data).getAsJsonObject().get("message").getAsJsonObject(); // Element 변환
 
 			JsonObject result = message.get("result").getAsJsonObject();
 
@@ -239,13 +241,30 @@ public class AirService {
 
 	public List<searchAirDto> searchAirPort(airParmDto airparmDto) throws IOException {
 		String auth = token();
-		
-		SearchLog log = new SearchLog();
-        log.setIataCode(airparmDto.getArrivalCode());         // 예: NRT
-        log.setCityName(airparmDto.getArrivalKoLocation());   // 예: 도쿄/나리타
-        
-        searchLogRepository.save(log);
-		
+
+		try {
+	        if (airparmDto.getArrivalCode() != null && !airparmDto.getArrivalCode().isEmpty()) {
+	            SearchLog log = new SearchLog();
+	            
+	            String iataCode = airparmDto.getArrivalCode(); // 예: CJU, NRT
+	            
+	            log.setIataCode(iataCode);
+	            log.setCityName(airparmDto.getArrivalKoLocation()); // 예: 제주, 도쿄
+	            
+	            // [핵심 로직] 도착 코드가 국내 공항 리스트에 있는지 확인
+	            if (DOMESTIC_AIRPORTS.contains(iataCode)) {
+	                log.setCountry("국내");
+	            } else {
+	                log.setCountry("해외");
+	            }
+
+	            searchLogRepository.save(log);
+	            System.out.println(">> [DB 저장] " + log.getCityName() + " (" + log.getCountry() + ") 기록 완료");
+	        }
+	    } catch (Exception e) {
+	        System.out.println(">> [DB 에러] 로그 저장 실패: " + e.getMessage());
+	    }
+
 		try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
 			String nonstop = "false";
 			if (airparmDto.isDirectFlight()) {
@@ -275,7 +294,7 @@ public class AirService {
 				EntityUtils.consume(entity1);
 				return resData;
 			});
-
+			System.out.println(data);
 			List<searchAirDto> flightOfferList = new ArrayList<>();
 			JsonObject rootObject = JsonParser.parseString(data).getAsJsonObject();
 
@@ -303,8 +322,29 @@ public class AirService {
 
 					// ## 가는 편 정보 처리 ##
 					JsonObject departureItinerary = itineraries.get(0).getAsJsonObject();
+
+					// [추가] 1. 총 소요 시간 파싱 (PT20H10M -> 20시간 10분)
+					if (departureItinerary.has("duration")) {
+						String rawDuration = departureItinerary.get("duration").getAsString();
+						dto.setTotalDuration(formatDuration(rawDuration));
+					}
+
 					JsonArray departureSegments = departureItinerary.getAsJsonArray("segments");
 					dto.setDirectFlight(departureSegments.size() == 1);
+
+					// [추가] 2. 경유지 추출 로직
+					if (departureSegments.size() > 1) {
+						List<String> layovers = new ArrayList<>();
+						// 마지막 도착지를 제외한 모든 도착지가 경유지입니다.
+						for (int i = 0; i < departureSegments.size() - 1; i++) {
+							JsonObject segment = departureSegments.get(i).getAsJsonObject();
+							String stopCode = segment.getAsJsonObject("arrival").get("iataCode").getAsString();
+							layovers.add(stopCode);
+						}
+						dto.setLayoverNames(String.join(", ", layovers));
+					} else {
+						dto.setLayoverNames("");
+					}
 
 					JsonObject firstDepartureSegment = departureSegments.get(0).getAsJsonObject();
 					JsonObject lastDepartureSegment = departureSegments.get(departureSegments.size() - 1)
@@ -321,6 +361,17 @@ public class AirService {
 					dto.setArrivalTime(arrivalAt.substring(11, 16));
 					dto.setArrivalCode(lastDepartureSegment.getAsJsonObject("arrival").get("iataCode").getAsString());
 					dto.setArrivalDate(arrivalAt.substring(0, 10));
+					
+					try {
+					    LocalDate depDate = LocalDate.parse(dto.getDepartureDate());
+					    LocalDate arrDate = LocalDate.parse(dto.getArrivalDate());
+					    // 날짜 차이 계산 (arr - dep)
+					    long diff = ChronoUnit.DAYS.between(depDate, arrDate);
+					    dto.setDayDifference((int) diff);
+					} catch (Exception e) {
+					    // 날짜 파싱 에러 시 기본값 0
+					    dto.setDayDifference(0);
+					}
 
 					// ## 오는 편 정보 처리 ##
 					if (itineraryCount > 1) {
@@ -410,10 +461,19 @@ public class AirService {
 				returnDto.setReturnDepartureTime(offer.getReturnDepartureTime());
 				returnDto.setReturnArrivalTime(offer.getReturnArrivalTime());
 				returnDto.setReturnDirectFlight(offer.isReturnDirectFlight());
-				
+
 				returnDto.setReturnDepartureDate(offer.getReturnDepartureDate());
-	            returnDto.setReturnArrivalDate(offer.getReturnArrivalDate());
+				returnDto.setReturnArrivalDate(offer.getReturnArrivalDate());
 				
+				try {
+				    LocalDate retDepDate = LocalDate.parse(offer.getReturnDepartureDate());
+				    LocalDate retArrDate = LocalDate.parse(offer.getReturnArrivalDate());
+				    long diff = ChronoUnit.DAYS.between(retDepDate, retArrDate);
+				    returnDto.setReturnDayDifference((int) diff);
+				} catch (Exception e) {
+				    returnDto.setReturnDayDifference(0);
+				}
+
 				// 중요: searchAirDto의 rawTotalPrice는 왕복 총액입니다.
 				// 여기서는 편의상 그대로 사용하지만, 편도 가격을 별도로 계산해야 할 수도 있습니다.
 				returnDto.setReturnTotalPrice(offer.getRawTotalPrice());
@@ -442,6 +502,31 @@ public class AirService {
 
 		// 3. DB에 정보가 없는 경우, 일단 국제선으로 간주 (안전 조치)
 		return false;
+	}
+
+	// [추가] ISO 8601 시간 포맷 변환 헬퍼 메소드 (PT20H10M -> 20시간 10분)
+	private String formatDuration(String ptDuration) {
+		if (ptDuration == null || ptDuration.isEmpty())
+			return "";
+
+		String time = ptDuration.replace("PT", ""); // "20H10M"
+		String hours = "0";
+		String minutes = "0";
+
+		int hIndex = time.indexOf("H");
+		int mIndex = time.indexOf("M");
+
+		if (hIndex != -1) {
+			hours = time.substring(0, hIndex);
+		}
+
+		if (mIndex != -1) {
+			// H가 있으면 H 뒤부터 M 앞까지, 없으면 처음부터 M 앞까지
+			int start = (hIndex != -1) ? hIndex + 1 : 0;
+			minutes = time.substring(start, mIndex);
+		}
+
+		return hours + "시간 " + minutes + "분";
 	}
 
 }

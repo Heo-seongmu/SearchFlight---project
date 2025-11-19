@@ -17,4 +17,6 @@ public class ReturnFlightDto {
 	private String returnArrivalCode;   // 오는 편 도착 공항 코드
 	private String returnDepartureDate; 
     private String returnArrivalDate;
+    
+    private int returnDayDifference;
 }

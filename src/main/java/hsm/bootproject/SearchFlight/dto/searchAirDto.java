@@ -40,5 +40,10 @@ public class searchAirDto {
 	
 	private String arrivalDate;
 	private String returnArrivalDate;
+	
+	private String layoverNames;   // 예: "YVR"
+	private String totalDuration;
+	
+	private int dayDifference;
 
 }
