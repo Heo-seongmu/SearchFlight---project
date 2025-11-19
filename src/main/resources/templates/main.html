@@ -1483,20 +1483,54 @@ main {
         alertModal.style.display = 'flex';
     }
 
+    const longHaulList = ["JFK", "LAX", "SFO", "SYD", "CDG", "LHR", "FCO", "MAD", "BCN"]; 
+    const asiaResortList = ["DAD", "BKK", "DPS", "GUM", "CEB", "NHA", "HKG"]; 
+    const smallDomesticList = ["KPO", "RSU", "KWJ", "USN", "HIN", "KUV", "WJU", "YNY"]; 
+    const noFlightFromSeoul = ["CJJ", "WJU", "KUV", "YNY"]; 
+
+    const impossibleRoutes = {
+        "SEL": ["ICN", "GMP","KPO", ...noFlightFromSeoul],
+        "ICN": [...smallDomesticList, "GMP", ...noFlightFromSeoul, "CJJ"],
+        "GMP": ["ICN", ...longHaulList, ...asiaResortList, "FUK", "OKA", "CTS", "NRT", ...noFlightFromSeoul, "CJJ"],
+        "KPO": ["ICN", "SEL", ...longHaulList, ...asiaResortList], 
+        "RSU": ["ICN", "SEL", ...longHaulList, ...asiaResortList],
+        "KWJ": ["ICN", "SEL", ...longHaulList, ...asiaResortList, "YNY"],
+        "USN": ["ICN", "SEL", "PUS", ...longHaulList, ...asiaResortList], 
+        "JFK": smallDomesticList,
+        "LHR": smallDomesticList,
+        "CDG": smallDomesticList,
+        "LAX": smallDomesticList,
+        "GUM": smallDomesticList
+    };
+
     searchForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
-        if (arrivalCodeInputForValidation.value === '') {
+        const depCode = document.getElementById('departureCode').value;
+        const arrCode = arrivalCodeInputForValidation.value;
+        const depDate = departureDateInputForValidation.value;
+
+        if (arrCode === '') {
             showAlertModal('도착지를 선택해주세요.');
             return;
         }
-        if (departureDateInputForValidation.value === '') {
+        if (depDate === '') {
             showAlertModal('날짜를 선택해주세요.');
             return;
         }
+
+        if (impossibleRoutes[depCode] && impossibleRoutes[depCode].includes(arrCode)) {
+            const depName = document.getElementById('departureBtn').innerText.split(' ')[0];
+            const arrName = document.getElementById('arrivalBtn').innerText.split(' ')[0];
+            // [수정됨] 백틱(`)이 빠져 있던 오류 해결
+            showAlertModal(`🚫 운항하지 않는 노선입니다.\n\n[${depName}]에서 [${arrName}]로 가는\n직항 항공편은 없습니다.`);
+            return; 
+        }
         
         loadingModal.style.display = 'flex';
-        setTimeout(() => { this.submit(); }, 100);
+        setTimeout(() => { 
+            this.submit(); 
+        }, 100);
     });
 
     closeAlertModalBtn.addEventListener('click', function() {
@@ -1504,7 +1538,7 @@ main {
     });
 
     // ==========================================
-    // [NEW] 여행지 추천 모달 (AJAX 연동 버전)
+    // 여행지 추천 모달 (AJAX 연동 버전)
     // ==========================================
 
     const destModal = document.getElementById('destinationModal');
@@ -1512,9 +1546,6 @@ main {
     const destModalDesc = document.getElementById('destModalDesc');
     const activityGrid = document.getElementById('activityGrid');
 
-    // 여행지 카드 클릭 시 AJAX 호출
-    // (주의: 동적으로 생성된 요소가 아니므로 바로 이벤트 걸어도 됩니다. 
-    //  만약 동적 생성이라면 위임(delegation) 방식을 써야 합니다.)
     const destCards = document.querySelectorAll('.destination-card');
     destCards.forEach(card => {
         card.addEventListener('click', function() {
@@ -1525,93 +1556,133 @@ main {
         });
     });
 
-    function openDestinationModal(city) {
-        // AJAX 호출
-        $.ajax({
-            url: '/api/destination/detail',
-            type: 'GET',
-            data: { cityName: city },
-            dataType: 'json',
-            success: function(data) {
-                // 1. 모달 텍스트 채우기
-                destModalTitle.textContent = city;
-                destModalDesc.textContent = data.desc;
-                
-                // 2. 액티비티 그리드 생성
-                let html = '';
-                if (data.activities && data.activities.length > 0) {
-                    data.activities.forEach(item => {
-                        html += `
-                            <div class="activity-item">
-                                <img src="${item.img}" class="activity-img" alt="${item.title}">
-                                <div class="activity-info">
-                                    <h5>${item.title}</h5>
-                                    <p>${item.text}</p>
+    const cityCodeMap = {
+            "제주": "CJU",
+            "부산": "PUS", "부산/김해": "PUS",
+            "여수": "RSU",
+            "양양": "YNY",
+            "광주": "KWJ",
+            "포항": "KPO", "포항/경주": "KPO",
+            "서울": "SEL", "서울/김포": "GMP", "서울/인천": "ICN",
+            "울산": "USN",
+            "청주": "CJJ",
+            "무안": "MWX",
+            "대구": "TAE",
+            
+            // 해외
+            "오사카": "KIX",
+            "도쿄": "NRT", "도쿄/나리타": "NRT",
+            "후쿠오카": "FUK",
+            "삿포로": "CTS",
+            "오키나와": "OKA",
+            "다낭": "DAD",
+            "방콕": "BKK",
+            "타이베이": "TPE",
+            "홍콩": "HKG",
+            "발리": "DPS",
+            "파리": "CDG",
+            "런던": "LHR",
+            "로마": "FCO",
+            "뉴욕": "JFK",
+            "시드니": "SYD",
+            "괌": "GUM"
+        };
+
+        function openDestinationModal(city) {
+            $.ajax({
+                url: '/api/destination/detail',
+                type: 'GET',
+                data: { cityName: city },
+                dataType: 'json',
+                success: function(data) {
+                    // 1. 모달 내용 채우기
+                    destModalTitle.textContent = city;
+                    destModalDesc.textContent = data.desc;
+                    
+                    // 2. 액티비티 그리드 생성
+                    let html = '';
+                    if (data.activities && data.activities.length > 0) {
+                        data.activities.forEach(item => {
+                            html += `
+                                <div class="activity-item">
+                                    <img src="${item.img}" class="activity-img" alt="${item.title}">
+                                    <div class="activity-info">
+                                        <h5>${item.title}</h5>
+                                        <p>${item.text}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    html = '<p style="grid-column: 1 / -1; text-align: center;">등록된 추천 활동이 없습니다.</p>';
+                            `;
+                        });
+                    } else {
+                        html = '<p style="grid-column: 1 / -1; text-align: center;">등록된 추천 활동이 없습니다.</p>';
+                    }
+                    activityGrid.innerHTML = html;
+
+                    // 3. 버튼 설정
+                    const bookBtn = document.getElementById('btnBookFlight');
+                    bookBtn.textContent = `✈️ ${city} 항공권 검색하러 가기`;
+
+                    // 4. 버튼 클릭 이벤트 (여기가 중요!)
+                    bookBtn.onclick = function() {
+                        const arrivalBtn = document.getElementById('arrivalBtn');
+                        const arrivalKoInput = document.getElementById('arrivalKoLocation');
+                        const arrivalCodeInput = document.getElementById('arrivalCode');
+
+                        // (1) 한글 이름 채우기
+                        arrivalBtn.textContent = city; 
+                        arrivalBtn.classList.remove('field-placeholder');
+                        arrivalBtn.classList.add('field-location');
+                        arrivalKoInput.value = city; 
+                        
+                        // (2) [핵심 수정] 공항 코드(IATA) 강제 주입 로직
+                        // 우선순위 1: 서버에서 받은 데이터, 우선순위 2: 우리가 만든 맵, 우선순위 3: 없으면 빈값
+                        let targetCode = data.iataCode;
+                        
+                        if (!targetCode) {
+                            // 맵에서 찾아보고, 그래도 없으면 도시 이름으로 한 번 더 찾아봄
+                            targetCode = cityCodeMap[city] || cityCodeMap[data.cityName];
+                        }
+
+                        if (targetCode) {
+                            arrivalCodeInput.value = targetCode;
+                            console.log(`도착지 코드 설정 완료: ${city} -> ${targetCode}`);
+                        } else {
+                            console.error(`⚠️ 오류: [${city}]에 해당하는 공항 코드를 찾을 수 없습니다.`);
+                            alert("죄송합니다. 해당 여행지의 공항 코드를 찾을 수 없습니다.");
+                            return; // 코드 없으면 진행 중단
+                        }
+
+                        // (3) 모달 닫고 이동
+                        closeDestinationModal();
+
+                        document.querySelector('.hero-section').scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+
+                        setTimeout(() => {
+                            datePicker.open(); 
+                        }, 500); 
+                    };
+
+                    destModal.style.display = 'flex';
+                },
+                error: function(err) {
+                    console.error(err);
+                    alert('정보를 불러오는데 실패했습니다.');
                 }
-                activityGrid.innerHTML = html;
-
-                // ====================================================
-                // 3. [추가] 항공권 검색 버튼 로직 연결
-                // ====================================================
-                const bookBtn = document.getElementById('btnBookFlight');
-                
-                // 버튼 텍스트를 해당 도시 이름으로 변경 (예: ✈️ 제주 항공권 검색하러 가기)
-                bookBtn.textContent = `✈️ ${city} 항공권 검색하러 가기`;
-
-                // 버튼 클릭 이벤트 설정
-               bookBtn.onclick = function() {
-                // (1) 도착지 UI 및 값 변경
-                const arrivalBtn = document.getElementById('arrivalBtn');
-                const arrivalKoInput = document.getElementById('arrivalKoLocation');
-                
-                arrivalBtn.textContent = city; 
-                arrivalBtn.classList.remove('field-placeholder');
-                arrivalBtn.classList.add('field-location');
-                arrivalKoInput.value = city; 
-
-                // (2) 모달 닫기
-                closeDestinationModal();
-
-                // (3) [NEW] 화면 스크롤 이동 (검색창 위치로 부드럽게)
-                // .hero-section(배경 이미지 있는 섹션)을 기준으로 이동합니다.
-                document.querySelector('.hero-section').scrollIntoView({ 
-                    behavior: 'smooth',  // 부드럽게 이동
-                    block: 'center'      // 검색창이 화면 중앙에 오도록
-                });
-
-                // (4) 날짜 선택창으로 포커스 이동
-                // 스크롤 이동 시간을 고려해서 딜레이를 조금(0.5초) 줍니다.
-                setTimeout(() => {
-                    datePicker.open(); 
-                }, 500); 
-            };
-
-                // 4. 모달 보여주기
-                destModal.style.display = 'flex';
-            },
-            error: function(err) {
-                console.error(err);
-                alert('정보를 불러오는데 실패했습니다.');
-            }
-        });
-    }
+            });
+        }
 
     function closeDestinationModal() {
         destModal.style.display = 'none';
     }
 
-    // 모달 외부 클릭 시 닫기
     destModal.addEventListener('click', function(event) {
         if (event.target === destModal) {
             closeDestinationModal();
         }
     });
-	</script>
+</script>
 </body>
 </html>
