@@ -3,6 +3,7 @@ package hsm.bootproject.SearchFlight.Service;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +11,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -37,6 +40,8 @@ import hsm.bootproject.SearchFlight.dto.airportDto;
 import hsm.bootproject.SearchFlight.dto.searchAirDto;
 import hsm.bootproject.SearchFlight.repository.SearchLogRepository;
 import hsm.bootproject.SearchFlight.repository.basicAreaRepository;
+
+import java.util.stream.IntStream;
 
 @Service
 public class AirService {
@@ -440,6 +445,113 @@ public class AirService {
 			return Collections.emptyList();
 		}
 	}
+	
+	public Map<String, String> getSurroundingPrices(airParmDto originalDto) throws IOException {
+        Map<String, String> priceMap = new ConcurrentHashMap<>(); 
+        String auth = token(); 
+
+        LocalDate startDepDate = LocalDate.parse(originalDto.getDepartureDate());
+        long duration = 0;
+        boolean isRoundTrip = "round-trip".equals(originalDto.getTripType());
+
+        if (isRoundTrip && originalDto.getReturnDate() != null && !originalDto.getReturnDate().isEmpty()) {
+            LocalDate startRetDate = LocalDate.parse(originalDto.getReturnDate());
+            duration = ChronoUnit.DAYS.between(startDepDate, startRetDate);
+        }
+        
+        final long finalDuration = duration; 
+        final String authToken = auth; // 람다식 내부 사용을 위해
+
+        List<CompletableFuture<Void>> futures = IntStream.rangeClosed(-2, 2)
+            .mapToObj(i -> CompletableFuture.runAsync(() -> {
+                try {
+                    LocalDate targetDepDate = startDepDate.plusDays(i);
+                    
+                    // 오늘 날짜 이전이면 조회 패스
+                    if (targetDepDate.isBefore(LocalDate.now())) {
+                        return; 
+                    }
+
+                    String targetDepDateStr = targetDepDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+                    String targetRetDateStr = null;
+
+                    if (isRoundTrip) {
+                        LocalDate targetRetDate = targetDepDate.plusDays(finalDuration);
+                        targetRetDateStr = targetRetDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+                    }
+
+                    String price = fetchCheapestPrice(originalDto, targetDepDateStr, targetRetDateStr, authToken);
+                    
+                    if (price != null) {
+                        priceMap.put(targetDepDateStr, price);
+                    } else {
+                        priceMap.put(targetDepDateStr, "-");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }))
+            .toList();
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+        return priceMap;
+    }
+
+    // [신규] 최저가 1개만 가져오는 가벼운 API 호출 메소드
+    private String fetchCheapestPrice(airParmDto dto, String depDate, String retDate, String authToken) {
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+            
+            String nonstop = dto.isDirectFlight() ? "true" : "false";
+
+            ClassicRequestBuilder requestBuilder = ClassicRequestBuilder
+                    .get("https://test.api.amadeus.com/v2/shopping/flight-offers")
+                    .addParameter("originLocationCode", dto.getDepartureCode())
+                    .addParameter("destinationLocationCode", dto.getArrivalCode())
+                    .addParameter("departureDate", depDate)
+                    .addParameter("adults", dto.getAdults())
+                    .addParameter("children", dto.getChildren())
+                    .addParameter("infants", dto.getInfants())
+                    .addParameter("travelClass", dto.getTravelClass())
+                    .addParameter("nonStop", nonstop)
+                    .addParameter("max", "1"); 
+
+            if (retDate != null) {
+                requestBuilder.addParameter("returnDate", retDate);
+            }
+
+            ClassicHttpRequest httpGet = requestBuilder.build();
+            httpGet.setHeader("Authorization", "Bearer " + authToken);
+
+            // API 호출
+            String responseData = httpclient.execute(httpGet, response -> {
+                final HttpEntity entity = response.getEntity();
+                String res = EntityUtils.toString(entity);
+                EntityUtils.consume(entity);
+                return res;
+            });
+
+            // JSON 파싱 (가격만 쏙 빼오기)
+            JsonObject root = JsonParser.parseString(responseData).getAsJsonObject();
+            if (root.has("data")) {
+                JsonArray dataArray = root.getAsJsonArray("data");
+                if (dataArray.size() > 0) {
+                    JsonObject firstOffer = dataArray.get(0).getAsJsonObject();
+                    String totalStr = firstOffer.getAsJsonObject("price").get("total").getAsString();
+                    
+                    // 환율 계산 및 포맷팅
+                    double price = Double.parseDouble(totalStr);
+                    long wonPrice = Math.round(price * 1650);
+                    return String.format("%,d원", wonPrice);
+                }
+            }
+        } catch (Exception e) {
+            // 에러 로그는 필요하면 찍되, 여기선 null 반환하여 '-' 처리
+            // System.out.println("가격 조회 실패: " + e.getMessage());
+        }
+        return null;
+    }
 
 	public List<ReturnFlightDto> findReturnFlights(airParmDto airparmDto, String selectedCarrierCode,
 			String selectedDepartureTime) throws IOException {

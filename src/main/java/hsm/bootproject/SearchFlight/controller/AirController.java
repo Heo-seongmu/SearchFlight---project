@@ -64,23 +64,31 @@ public class AirController {
 		return searchAirports;
 	}
 	
-@RequestMapping(value = "/searchAirport", method = {RequestMethod.GET, RequestMethod.POST})
-public String searchAirport(airParmDto airparmDto, Model model, HttpSession session) {
-		
-		try {
-			session.setAttribute("searchParams", airparmDto);
-			
-			List<searchAirDto> searchairDto = airService.searchAirPort(airparmDto);
-			model.addAttribute("searchairDto",searchairDto);
-			model.addAttribute("airparmDto",airparmDto);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if ("one-way".equals(airparmDto.getTripType())) {
-	        // tripType이 "one-way"이면 oneAirList.html 반환
+	@RequestMapping(value = "/searchAirport", method = {RequestMethod.GET, RequestMethod.POST})
+	public String searchAirport(airParmDto airparmDto, Model model, HttpSession session) {
+	    try {
+	        session.setAttribute("searchParams", airparmDto);
+	        
+	        // 1. 메인 리스트 조회
+	        List<searchAirDto> searchairDto = airService.searchAirPort(airparmDto);
+	        model.addAttribute("searchairDto", searchairDto);
+	        model.addAttribute("airparmDto", airparmDto);
+	        
+	        // 2. [추가] 주변 날짜(5일치) 가격 조회
+	        // 이 작업은 시간이 조금 걸릴 수 있습니다.
+	        Map<String, String> datePriceMap = airService.getSurroundingPrices(airparmDto);
+	        
+	        // JSON 형태로 변환해서 보내거나, Map 그대로 보내서 타임리프에서 처리
+	        // 자바스크립트에서 쓰기 편하게 Map 그대로 넘깁니다.
+	        model.addAttribute("datePriceMap", datePriceMap);
+
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    if ("one-way".equals(airparmDto.getTripType())) {
 	        return "oneAirList";
 	    } else {
-	        // 그 외의 경우 (기본값, "round-trip" 등) airList.html 반환
 	        return "airList";
 	    }
 	}

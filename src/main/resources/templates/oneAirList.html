@@ -1144,8 +1144,11 @@ body {
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
 
-	<script>
-    // --- 🟢 날짜 스트립 로직 추가 (시작) 🟢 ---
+	<script th:inline="javascript">
+    /* 🟢 서버에서 넘어온 날짜별 가격 데이터 (Map) */
+    const datePriceMap = {}; 
+
+    // --- 1. 날짜 스트립 로직 (가격 표시 + 과거 차단) ---
     document.addEventListener('DOMContentLoaded', function() {
         renderDateStrip();
     });
@@ -1161,24 +1164,42 @@ body {
         const currentDepDate = new Date(currentDepDateStr);
         container.innerHTML = ''; 
 
-        // -2일 ~ +2일
+        // 오늘 날짜 (시간 초기화)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
         for (let i = -2; i <= 2; i++) {
             const targetDate = new Date(currentDepDate);
             targetDate.setDate(currentDepDate.getDate() + i);
+            targetDate.setHours(0, 0, 0, 0); 
             
             const year = targetDate.getFullYear();
             const month = String(targetDate.getMonth() + 1).padStart(2, '0');
             const day = String(targetDate.getDate()).padStart(2, '0');
             const fullDateStr = `${year}-${month}-${day}`;
-            const displayDateStr = `${month}월 ${day}일`;
+            
+            const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+            const dayName = dayNames[targetDate.getDay()];
+            const displayDateStr = `${month}월 ${day}일(${dayName})`;
             
             const isActive = (i === 0) ? 'active' : '';
+            // 🚨 과거 날짜 확인
+            const isPastDate = targetDate.getTime() < today.getTime();
+            const disabledClass = isPastDate ? 'disabled' : '';
+            
+            // 🚨 가격 정보 매핑
+            let priceText = '-';
+            if (datePriceMap && datePriceMap[fullDateStr]) {
+                priceText = datePriceMap[fullDateStr] + ' ~';
+            }
+            
+            // 🚨 클릭 이벤트 제어
+            const onClickHandler = isPastDate ? '' : `onclick="searchByDate('${fullDateStr}')"`;
 
-            // 가격 정보는 현재 알 수 없으므로 '-' 처리
             const html = `
-                <div class="date-cell ${isActive}" onclick="searchByDate('${fullDateStr}')">
+                <div class="date-cell ${isActive} ${disabledClass}" ${onClickHandler}>
                     <span class="date-text">${displayDateStr}</span>
-                    <span class="price-text" style="font-size: 0.8rem; color: #888;">-</span> 
+                    <span class="price-text" style="font-size: 0.9rem; font-weight: bold;">${priceText}</span> 
                 </div>
             `;
             container.insertAdjacentHTML('beforeend', html);
