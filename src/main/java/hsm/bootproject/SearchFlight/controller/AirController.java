@@ -65,22 +65,23 @@ public class AirController {
 	}
 	
 	@RequestMapping(value = "/searchAirport", method = {RequestMethod.GET, RequestMethod.POST})
-	public String searchAirport(airParmDto airparmDto, Model model, HttpSession session) {
+	public String searchAirport(airParmDto airparmDto, Model model, HttpSession session,
+	                            @RequestParam(value = "skipPrice", required = false, defaultValue = "false") boolean skipPrice) {
+	    
 	    try {
 	        session.setAttribute("searchParams", airparmDto);
 	        
-	        // 1. 메인 리스트 조회
+	        // 1. 메인 리스트 조회 (이건 항상 실행)
 	        List<searchAirDto> searchairDto = airService.searchAirPort(airparmDto);
 	        model.addAttribute("searchairDto", searchairDto);
 	        model.addAttribute("airparmDto", airparmDto);
 	        
-	        // 2. [추가] 주변 날짜(5일치) 가격 조회
-	        // 이 작업은 시간이 조금 걸릴 수 있습니다.
-	        Map<String, String> datePriceMap = airService.getSurroundingPrices(airparmDto);
-	        
-	        // JSON 형태로 변환해서 보내거나, Map 그대로 보내서 타임리프에서 처리
-	        // 자바스크립트에서 쓰기 편하게 Map 그대로 넘깁니다.
-	        model.addAttribute("datePriceMap", datePriceMap);
+	        // 2. [수정] skipPrice가 false일 때만 5일치 가격 조회 실행
+	        // 페이지 처음 들어올 땐 false라서 실행됨 / 날짜 클릭 시엔 true로 보낼 거라 실행 안 됨
+	        if (!skipPrice) {
+	            Map<String, String> datePriceMap = airService.getSurroundingPrices(airparmDto);
+	            model.addAttribute("datePriceMap", datePriceMap);
+	        }
 
 	    } catch (IOException e) {
 	        e.printStackTrace();

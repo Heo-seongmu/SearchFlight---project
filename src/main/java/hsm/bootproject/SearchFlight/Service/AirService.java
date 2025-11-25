@@ -446,60 +446,87 @@ public class AirService {
 		}
 	}
 	
-	public Map<String, String> getSurroundingPrices(airParmDto originalDto) throws IOException {
-        Map<String, String> priceMap = new ConcurrentHashMap<>(); 
-        String auth = token(); 
+	public Map<String, String> getSurroundingPrices(airParmDto originalDto) {
+	    Map<String, String> priceMap = new ConcurrentHashMap<>(); 
+	    
+	    String depDateStr = originalDto.getDepartureDate();
+	    if (depDateStr == null || depDateStr.trim().isEmpty()) {
+	        return priceMap; 
+	    }
 
-        LocalDate startDepDate = LocalDate.parse(originalDto.getDepartureDate());
-        long duration = 0;
-        boolean isRoundTrip = "round-trip".equals(originalDto.getTripType());
+	    // 🟢 [중요] token() 메서드도 예외를 던질 수 있다면 try-catch로 감싸거나, 
+	    // getSurroundingPrices 메서드 선언부에서 throws를 빼고 내부 처리해야 합니다.
+	    String auth = "";
+	    try {
+	        auth = token(); 
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        return priceMap; // 토큰 발급 실패시 빈 맵 반환
+	    }
 
-        if (isRoundTrip && originalDto.getReturnDate() != null && !originalDto.getReturnDate().isEmpty()) {
-            LocalDate startRetDate = LocalDate.parse(originalDto.getReturnDate());
-            duration = ChronoUnit.DAYS.between(startDepDate, startRetDate);
-        }
-        
-        final long finalDuration = duration; 
-        final String authToken = auth; // 람다식 내부 사용을 위해
+	    LocalDate startDepDate;
+	    try {
+	        startDepDate = LocalDate.parse(depDateStr);
+	    } catch (Exception e) {
+	        return priceMap;
+	    }
 
-        List<CompletableFuture<Void>> futures = IntStream.rangeClosed(-2, 2)
-            .mapToObj(i -> CompletableFuture.runAsync(() -> {
-                try {
-                    LocalDate targetDepDate = startDepDate.plusDays(i);
-                    
-                    // 오늘 날짜 이전이면 조회 패스
-                    if (targetDepDate.isBefore(LocalDate.now())) {
-                        return; 
-                    }
+	    long duration = 0;
+	    boolean isRoundTrip = "round-trip".equals(originalDto.getTripType());
 
-                    String targetDepDateStr = targetDepDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
-                    String targetRetDateStr = null;
+	    if (isRoundTrip) {
+	        String retDateStr = originalDto.getReturnDate();
+	        if (retDateStr != null && !retDateStr.trim().isEmpty()) {
+	            try {
+	                LocalDate startRetDate = LocalDate.parse(retDateStr);
+	                duration = ChronoUnit.DAYS.between(startDepDate, startRetDate);
+	            } catch (Exception e) {
+	                // ignore
+	            }
+	        }
+	    }
+	    
+	    final long finalDuration = duration; 
+	    final String authToken = auth; 
 
-                    if (isRoundTrip) {
-                        LocalDate targetRetDate = targetDepDate.plusDays(finalDuration);
-                        targetRetDateStr = targetRetDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
-                    }
+	    List<CompletableFuture<Void>> futures = IntStream.rangeClosed(-2, 2)
+	        .mapToObj(i -> CompletableFuture.runAsync(() -> {
+	            // 🟢 람다식 내부: 여기서 발생하는 모든 예외는 내부에서 처리해야 함
+	            try {
+	                LocalDate targetDepDate = startDepDate.plusDays(i);
+	                
+	                if (targetDepDate.isBefore(LocalDate.now())) {
+	                    return; 
+	                }
 
-                    String price = fetchCheapestPrice(originalDto, targetDepDateStr, targetRetDateStr, authToken);
-                    
-                    if (price != null) {
-                        priceMap.put(targetDepDateStr, price);
-                    } else {
-                        priceMap.put(targetDepDateStr, "-");
-                    }
+	                String targetDepDateStr = targetDepDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+	                String targetRetDateStr = null;
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }))
-            .toList();
+	                if (isRoundTrip) {
+	                    LocalDate targetRetDate = targetDepDate.plusDays(finalDuration);
+	                    targetRetDateStr = targetRetDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+	                }
 
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+	                // fetchCheapestPrice는 내부에서 예외를 먹고 null을 리턴하도록 만들었으므로 안전함
+	                String price = fetchCheapestPrice(originalDto, targetDepDateStr, targetRetDateStr, authToken);
+	                
+	                if (price != null) {
+	                    priceMap.put(targetDepDateStr, price);
+	                } else {
+	                    priceMap.put(targetDepDateStr, "-");
+	                }
 
-        return priceMap;
-    }
+	            } catch (Exception e) {
+	                e.printStackTrace(); // 람다 내부 에러 출력
+	            }
+	        }))
+	        .toList();
 
-    // [신규] 최저가 1개만 가져오는 가벼운 API 호출 메소드
+	    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+	    return priceMap;
+	}
+
     private String fetchCheapestPrice(airParmDto dto, String depDate, String retDate, String authToken) {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             
@@ -524,31 +551,47 @@ public class AirService {
             ClassicHttpRequest httpGet = requestBuilder.build();
             httpGet.setHeader("Authorization", "Bearer " + authToken);
 
-            // API 호출
             String responseData = httpclient.execute(httpGet, response -> {
                 final HttpEntity entity = response.getEntity();
-                String res = EntityUtils.toString(entity);
-                EntityUtils.consume(entity);
-                return res;
+                return EntityUtils.toString(entity);
             });
 
-            // JSON 파싱 (가격만 쏙 빼오기)
+            // 🟢 [디버깅 로그 추가] API 응답 확인
+            System.out.println("=== [" + depDate + "] API 조회 결과 ===");
+            // 내용이 너무 길면 앞부분만 출력
+            if(responseData.length() > 200) {
+                 System.out.println(responseData.substring(0, 200) + "..."); 
+            } else {
+                 System.out.println(responseData);
+            }
+
             JsonObject root = JsonParser.parseString(responseData).getAsJsonObject();
+            
+            // 에러 응답인지 확인 (예: rate limit)
+            if (root.has("errors")) {
+                System.out.println("🚨 API 에러 발생: " + root.get("errors"));
+                return null;
+            }
+
             if (root.has("data")) {
                 JsonArray dataArray = root.getAsJsonArray("data");
                 if (dataArray.size() > 0) {
                     JsonObject firstOffer = dataArray.get(0).getAsJsonObject();
                     String totalStr = firstOffer.getAsJsonObject("price").get("total").getAsString();
                     
-                    // 환율 계산 및 포맷팅
                     double price = Double.parseDouble(totalStr);
                     long wonPrice = Math.round(price * 1650);
-                    return String.format("%,d원", wonPrice);
+                    
+                    String result = String.format("%,d원", wonPrice);
+                    System.out.println("✅ 가격 찾음: " + result);
+                    return result;
+                } else {
+                    System.out.println("⚠️ 데이터 없음 (data array is empty)");
                 }
             }
         } catch (Exception e) {
-            // 에러 로그는 필요하면 찍되, 여기선 null 반환하여 '-' 처리
-            // System.out.println("가격 조회 실패: " + e.getMessage());
+            System.out.println("❌ 예외 발생: " + e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }

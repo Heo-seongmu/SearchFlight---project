@@ -828,110 +828,79 @@ body {
 			</div>
 
 			<div class="col-lg-9">
-				<h4 class="fw-bold">가는편을 선택해 주세요</h4>
-				<p class="text-body-secondary mb-4">성인 1인 기준, 발권대행수수료 포함</p>
+    <h4 class="fw-bold">가는편을 선택해 주세요</h4>
+    <p class="text-body-secondary mb-4">성인 1인 기준, 발권대행수수료 포함</p>
+    
+    <div class="date-strip-container" id="dateStripContainer"></div>
 
-                <div class="date-strip-container" id="dateStripContainer">
+    <div id="flight-list-container">
+        
+        <div th:if="${#lists.isEmpty(searchairDto)}" class="text-center py-5">
+            <p class="text-muted">해당 날짜의 항공권이 없습니다.</p>
+        </div>
+
+        <div class="vstack gap-3 flight-item-container" th:each="searchAir : ${searchairDto}">
+            <button class="card flight-card-button w-100"
+                th:data-offer-id="${searchAir.id}"
+                th:data-departure-time="${searchAir.departureTime}"
+                th:data-carrier-code="${searchAir.carrierCode}"
+                th:data-departure-code="${airparmDto.departureCode}"
+                th:data-arrival-code="${airparmDto.arrivalCode}"
+                th:data-departure-date="${airparmDto.departureDate}"
+                th:data-return-date="${airparmDto.returnDate}"
+                th:data-adults="${airparmDto.adults}"
+                th:data-children="${airparmDto.children}"
+                th:data-infants="${airparmDto.infants}"
+                th:data-travel-class="${airparmDto.travelClass}"
+                th:data-arrival-time="${searchAir.arrivalTime}"
+                th:data-total-price="${searchAir.rawTotalPrice}"
+                th:data-origin-code="${searchAir.departureCode}"
+                th:data-destination-code="${searchAir.arrivalCode}"
+                th:data-departure-ko-location="${airparmDto.departureKoLocation}"
+                th:data-arrival-ko-location="${airparmDto.arrivalKoLocation}"
+                onclick="selectOneWayFlight(this)">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-5">
+                            <small class="text-body-secondary" th:text="${searchAir.numberOfBookableSeats} + '석 가능'">9석 가능</small>
+                            <div class="d-flex align-items-center mt-1">
+                                <div>
+                                    <h6 class="fw-bold mb-0 d-flex align-items-center flex-wrap">
+                                        <span th:text="${searchAir.departureTime}">16:00</span> 
+                                        <small class="text-secondary fw-normal ms-1 me-2" style="font-size: 0.75rem;" th:text="'(' + ${#strings.substring(searchAir.departureDate, 5).replace('-', '.')} + ')'">(11.25) </small> 
+                                        <span class="me-2">-</span> 
+                                        <span th:text="${searchAir.arrivalTime}">09:30</span> 
+                                        <small class="text-secondary fw-normal ms-1" style="font-size: 0.75rem;" th:text="'(' + ${#strings.substring(searchAir.arrivalDate, 5).replace('-', '.')} + ')'">(11.25) </small> 
+                                        
+                                        <span th:if="${searchAir.dayDifference == 0}" class="badge bg-light text-secondary border rounded-pill ms-2" style="font-size: 0.7rem; font-weight: normal;"> 당일 </span> 
+                                        <small th:if="${searchAir.dayDifference == 0}" class="text-secondary ms-1" style="font-size: 0.7rem;"> <i class="bi bi-info-circle"></i> 시차반영 </small> 
+                                        <span th:if="${searchAir.dayDifference > 0}" class="badge bg-danger-subtle text-danger-emphasis rounded-pill ms-2" style="font-size: 0.7rem;" th:text="'+' + ${searchAir.dayDifference} + '일'"> +1일 </span> 
+                                        <span th:if="${searchAir.dayDifference < 0}" class="badge bg-primary-subtle text-primary-emphasis rounded-pill ms-2" style="font-size: 0.7rem;" th:text="${searchAir.dayDifference} + '일'"> -1일 </span> 
+                                        <small th:if="${searchAir.dayDifference < 0}" class="text-secondary ms-1" style="font-size: 0.7rem;"> <i class="bi bi-info-circle"></i> 시차반영 </small>
+                                    </h6>
+                                    <small class="text-body-secondary" th:text="${searchAir.departureCode} + ' → ' + ${searchAir.arrivalCode} + ' · ' + ${searchAir.carrierCode} + ' 항공'">ICN → SFO · UA 항공 </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-md-end">
+                            <div class="mb-1"><small class="text-body-secondary"><i class="bi bi-clock"></i> <span th:text="${searchAir.totalDuration}">20시간 10분</span></small></div>
+                            <span class="fw-bold text-primary" th:if="${searchAir.directFlight}">직항</span>
+                            <div th:unless="${searchAir.directFlight}">
+                                <span class="fw-bold text-dark">경유</span> <small class="text-danger d-block fw-bold" style="font-size: 0.8rem;" th:text="${searchAir.layoverNames} + ' 경유'">YVR 경유</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <span class="price-display" th:text="${#numbers.formatInteger(searchAir.rawTotalPrice, 0, 'COMMA')} + '원'">292,050원</span>
+                        </div>
                     </div>
-
-				<div class="vstack gap-3 flight-item-container"
-					th:each="searchAir : ${searchairDto}">
-					<button class="card flight-card-button w-100"
-						th:data-offer-id="${searchAir.id}"
-						th:data-departure-time="${searchAir.departureTime}"
-						th:data-carrier-code="${searchAir.carrierCode}"
-						th:data-departure-code="${airparmDto.departureCode}"
-						th:data-arrival-code="${airparmDto.arrivalCode}"
-						th:data-departure-date="${airparmDto.departureDate}"
-						th:data-return-date="${airparmDto.returnDate}"
-						th:data-adults="${airparmDto.adults}"
-						th:data-children="${airparmDto.children}"
-						th:data-infants="${airparmDto.infants}"
-						th:data-travel-class="${airparmDto.travelClass}"
-						th:data-arrival-time="${searchAir.arrivalTime}"
-						th:data-total-price="${searchAir.rawTotalPrice}"
-						th:data-origin-code="${searchAir.departureCode}"
-						th:data-destination-code="${searchAir.arrivalCode}"
-						th:data-departure-ko-location="${airparmDto.departureKoLocation}"
-						th:data-arrival-ko-location="${airparmDto.arrivalKoLocation}"
-						onclick="selectOneWayFlight(this)">
-						<div class="card-body">
-							<div class="row align-items-center">
-								<div class="col-md-5">
-									<small class="text-body-secondary"
-										th:text="${searchAir.numberOfBookableSeats} + '석 가능'">9석
-										가능</small>
-
-									<div class="d-flex align-items-center mt-1">
-										<div>
-											<h6 class="fw-bold mb-0 d-flex align-items-center flex-wrap">
-
-												<span th:text="${searchAir.departureTime}">16:00</span> <small
-													class="text-secondary fw-normal ms-1 me-2"
-													style="font-size: 0.75rem;"
-													th:text="'(' + ${#strings.substring(searchAir.departureDate, 5).replace('-', '.')} + ')'">
-													(11.25) </small> <span class="me-2">-</span> <span
-													th:text="${searchAir.arrivalTime}">09:30</span> <small
-													class="text-secondary fw-normal ms-1"
-													style="font-size: 0.75rem;"
-													th:text="'(' + ${#strings.substring(searchAir.arrivalDate, 5).replace('-', '.')} + ')'">
-													(11.25) </small> <span th:if="${searchAir.dayDifference == 0}"
-													class="badge bg-light text-secondary border rounded-pill ms-2"
-													style="font-size: 0.7rem; font-weight: normal;"> 당일
-												</span> <small th:if="${searchAir.dayDifference == 0}"
-													class="text-secondary ms-1" style="font-size: 0.7rem;">
-													<i class="bi bi-info-circle"></i> 시차반영
-												</small> <span th:if="${searchAir.dayDifference > 0}"
-													class="badge bg-danger-subtle text-danger-emphasis rounded-pill ms-2"
-													style="font-size: 0.7rem;"
-													th:text="'+' + ${searchAir.dayDifference} + '일'">
-													+1일 </span> <span th:if="${searchAir.dayDifference < 0}"
-													class="badge bg-primary-subtle text-primary-emphasis rounded-pill ms-2"
-													style="font-size: 0.7rem;"
-													th:text="${searchAir.dayDifference} + '일'"> -1일 </span> <small
-													th:if="${searchAir.dayDifference < 0}"
-													class="text-secondary ms-1" style="font-size: 0.7rem;">
-													<i class="bi bi-info-circle"></i> 시차반영
-												</small>
-											</h6>
-
-											<small class="text-body-secondary"
-												th:text="${searchAir.departureCode} + ' → ' + ${searchAir.arrivalCode} + ' · ' + ${searchAir.carrierCode} + ' 항공'">
-												ICN → SFO · UA 항공 </small>
-										</div>
-									</div>
-								</div>
-
-								<div class="col-md-3 text-md-end">
-									<div class="mb-1">
-										<small class="text-body-secondary"><i
-											class="bi bi-clock"></i> <span
-											th:text="${searchAir.totalDuration}">20시간 10분</span></small>
-									</div>
-
-									<span class="fw-bold text-primary"
-										th:if="${searchAir.directFlight}">직항</span>
-
-									<div th:unless="${searchAir.directFlight}">
-										<span class="fw-bold text-dark">경유</span> <small
-											class="text-danger d-block fw-bold"
-											style="font-size: 0.8rem;"
-											th:text="${searchAir.layoverNames} + ' 경유'">YVR 경유</small>
-									</div>
-								</div>
-
-								<div class="col-md-4 text-md-end">
-									<span class="price-display"
-										th:text="${#numbers.formatInteger(searchAir.rawTotalPrice, 0, 'COMMA')} + '원'">292,050원</span>
-								</div>
-							</div>
-							<hr>
-						</div>
-					</button>
-					<br>
-				</div>
-			</div>
-		</div>
+                    <hr>
+                </div>
+            </button>
+            <br>
+        </div>
+    </div>
+</div>
+</div>
 	</main>
 
 	<div class="modal fade" id="researchModal" tabindex="-1"
@@ -1146,13 +1115,15 @@ body {
 
 	<script th:inline="javascript">
     /* 🟢 서버에서 넘어온 날짜별 가격 데이터 (Map) */
-    const datePriceMap = {}; 
+    const datePriceMap = /*[[${datePriceMap}]]*/ {}; 
 
-    // --- 1. 날짜 스트립 로직 (가격 표시 + 과거 차단) ---
+    // 1. 초기화 로직
     document.addEventListener('DOMContentLoaded', function() {
         renderDateStrip();
+        initFilters(); 
     });
 
+    // 2. 날짜 스트립 렌더링
     function renderDateStrip() {
         const container = document.getElementById('dateStripContainer');
         const filterBtn = document.querySelector('.filter-card-button');
@@ -1161,10 +1132,11 @@ body {
         const currentDepDateStr = filterBtn.dataset.departureDate; 
         if (!currentDepDateStr) return;
         
-        const currentDepDate = new Date(currentDepDateStr);
+        const parts = currentDepDateStr.split('-');
+        const currentDepDate = new Date(parts[0], parts[1] - 1, parts[2]); 
+
         container.innerHTML = ''; 
 
-        // 오늘 날짜 (시간 초기화)
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -1183,17 +1155,14 @@ body {
             const displayDateStr = `${month}월 ${day}일(${dayName})`;
             
             const isActive = (i === 0) ? 'active' : '';
-            // 🚨 과거 날짜 확인
             const isPastDate = targetDate.getTime() < today.getTime();
             const disabledClass = isPastDate ? 'disabled' : '';
             
-            // 🚨 가격 정보 매핑
             let priceText = '-';
-            if (datePriceMap && datePriceMap[fullDateStr]) {
+            if (datePriceMap && datePriceMap[fullDateStr] && datePriceMap[fullDateStr] !== '-') {
                 priceText = datePriceMap[fullDateStr] + ' ~';
             }
             
-            // 🚨 클릭 이벤트 제어
             const onClickHandler = isPastDate ? '' : `onclick="searchByDate('${fullDateStr}')"`;
 
             const html = `
@@ -1206,68 +1175,77 @@ body {
         }
     }
 
-    function searchByDate(newDepartureDate) {
+    // 3. 날짜 클릭 시 재검색 (AJAX 부분 교체)
+    async function searchByDate(newDepartureDate) {
         const filterBtn = document.querySelector('.filter-card-button');
         const dataset = filterBtn.dataset;
+        const dateCells = document.querySelectorAll('.date-cell');
         
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/air/searchAirport';
-        
-        let newReturnDate = '';
-        
-        // 왕복인 경우 박수(Duration) 유지 계산 (편도일 때는 이 조건문을 타지 않으므로 newReturnDate는 빈값)
-        if (dataset.tripType === 'round-trip' && dataset.returnDate) {
-            const oldDep = new Date(dataset.departureDate);
-            const oldRet = new Date(dataset.returnDate);
-            const diffTime = oldRet.getTime() - oldDep.getTime(); 
-            
-            const newDep = new Date(newDepartureDate);
-            const newRet = new Date(newDep.getTime() + diffTime);
-            
-            const rYear = newRet.getFullYear();
-            const rMonth = String(newRet.getMonth() + 1).padStart(2, '0');
-            const rDay = String(newRet.getDate()).padStart(2, '0');
-            newReturnDate = `${rYear}-${rMonth}-${rDay}`;
-        }
-
-        const params = {
-            tripType: dataset.tripType,
-            departureCode: dataset.departureCode,
-            arrivalCode: dataset.arrivalCode,
-            departureKoLocation: dataset.departureKoLocation,
-            arrivalKoLocation: dataset.arrivalKoLocation,
-            adults: dataset.adults,
-            children: dataset.children,
-            infants: dataset.infants,
-            travelClass: dataset.travelClass,
-            departureDate: newDepartureDate, 
-            returnDate: newReturnDate 
-        };
-
-        for (const key in params) {
-            if (params[key] !== undefined && params[key] !== null) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = params[key];
-                form.appendChild(input);
+        // UI 업데이트 (active 이동)
+        dateCells.forEach(cell => {
+            cell.classList.remove('active');
+            if(cell.getAttribute('onclick') && cell.getAttribute('onclick').includes(newDepartureDate)) {
+                 cell.classList.add('active');
             }
-        }
+        });
 
         const loadingModal = document.getElementById('loadingModal');
         if (loadingModal) {
-            loadingModal.querySelector('p').textContent = '날짜를 변경하여 검색중입니다...';
+            loadingModal.querySelector('p').textContent = '선택한 날짜의 항공권을 조회중입니다...';
             loadingModal.style.display = 'flex';
         }
 
-        document.body.appendChild(form);
-        form.submit();
-    }
-    // --- 🟢 날짜 스트립 로직 추가 (끝) 🟢 ---
+        const formData = new FormData();
+        formData.append('tripType', dataset.tripType);
+        formData.append('departureCode', dataset.departureCode);
+        formData.append('arrivalCode', dataset.arrivalCode);
+        formData.append('departureKoLocation', dataset.departureKoLocation);
+        formData.append('arrivalKoLocation', dataset.arrivalKoLocation);
+        formData.append('adults', dataset.adults);
+        formData.append('children', dataset.children);
+        formData.append('infants', dataset.infants);
+        formData.append('travelClass', dataset.travelClass);
+        formData.append('departureDate', newDepartureDate); 
+        // 편도라 returnDate 필요 없음
+        
+        // 🟢 가격 조회 건너뛰기
+        formData.append('skipPrice', 'true'); 
 
-    // 🟢 (기존 JS - 'oneAirList.html' 용) 🟢
-    
+        try {
+            const response = await fetch('/air/searchAirport', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const htmlText = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, 'text/html');
+            
+            // 리스트 교체
+            const newFlightList = doc.getElementById('flight-list-container');
+            const currentFlightList = document.getElementById('flight-list-container');
+            
+            if (newFlightList && currentFlightList) {
+                currentFlightList.innerHTML = newFlightList.innerHTML;
+            }
+
+            // 데이터 업데이트
+            filterBtn.dataset.departureDate = newDepartureDate;
+            
+            // 필터 재초기화
+            initFilters();
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('항공권 조회 중 오류가 발생했습니다.');
+        } finally {
+            if (loadingModal) loadingModal.style.display = 'none';
+        }
+    }
+
+    // 4. 편도 예약 이동
     function createHiddenInput(form, name, value) {
         const input = document.createElement('input');
         input.type = 'hidden';
@@ -1276,7 +1254,6 @@ body {
         form.appendChild(input);
     }
 
-    // ⭐️ 편도(One-Way) 항공편 선택 함수 ⭐️
     async function selectOneWayFlight(buttonElement) {
         const departureInfo = {
             id: buttonElement.dataset.offerId,
@@ -1290,31 +1267,11 @@ body {
             departureKoLocation: buttonElement.dataset.departureKoLocation,
             arrivalKoLocation: buttonElement.dataset.arrivalKoLocation
         };
-
         const passengerInfo = {
             adults: parseInt(buttonElement.dataset.adults, 10),
             children: parseInt(buttonElement.dataset.children, 10),
             infants: parseInt(buttonElement.dataset.infants, 10),
             travelClass: buttonElement.dataset.travelClass
-        };
-
-        const bookingData = {
-            departureKoLocation: departureInfo.departureKoLocation,
-            arrivalKoLocation: departureInfo.arrivalKoLocation,
-            adults: passengerInfo.adults, 
-            children: passengerInfo.children,
-            infants: passengerInfo.infants, 
-            travelClass: passengerInfo.travelClass,
-            departureFlight: {
-                id: departureInfo.id,
-                carrierCode: departureInfo.carrierCode,
-                originCode: departureInfo.originCode,
-                destinationCode: departureInfo.destinationCode,
-                departureTime: `${departureInfo.departureDate}T${departureInfo.departureTime}:00`,
-                arrivalTime: `${departureInfo.departureDate}T${departureInfo.arrivalTime}:00`,
-                totalPrice: departureInfo.totalPrice
-            },
-            returnFlight: null // 편도이므로 null
         };
 
         const loadingModal = document.getElementById('loadingModal');
@@ -1325,27 +1282,31 @@ body {
         form.method = 'POST';
         form.action = '/air/PsgInfo'; 
 
-        createHiddenInput(form, 'departureKoLocation', bookingData.departureKoLocation);
-        createHiddenInput(form, 'arrivalKoLocation', bookingData.arrivalKoLocation);
-        createHiddenInput(form, 'adults', bookingData.adults);
-        createHiddenInput(form, 'children', bookingData.children);
-        createHiddenInput(form, 'infants', bookingData.infants);
-        createHiddenInput(form, 'travelClass', bookingData.travelClass);
+        createHiddenInput(form, 'departureKoLocation', departureInfo.departureKoLocation);
+        createHiddenInput(form, 'arrivalKoLocation', departureInfo.arrivalKoLocation);
+        createHiddenInput(form, 'adults', passengerInfo.adults);
+        createHiddenInput(form, 'children', passengerInfo.children);
+        createHiddenInput(form, 'infants', passengerInfo.infants);
+        createHiddenInput(form, 'travelClass', passengerInfo.travelClass);
 
-        if (bookingData.departureFlight) {
-            for (const key in bookingData.departureFlight) {
-                createHiddenInput(form, `departureFlight.${key}`, bookingData.departureFlight[key]);
-            }
+        const departureFlight = {
+            id: departureInfo.id,
+            carrierCode: departureInfo.carrierCode,
+            originCode: departureInfo.originCode,
+            destinationCode: departureInfo.destinationCode,
+            departureTime: `${departureInfo.departureDate}T${departureInfo.departureTime}:00`,
+            arrivalTime: `${departureInfo.departureDate}T${departureInfo.arrivalTime}:00`,
+            totalPrice: departureInfo.totalPrice
+        };
+        for (const key in departureFlight) {
+            createHiddenInput(form, `departureFlight.${key}`, departureFlight[key]);
         }
         
         document.body.appendChild(form);
         form.submit();
     }
 
-
-    // ==================================================================
-    // (기존) 재검색, 장소/탑승객 선택 모달 관련 코드 (수정 없음)
-    // ==================================================================
+    // 5. 모달 및 필터 로직 (공통)
     const researchModal = document.getElementById('researchModal');
     const modalDateRangeBtn = document.getElementById('modalDateRangeBtn');
     const modalDepartureDateInput = document.getElementById('modalDepartureDateInput');
@@ -1385,65 +1346,60 @@ body {
 
     researchModal.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
-        const { 
-            tripType, departureCode, arrivalCode, departureDate, returnDate, 
-            adults, children, infants, travelClass,
-            departureKoLocation, arrivalKoLocation
-        } = button.dataset;
-
+        // 데이터셋에서 값 가져오기
+        const { tripType, departureCode, arrivalCode, departureDate, returnDate, adults, children, infants, travelClass, departureKoLocation, arrivalKoLocation } = button.dataset;
+        
+        // 요소 선택
         const modalDepartureBtn = researchModal.querySelector('#modalDepartureBtn');
         const modalArrivalBtn = researchModal.querySelector('#modalArrivalBtn');
         const passengerBtn = researchModal.querySelector('#passengerBtn'); 
-        const modalDepartureCodeInput = researchModal.querySelector('#modalDepartureCodeInput');
-        const modalArrivalCodeInput = researchModal.querySelector('#modalArrivalCodeInput');
-        const modalDepartureKoLocationInput = researchModal.querySelector('#modalDepartureKoLocationInput');
-        const modalArrivalKoLocationInput = researchModal.querySelector('#modalArrivalKoLocationInput');
-        const adultsInput = researchModal.querySelector('#adultsInput'); 
-        const childrenInput = researchModal.querySelector('#childrenInput'); 
-        const infantsInput = researchModal.querySelector('#infantsInput'); 
-        const travelClassInput = researchModal.querySelector('#travelClassInput');
-
+        const modalDateRangeBtn = document.getElementById('modalDateRangeBtn'); // 날짜 버튼
+        
+        // 1. 장소 정보 채우기
         modalDepartureBtn.textContent = departureCode;
         modalArrivalBtn.textContent = arrivalCode;
-        modalDepartureCodeInput.value = departureCode;
-        modalArrivalCodeInput.value = arrivalCode;
-        modalDepartureKoLocationInput.value = departureKoLocation;
-        modalArrivalKoLocationInput.value = arrivalKoLocation;
+        document.getElementById('modalDepartureCodeInput').value = departureCode;
+        document.getElementById('modalArrivalCodeInput').value = arrivalCode;
+        document.getElementById('modalDepartureKoLocationInput').value = departureKoLocation;
+        document.getElementById('modalArrivalKoLocationInput').value = arrivalKoLocation;
+        
+        // 2. 날짜 정보 채우기 (🟢 여기서 undefined 문제 해결)
+        let safeReturnDate = returnDate;
+        if (!safeReturnDate || safeReturnDate === 'undefined' || safeReturnDate === 'null') {
+            safeReturnDate = ''; // 빈 값으로 초기화
+        }
 
         let dateString = departureDate;
-        if (tripType === 'round-trip' && returnDate && returnDate.trim() !== '') {
-            dateString += ` ~ ${returnDate}`;
+        if (tripType === 'round-trip' && safeReturnDate !== '') {
+            dateString += ` ~ ${safeReturnDate}`;
         }
+        
         modalDateRangeBtn.textContent = dateString;
-        modalDepartureDateInput.value = departureDate;
-        modalReturnDateInput.value = returnDate;
+        document.getElementById('modalDepartureDateInput').value = departureDate;
+        document.getElementById('modalReturnDateInput').value = safeReturnDate; // 🟢 안전한 값 넣기
 
-        let passengerString = `성인 ${adults} 어린이 ${children} 유아 ${infants} · ${travelClass} class`;
-        passengerBtn.textContent = passengerString;
-        adultsInput.value = adults;
-        childrenInput.value = children;
-        infantsInput.value = infants;
-        travelClassInput.value = travelClass;
+        // 3. 승객 정보 채우기
+        passengerBtn.textContent = `성인 ${adults} 어린이 ${children} 유아 ${infants} · ${travelClass} class`;
+        document.getElementById('adultsInput').value = adults;
+        document.getElementById('childrenInput').value = children;
+        document.getElementById('infantsInput').value = infants;
+        document.getElementById('travelClassInput').value = travelClass;
 
+        // 4. 라디오 버튼 및 달력 모드 설정
         if (tripType === 'round-trip') {
             roundTripRadio.checked = true;
             datePicker.set('mode', 'range');
-            if (returnDate && returnDate.trim() !== '') {
-                datePicker.setDate([departureDate, returnDate]);
-            }
+            if(safeReturnDate) datePicker.setDate([departureDate, safeReturnDate]);
         } else {
             oneWayRadio.checked = true;
             datePicker.set('mode', 'single');
-            if (departureDate) {
-                datePicker.setDate([departureDate]);
-            }
+            datePicker.setDate([departureDate]);
         }
     });
-    
+
+    // Location & Passenger Modal
     const modalDepartureBtn = document.getElementById('modalDepartureBtn');
     const modalArrivalBtn = document.getElementById('modalArrivalBtn');
-    const modalDepartureCodeInput = document.getElementById('modalDepartureCodeInput');
-    const modalArrivalCodeInput = document.getElementById('modalArrivalCodeInput');
     const locationModal = document.getElementById('locationModal');
     const locationModalContent = locationModal.querySelector('.modal-content');
     const popularSearchesContainer = locationModal.querySelector('.popular-searches');
@@ -1454,13 +1410,11 @@ body {
     function closeLocationModal() {
         locationModal.style.display = 'none';
         document.getElementById('researchModal').style.display = 'block';
-        const backdropEl = document.querySelector('.modal-backdrop');
-        if (backdropEl) backdropEl.style.display = 'block';
+        document.querySelector('.modal-backdrop').style.display = 'block';
     }
     function openLocationModal(context) {
         document.getElementById('researchModal').style.display = 'none';
-        const backdropEl = document.querySelector('.modal-backdrop');
-        if (backdropEl) backdropEl.style.display = 'none';
+        document.querySelector('.modal-backdrop').style.display = 'none';
         locationSelectionContext = context;
         locationModalContent.querySelector('#modalTitle').textContent = context.type === 'departure' ? '출발지 선택' : '도착지 선택';
         popularSearchesContainer.innerHTML = defaultModalContentHtml;
@@ -1476,27 +1430,20 @@ body {
         locationSelectionContext.koLocationInputElement.value = kolocation;
         closeLocationModal();
     }
-    function handleTagClick(event) {
-        selectLocation(event.currentTarget.textContent, event.currentTarget.dataset.iata);
-    }
+    function handleTagClick(event) { selectLocation(event.currentTarget.textContent, event.currentTarget.dataset.iata); }
     function renderSearchResults(airList) {
         let airListHtml = '';
         if (airList && airList.length > 0) {
-            airList.forEach(air => {
-                airListHtml += `<div class="search-result-item" data-kolocation="${air.kolocation}" data-iata="${air.iataCode}"><div class="location-main">${air.kolocation} (${air.iataCode})</div><div class="location-sub">${air.enlocation}</div></div>`;
-            });
-        } else {
-            airListHtml = '<div class="no-results">검색 결과가 없습니다.</div>';
-        }
+            airList.forEach(air => { airListHtml += `<div class="search-result-item" data-kolocation="${air.kolocation}" data-iata="${air.iataCode}"><div class="location-main">${air.kolocation} (${air.iataCode})</div><div class="location-sub">${air.enlocation}</div></div>`; });
+        } else { airListHtml = '<div class="no-results">검색 결과가 없습니다.</div>'; }
         popularSearchesContainer.innerHTML = airListHtml;
     }
-    modalDepartureBtn.addEventListener('click', () => openLocationModal({ type: 'departure', buttonElement: modalDepartureBtn, inputElement: modalDepartureCodeInput, koLocationInputElement: document.getElementById('modalDepartureKoLocationInput') }));
-    modalArrivalBtn.addEventListener('click', () => openLocationModal({ type: 'arrival', buttonElement: modalArrivalBtn, inputElement: modalArrivalCodeInput, koLocationInputElement: document.getElementById('modalArrivalKoLocationInput') }));
+    modalDepartureBtn.addEventListener('click', () => openLocationModal({ type: 'departure', buttonElement: modalDepartureBtn, inputElement: document.getElementById('modalDepartureCodeInput'), koLocationInputElement: document.getElementById('modalDepartureKoLocationInput') }));
+    modalArrivalBtn.addEventListener('click', () => openLocationModal({ type: 'arrival', buttonElement: modalArrivalBtn, inputElement: document.getElementById('modalArrivalCodeInput'), koLocationInputElement: document.getElementById('modalArrivalKoLocationInput') }));
     locationModal.addEventListener('click', function(event) {
-        const { target } = event;
-        if (target.id === 'searchAir') return;
-        if (target.id === 'closeModalBtn' || target.classList.contains('close-button') || target === locationModal) { closeLocationModal(); return; }
-        const resultItem = target.closest('.search-result-item');
+        if (event.target.id === 'searchAir') return;
+        if (event.target.id === 'closeModalBtn' || event.target.classList.contains('close-button') || event.target === locationModal) { closeLocationModal(); return; }
+        const resultItem = event.target.closest('.search-result-item');
         if (resultItem) selectLocation(resultItem.dataset.kolocation, resultItem.dataset.iata);
     });
     locationModal.addEventListener('keydown', function(event) {
@@ -1511,37 +1458,33 @@ body {
     const passengerModal = document.getElementById('passengerModal');
     const passengerModalContent = passengerModal.querySelector('.modal-content');
     const confirmPassengerBtn = document.getElementById('confirmPassengerBtn');
-    const adultsInput = document.querySelector('#researchModal #adultsInput');
-    const childrenInput = document.querySelector('#researchModal #childrenInput');
-    const infantsInput = document.querySelector('#researchModal #infantsInput');
-    const travelClassInput = document.querySelector('#researchModal #travelClassInput');
 
     function openPassengerModal() {
         document.getElementById('researchModal').style.display = 'none';
-        const backdropEl = document.querySelector('.modal-backdrop');
-        if (backdropEl) backdropEl.style.display = 'none';
+        document.querySelector('.modal-backdrop').style.display = 'none';
         passengerModal.style.display = 'flex';
     }
     function closePassengerModal() {
         passengerModal.style.display = 'none';
         document.getElementById('researchModal').style.display = 'block';
-        const backdropEl = document.querySelector('.modal-backdrop');
-        if (backdropEl) backdropEl.style.display = 'block';
+        document.querySelector('.modal-backdrop').style.display = 'block';
     }
     function updateButtonStates() {
         const adults = parseInt(passengerModal.querySelector('.passenger-row[data-type="adult"] .count').textContent);
         const children = parseInt(passengerModal.querySelector('.passenger-row[data-type="child"] .count').textContent);
         const infants = parseInt(passengerModal.querySelector('.passenger-row[data-type="infant"] .count').textContent);
-        const totalAllPassengers = adults + children + infants;
+        const total = adults + children + infants;
+        
         const adultControls = passengerModal.querySelector('.passenger-row[data-type="adult"]');
-        const childControls = passengerModal.querySelector('.passenger-row[data-type="child"]');
-        const infantControls = passengerModal.querySelector('.passenger-row[data-type="infant"]');
-        const isTotalMaxed = (totalAllPassengers >= 9);
-        adultControls.querySelector('.plus').disabled = isTotalMaxed;
+        adultControls.querySelector('.plus').disabled = total >= 9;
         adultControls.querySelector('.minus').disabled = (adults <= 1 || adults < infants);
-        childControls.querySelector('.plus').disabled = isTotalMaxed;
+        
+        const childControls = passengerModal.querySelector('.passenger-row[data-type="child"]');
+        childControls.querySelector('.plus').disabled = total >= 9;
         childControls.querySelector('.minus').disabled = (children <= 0);
-        infantControls.querySelector('.plus').disabled = isTotalMaxed || (infants >= adults);
+        
+        const infantControls = passengerModal.querySelector('.passenger-row[data-type="infant"]');
+        infantControls.querySelector('.plus').disabled = (total >= 9 || infants >= adults);
         infantControls.querySelector('.minus').disabled = (infants <= 0);
     }
     passengerBtn.addEventListener('click', openPassengerModal);
@@ -1550,20 +1493,21 @@ body {
         const button = event.target;
         if (!button.classList.contains('control-btn') || button.disabled) return;
         const countSpan = button.closest('.passenger-row').querySelector('.count');
-        let currentCount = parseInt(countSpan.textContent);
-        countSpan.textContent = button.classList.contains('plus') ? currentCount + 1 : currentCount - 1;
+        let count = parseInt(countSpan.textContent);
+        countSpan.textContent = button.classList.contains('plus') ? count + 1 : count - 1;
         updateButtonStates();
     });
     confirmPassengerBtn.addEventListener('click', () => {
         const adults = passengerModal.querySelector('.passenger-row[data-type="adult"] .count').textContent;
         const children = passengerModal.querySelector('.passenger-row[data-type="child"] .count').textContent;
         const infants = passengerModal.querySelector('.passenger-row[data-type="infant"] .count').textContent;
-        const selectedClassRadio = passengerModal.querySelector('input[name="travelClassModal"]:checked');
-        adultsInput.value = adults;
-        childrenInput.value = children;
-        infantsInput.value = infants;
-        travelClassInput.value = selectedClassRadio.value;
-        passengerBtn.textContent = `성인 ${adults} 어린이 ${children} 유아 ${infants} · ${selectedClassRadio.parentElement.textContent.trim()}`;
+        const cls = passengerModal.querySelector('input[name="travelClassModal"]:checked').value;
+        const clsText = passengerModal.querySelector('input[name="travelClassModal"]:checked').parentElement.textContent.trim();
+        document.getElementById('adultsInput').value = adults;
+        document.getElementById('childrenInput').value = children;
+        document.getElementById('infantsInput').value = infants;
+        document.getElementById('travelClassInput').value = cls;
+        passengerBtn.textContent = `성인 ${adults} 어린이 ${children} 유아 ${infants} · ${clsText}`;
         closePassengerModal();
     });
     updateButtonStates();
@@ -1577,16 +1521,24 @@ body {
         setTimeout(() => event.target.submit(), 100);
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        
+    // --- 6. 필터 로직 (중복 방지 적용) ---
+    function initFilters() {
         const durSliderEl = document.getElementById('duration-slider');
         const priceSliderEl = document.getElementById('price-slider');
         const airlineListContainer = document.getElementById('airline-filter-list');
 
-        if (!durSliderEl || !priceSliderEl || !airlineListContainer) {
-            console.log("필터 요소를 찾을 수 없습니다.");
-            return; 
+        if (!durSliderEl || !priceSliderEl || !airlineListContainer) return;
+
+        // 🟢 [수정 1] 기존 슬라이더 초기화
+        if (durSliderEl.noUiSlider) {
+            durSliderEl.noUiSlider.destroy();
         }
+        if (priceSliderEl.noUiSlider) {
+            priceSliderEl.noUiSlider.destroy();
+        }
+        
+        // 🟢 [수정 2] 항공사 목록 초기화
+        airlineListContainer.innerHTML = '';
 
         function parseTime(timeStr) {
             if (!timeStr || !timeStr.includes(':')) return 0; 
@@ -1596,11 +1548,8 @@ body {
         function calculateDuration(depTime, arrTime) {
             const depMinutes = parseTime(depTime);
             const arrMinutes = parseTime(arrTime);
-            if (arrMinutes >= depMinutes) {
-                return arrMinutes - depMinutes;
-            } else {
-                return (1440 - depMinutes) + arrMinutes; 
-            }
+            if (arrMinutes >= depMinutes) return arrMinutes - depMinutes;
+            else return (1440 - depMinutes) + arrMinutes; 
         }
         function formatDuration(minutes) {
             const m = Math.round(minutes); 
@@ -1608,45 +1557,29 @@ body {
             const min = m % 60;
             return `${h}시간 ${min}분`;
         }
-        const priceFormatter = new Intl.NumberFormat('ko-KR', {
-            style: 'currency',
-            currency: 'KRW',
-            minimumFractionDigits: 0
-        });
-
-        const airlineNames = {
-            '7C': '제주항공', 'LJ': '진에어', 'TW': '티웨이항공',
-            'KE': '대한항공', 'OZ': '아시아나항공', 'RS': '에어서울',
-            'BX': '에어부산', 'ZE': '이스타항공', 'VJ': '비엣젯항공',
-            'VN': '베트남항공', 'PR': '필리핀항공', 'JL': '일본항공',
-            'NH': '전일본공수', 'MM': '피치항공', 'VZ': '타이 비엣젯 항공', 
-            'TC': '타이 에어아시아 엑스', 'MU': '중국동방항공', 'CZ': '중국남방항공'
-        };
-        function getAirlineName(code) {
-            return airlineNames[code] || code;
-        }
+        const priceFormatter = new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW', minimumFractionDigits: 0 });
+        const airlineNames = { '7C': '제주항공', 'LJ': '진에어', 'TW': '티웨이항공', 'KE': '대한항공', 'OZ': '아시아나항공', 'RS': '에어서울', 'BX': '에어부산', 'ZE': '이스타항공', 'VJ': '비엣젯항공', 'VN': '베트남항공', 'PR': '필리핀항공', 'JL': '일본항공', 'NH': '전일본공수', 'MM': '피치항공', 'VZ': '타이 비엣젯 항공', 'TC': '타이 에어아시아 엑스', 'MU': '중국동방항공', 'CZ': '중국남방항공', 'YP': '에어프레미아' };
+        
+        function getAirlineName(code) { return airlineNames[code] || code; }
 
         const flightCards = document.querySelectorAll('.flight-item-container');
-        
         if (flightCards.length === 0) {
-            document.getElementById('filterAccordion').style.display = 'none';
-            return;
+            // 데이터 없으면 그냥 리턴 (필터 안 만듦)
+            return; 
         }
 
-        let minPrice = Infinity, maxPrice = 0;
-        let minDuration = Infinity, maxDuration = 0;
+        let minPrice = Infinity, maxPrice = 0, minDuration = Infinity, maxDuration = 0;
         const uniqueAirlines = new Set();
 
         flightCards.forEach(card => {
             const button = card.querySelector('.flight-card-button');
             if (!button) return; 
-
             const depTime = button.dataset.departureTime;
             const arrTime = button.dataset.arrivalTime;
             const price = parseFloat(button.dataset.totalPrice);
+            const carrier = button.dataset.carrierCode;
             
-            card.dataset.carrierCode = button.dataset.carrierCode;
-
+            card.dataset.carrierCode = carrier;
             const depMinutes = parseTime(depTime);
             const duration = calculateDuration(depTime, arrTime);
             
@@ -1654,114 +1587,54 @@ body {
             card.dataset.depMinutes = depMinutes;
             card.dataset.durationMinutes = duration;
 
-            if (!isNaN(price)) {
-                if (price < minPrice) minPrice = price;
-                if (price > maxPrice) maxPrice = price;
+            if (!isNaN(price)) { 
+                if (price < minPrice) minPrice = price; 
+                if (price > maxPrice) maxPrice = price; 
             }
-            if (!isNaN(duration)) {
-                if (duration < minDuration) minDuration = duration;
-                if (duration > maxDuration) maxDuration = duration;
+            if (!isNaN(duration)) { 
+                if (duration < minDuration) minDuration = duration; 
+                if (duration > maxDuration) maxDuration = duration; 
             }
-            
-            uniqueAirlines.add(card.dataset.carrierCode);
+            uniqueAirlines.add(carrier);
         });
         
         if (minPrice === Infinity) minPrice = 0;
         if (minDuration === Infinity) minDuration = 0;
-        if (maxPrice === 0) maxPrice = minPrice; 
-        if (maxDuration === 0) maxDuration = minDuration; 
+        if (maxPrice === 0) maxPrice = minPrice + 10000;
+        if (maxDuration === 0) maxDuration = minDuration + 60; 
+        
+        if (minPrice === maxPrice) { minPrice -= 1; maxPrice += 1; }
+        if (minDuration === maxDuration) { minDuration -= 1; maxDuration += 1; }
 
         uniqueAirlines.forEach(code => {
             const airlineName = getAirlineName(code);
             const itemId = `airline-${code}`;
-            const itemHtml = `
-                <span class="airline-filter-item">
-                    <input class="form-check-input" type="checkbox" value="${code}" id="${itemId}">
-                    <label class="form-check-label" for="${itemId}">
-                        ${airlineName} (${code})
-                    </label>
-                </span>
-            `;
+            const itemHtml = `<span class="airline-filter-item"><input class="form-check-input" type="checkbox" value="${code}" id="${itemId}"><label class="form-check-label" for="${itemId}">${airlineName} (${code})</label></span>`;
             airlineListContainer.insertAdjacentHTML('beforeend', itemHtml);
         });
 
-        noUiSlider.create(durSliderEl, {
-            range: { 'min': minDuration, 'max': maxDuration },
-            start: [minDuration, maxDuration],
-            connect: true, step: 10,
-            tooltips: [ { to: formatDuration, from: Number }, { to: formatDuration, from: Number } ],
-            format: { to: v => Math.round(v), from: v => Math.round(v) }
-        });
-        noUiSlider.create(priceSliderEl, {
-            range: { 'min': minPrice, 'max': maxPrice },
-            start: [minPrice, maxPrice],
-            connect: true, step: 1000,
-            tooltips: [ { to: v => priceFormatter.format(v), from: Number }, { to: v => priceFormatter.format(v), from: Number } ],
-            format: { to: v => Math.round(v), from: v => Math.round(v) }
-        });
+        noUiSlider.create(durSliderEl, { range: { 'min': minDuration, 'max': maxDuration }, start: [minDuration, maxDuration], connect: true, step: 10, tooltips: [ { to: formatDuration, from: Number }, { to: formatDuration, from: Number } ], format: { to: v => Math.round(v), from: v => Math.round(v) } });
+        noUiSlider.create(priceSliderEl, { range: { 'min': minPrice, 'max': maxPrice }, start: [minPrice, maxPrice], connect: true, step: 1000, tooltips: [ { to: v => priceFormatter.format(v), from: Number }, { to: v => priceFormatter.format(v), from: Number } ], format: { to: v => Math.round(v), from: v => Math.round(v) } });
 
         const durMinLabel = document.getElementById('duration-min');
         const durMaxLabel = document.getElementById('duration-max');
         const priceMinLabel = document.getElementById('price-min');
         const priceMaxLabel = document.getElementById('price-max');
         
-        durSliderEl.noUiSlider.on('update', (values) => {
-            durMinLabel.textContent = formatDuration(values[0]);
-            durMaxLabel.textContent = formatDuration(values[1]);
-            filterFlights();
-        });
-        priceSliderEl.noUiSlider.on('update', (values) => {
-            priceMinLabel.textContent = priceFormatter.format(values[0]);
-            priceMaxLabel.textContent = priceFormatter.format(values[1]);
-            filterFlights();
-        });
-        
-        const timeAllBtn = document.getElementById('time-all');
-        const timeOptionBtns = document.querySelectorAll('.time-filter-option');
-
-        timeAllBtn.addEventListener('change', function() {
-            if (timeAllBtn.checked) {
-                timeOptionBtns.forEach(btn => { btn.checked = false; });
-            } else {
-                const anyOtherChecked = Array.from(timeOptionBtns).some(btn => btn.checked);
-                if (!anyOtherChecked) { timeAllBtn.checked = true; }
-            }
-            filterFlights();
-        });
-
-        timeOptionBtns.forEach(btn => {
-            btn.addEventListener('change', function() {
-                if (btn.checked) {
-                    timeAllBtn.checked = false;
-                } else {
-                    const anyOtherChecked = Array.from(timeOptionBtns).some(btn => btn.checked);
-                    if (!anyOtherChecked) { timeAllBtn.checked = true; }
-                }
-                filterFlights();
-            });
-        });
-        
-        document.querySelectorAll('#airline-filter-list input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', filterFlights);
-        });
-
-        function filterFlights() {
+        function updateFilters() {
             const checkedTimeBtns = document.querySelectorAll('input[name="timeFilter"]:checked');
-            const timeRanges = Array.from(checkedTimeBtns).map(btn => ({
-                min: parseInt(btn.dataset.min, 10),
-                max: parseInt(btn.dataset.max, 10)
-            }));
+            const timeRanges = Array.from(checkedTimeBtns).map(btn => ({ min: parseInt(btn.dataset.min), max: parseInt(btn.dataset.max) }));
             
+            if(!durSliderEl.noUiSlider || !priceSliderEl.noUiSlider) return;
+
             const [durMin, durMax] = durSliderEl.noUiSlider.get().map(Number);
             const [priceMin, priceMax] = priceSliderEl.noUiSlider.get().map(Number);
-            const checkedAirlines = Array.from(
-                document.querySelectorAll('#airline-filter-list input[type="checkbox"]:checked')
-            ).map(cb => cb.value);
+            const checkedAirlines = Array.from(document.querySelectorAll('#airline-filter-list input[type="checkbox"]:checked')).map(cb => cb.value);
 
             flightCards.forEach(card => {
-                const depMinutes = parseInt(card.dataset.depMinutes, 10);
-                const duration = parseInt(card.dataset.durationMinutes, 10);
-                const price = parseInt(card.dataset.priceNum, 10);
+                const depMinutes = parseInt(card.dataset.depMinutes);
+                const duration = parseInt(card.dataset.durationMinutes);
+                const price = parseInt(card.dataset.priceNum);
                 const carrier = card.dataset.carrierCode;
 
                 const showByDep = timeRanges.some(range => (depMinutes >= range.min && depMinutes <= range.max));
@@ -1769,28 +1642,47 @@ body {
                 const showByPrice = (price >= priceMin && price <= priceMax);
                 const showByAirline = (checkedAirlines.length === 0) || checkedAirlines.includes(carrier);
 
-                if (showByDep && showByDur && showByPrice && showByAirline) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = (showByDep && showByDur && showByPrice && showByAirline) ? 'block' : 'none';
             });
         }
+
+        durSliderEl.noUiSlider.on('update', (values) => { durMinLabel.textContent = formatDuration(values[0]); durMaxLabel.textContent = formatDuration(values[1]); updateFilters(); });
+        priceSliderEl.noUiSlider.on('update', (values) => { priceMinLabel.textContent = priceFormatter.format(values[0]); priceMaxLabel.textContent = priceFormatter.format(values[1]); updateFilters(); });
         
-        if (minDuration === maxDuration) {
-            durSliderEl.setAttribute('disabled', true);
-        }
-        if (minPrice === maxPrice) {
-            priceSliderEl.setAttribute('disabled', true);
-        }
+        const timeAllBtn = document.getElementById('time-all');
+        const timeOptionBtns = document.querySelectorAll('.time-filter-option');
+        
+        // Clone Hack으로 중복 이벤트 리스너 제거
+        const oldTimeAllBtn = document.getElementById('time-all');
+        const newTimeAllBtn = oldTimeAllBtn.cloneNode(true);
+        oldTimeAllBtn.parentNode.replaceChild(newTimeAllBtn, oldTimeAllBtn);
+        
+        const refreshedTimeAllBtn = document.getElementById('time-all');
+        refreshedTimeAllBtn.addEventListener('change', function() {
+            if (this.checked) timeOptionBtns.forEach(btn => btn.checked = false);
+            else if (!Array.from(timeOptionBtns).some(btn => btn.checked)) this.checked = true;
+            updateFilters();
+        });
+
+        timeOptionBtns.forEach(btn => {
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener('change', function() {
+                if (this.checked) refreshedTimeAllBtn.checked = false;
+                else if (!Array.from(document.querySelectorAll('.time-filter-option')).some(b => b.checked)) refreshedTimeAllBtn.checked = true;
+                updateFilters();
+            });
+        });
+
+        document.querySelectorAll('#airline-filter-list input[type="checkbox"]').forEach(checkbox => checkbox.addEventListener('change', updateFilters));
         
         durMinLabel.textContent = formatDuration(minDuration);
         durMaxLabel.textContent = formatDuration(maxDuration);
         priceMinLabel.textContent = priceFormatter.format(minPrice);
         priceMaxLabel.textContent = priceFormatter.format(maxPrice);
         
-        filterFlights(); 
-    });
-    </script>
+        updateFilters();
+    }
+</script>
 </body>
 </html>
