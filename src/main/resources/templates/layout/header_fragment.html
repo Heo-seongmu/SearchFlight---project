@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- 1. 공통 헤드 (CSS & 폰트) -->
+<head th:fragment="common-head">
+    <!-- 폰트: Pretendard 또는 Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- [공통] 기본 스타일 --- */
+        body {
+            font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        a { text-decoration: none; color: inherit; }
+        ul, li { list-style: none; padding: 0; margin: 0; }
+
+        /* --- [공통] 헤더(GNB) 스타일 --- */
+        .moana_gnb {
+            background-color: #ffffff;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .gnb_container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            box-sizing: border-box;
+        }
+
+        .box__inner h1 a {
+            color: #333;
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.5px;
+        }
+        .logo-highlight { color: #5ac4c9; }
+
+        .list__tab { display: flex; gap: 40px; }
+        .list__tab .list-item a {
+            color: #666;
+            font-weight: 500;
+            font-size: 17px;
+            padding: 10px 0;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .list__tab .list-item a:hover { color: #5ac4c9; }
+        
+        /* 활성화 메뉴 스타일 */
+        .list__tab .list-item a.link__tab--active {
+            color: #333; font-weight: 700;
+        }
+        .list__tab .list-item a.link__tab--active::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -4px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #5ac4c9;
+        }
+
+        .link-container { display: flex; align-items: center; gap: 16px; }
+        
+        .link__text-btn {
+            border: none; background: none; padding: 0;
+            font-size: 15px; font-weight: 500; color: #555;
+            cursor: pointer;
+        }
+        .link__text-btn:hover { color: #5ac4c9; text-decoration: underline; }
+
+        .btn-primary-login {
+            background-color: #5ac4c9;
+            color: #fff !important;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(90, 196, 201, 0.3);
+            transition: all 0.2s;
+        }
+        .btn-primary-login:hover {
+            background-color: #48a9ad;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(90, 196, 201, 0.4);
+        }
+
+        .user-profile {
+            display: flex; align-items: center; gap: 6px;
+            background-color: #f0f7f8; padding: 6px 14px;
+            border-radius: 20px; color: #333; font-weight: 600;
+            font-size: 14px;
+        }
+        .user-avatar-icon {
+            width: 24px; height: 24px; background-color: #fff;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 12px;
+        }
+        
+        /* 모바일 반응형 */
+        @media (max-width: 576px) {
+            .moana_gnb { height: auto; padding: 10px 0; }
+            .gnb_container { flex-direction: column; gap: 10px; }
+            .list__tab { gap: 20px; }
+        }
+    </style>
+</head>
+
+<!-- 2. 공통 헤더 바 (HTML) -->
+<header th:fragment="common-header(activeMenu)" class="moana_gnb" role="banner">
+    <div class="gnb_container">
+        <div class="box__inner">
+            <h1>
+                <a href="/">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22 2L11 13" stroke="#5ac4c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M22 2L15 22L11 13L2 9L22 2Z" fill="#5ac4c9" stroke="#5ac4c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    무성의 <span class="logo-highlight">여행</span>
+                </a>
+            </h1>
+        </div>
+        
+        <ul class="list__tab">
+            <!-- activeMenu 파라미터에 따라 클래스 추가 -->
+            <li class="list-item">
+                <a class="link__tab" 
+                   th:classappend="${activeMenu == 'home'} ? 'link__tab--active'"
+                   href="/">항공권 예매</a>
+            </li>
+            <li class="list-item">
+                <a class="link__tab" 
+                   th:classappend="${activeMenu == 'chat'} ? 'link__tab--active'"
+                   href="/chat">여행 추천챗</a>
+            </li>
+        </ul>
+
+        <div class="link-container">
+            <a href="/revList" class="link__text-btn"
+                th:if="${session.loginUser != null}">나의 예약</a> 
+            
+            <a th:if="${session.loginUser == null}"
+                class="btn-primary-login" href="member/login">로그인</a>
+            
+            <div th:if="${session.loginUser != null}" class="user-profile">
+                <span class="user-avatar-icon">👤</span>
+                <span th:text="${session.loginUser.UserName}">사용자</span>님
+            </div>
+            
+            <a th:if="${session.loginUser != null}"
+                class="link__text-btn" href="member/logout" style="font-size: 13px; color: #888;">로그아웃</a>
+        </div>
+    </div>
+</header>
+</html>

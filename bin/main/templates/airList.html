@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>무성의 여행 - 항공권 선택</title>
+
+<!-- 공통 헤드 (폰트, 기본 스타일 등) 가져오기 -->
+<th:block th:replace="layout/header_fragment :: common-head"></th:block>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800" rel="stylesheet">
@@ -13,100 +16,13 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" rel="stylesheet">
 
 <style type="text/css">
-/* --- 🟢 모든 CSS 코드 시작 🟢 --- */
-.moana_gnb {
-	background-color: #5ac4c9;
-	color: #fff;
-	padding: 10px 0;
-}
+/* [수정됨] 헤더(.moana_gnb)와 관련된 옛날 스타일은 모두 삭제했습니다.
+   이제 common-head에서 불러오는 스타일이 적용됩니다.
+*/
 
-.gnb_container {
-	max-width: 1200px;
-	margin: 0 auto;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0 20px;
-}
+/* --- 항공권 리스트 페이지 전용 스타일 --- */
 
-.moana_gnb h1 {
-	margin: 0;
-	display: flex;
-	align-items: center;
-}
-
-.box__inner h1 a {
-	color: #fff;
-	text-decoration: none;
-	font-size: 22px;
-	font-weight: bold;
-}
-
-.list__tab {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	gap: 20px;
-}
-
-.list__tab .list-item a {
-	color: #fff;
-	text-decoration: none;
-	font-weight: bold;
-	padding: 5px 0;
-	position: relative;
-	transition: color 0.3s ease;
-}
-
-.list__tab .list-item a:hover, .list__tab .list-item a.link__tab--active {
-	color: #eee;
-}
-
-.list__tab .list-item a.link__tab--active::after {
-	content: '';
-	position: absolute;
-	left: 0;
-	bottom: -5px;
-	width: 100%;
-	height: 2px;
-	background-color: #fff;
-}
-
-.link-container {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-}
-
-.link__booking-history {
-	background-color: transparent;
-	border: 1px solid #fff;
-	color: #fff;
-	padding: 8px 15px;
-	border-radius: 20px;
-	text-decoration: none;
-	font-size: 14px;
-	transition: background-color 0.3s ease, color 0.3s ease;
-	white-space: nowrap;
-}
-
-.link__booking-history:hover {
-	background-color: #fff;
-	color: #5ac4c9;
-}
-
-.box__inner {
-	display: flex;
-	align-items: center;
-	gap: 20px;
-}
-
-body {
-	margin: 0;
-	background-color: #f8f9fa;
-}
-
+/* 필터/검색 정보 카드 버튼 스타일 */
 .filter-card-button {
 	text-align: left;
 	width: 100%;
@@ -121,6 +37,7 @@ body {
 	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
+/* 항공권 카드 스타일 */
 .flight-card-button {
 	text-align: left;
 	border-width: 1px;
@@ -142,6 +59,7 @@ body {
 	letter-spacing: -1px;
 }
 
+/* 검색 폼 (모달 내부) 스타일 */
 .flight-search-form .form-label {
 	display: block;
 	font-size: 0.875rem;
@@ -213,6 +131,7 @@ body {
 	flex-grow: 0;
 }
 
+/* 모달 공통 스타일 */
 .modal-overlay {
 	display: none;
 	position: fixed;
@@ -323,6 +242,7 @@ body {
 	z-index: 1061 !important;
 }
 
+/* 탑승객 모달 스타일 */
 .passenger-section, .seat-class-section {
 	margin-bottom: 24px;
 }
@@ -399,6 +319,7 @@ body {
 	cursor: pointer;
 }
 
+/* 로딩 모달 */
 #loadingModal {
 	display: none;
 	position: fixed;
@@ -434,6 +355,7 @@ body {
   100% { transform: rotate(360deg); }
 }
  
+/* 스텝 인디케이터 */
 .step-icon {
 	width: 36px;
 	height: 36px;
@@ -461,7 +383,7 @@ body {
 	margin-right: 1rem;
 }
 
-/* --- ⭐ 필터 카드 & 슬라이더 CSS --- */
+/* --- 필터 카드 & 슬라이더 CSS --- */
 .filter-card {
 	border: 1px solid #dee2e6;
 	border-radius: 0.375rem;
@@ -563,7 +485,8 @@ body {
 	margin-left: 8px;
 	cursor: pointer;
 }
-/* --- 📅 상단 날짜/가격 스트립 CSS --- */
+
+/* --- 상단 날짜/가격 스트립 CSS --- */
 .date-strip-container {
     display: flex;
     background-color: #fff;
@@ -621,27 +544,8 @@ body {
 </style>
 </head>
 <body>
-	<div class="moana_gnb" role="complementary">
-		<div class="gnb_container">
-			<div class="box__inner">
-				<h1>
-					<a href="/">무성의 여행</a>
-				</h1>
-			</div>
-
-			<ul class="list__tab">
-				<li class="list-item"><a class="link__tab" href="/">항공</a></li>
-				<li class="list-item"><a class="link__tab" href="/chat">추천챗</a></li>
-			</ul>
-
-			<div class="link-container">
-				<a href="/revList" class="link__booking-history sp_sd--after" th:if="${session.loginUser != null}">나의 예약내역</a> 
-				<a th:if="${session.loginUser == null}" class="link__booking-history sp_sd--after" href="/member/login">로그인</a>
-				<a th:if="${session.loginUser != null}" th:text="${session.loginUser.UserName}" class="link__booking-history sp_sd--after"></a> 
-				<a th:if="${session.loginUser != null}" class="link__booking-history sp_sd--after" href="/member/logout">로그아웃</a>
-			</div>
-		</div>
-	</div>
+    <!-- 공통 헤더 적용 (activeMenu='home') -->
+	<header th:replace="layout/header_fragment :: common-header(activeMenu='home')"></header>
 
 	<main class="container py-5">
 
@@ -891,6 +795,7 @@ body {
 </div>
 </main>
 
+    <!-- 모달 등 나머지 HTML 요소들은 기존 코드 유지 -->
     <div class="modal fade" id="researchModal" tabindex="-1" aria-labelledby="researchModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -1070,6 +975,7 @@ body {
 	<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
 
+	<!-- 스크립트 내용은 기존과 동일하므로 아래에 그대로 붙여넣습니다 -->
 	<script th:inline="javascript">
     /* 🟢 서버에서 넘어온 날짜별 가격 데이터 (Map) */
     const datePriceMap = /*[[${datePriceMap}]]*/ {}; 
@@ -1811,6 +1717,10 @@ body {
                 this.submit();
             }, 50);
         });
+    }
+    
+    function selectOneWayFlight(element) {
+        openReturnFlightModal(element);
     }
     </script>
 </body>

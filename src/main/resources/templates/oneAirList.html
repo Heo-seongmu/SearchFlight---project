@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>무성의 여행 - 항공권 선택(편도)</title>
+
+<!-- 공통 헤드 (폰트, 기본 스타일 등) 가져오기 -->
+<th:block th:replace="layout/header_fragment :: common-head"></th:block>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800" rel="stylesheet">
@@ -13,100 +16,14 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" rel="stylesheet">
 
 <style type="text/css">
-/* --- 🟢 스타일은 기존과 동일하게 유지 🟢 --- */
-.moana_gnb {
-	background-color: #5ac4c9;
-	color: #fff;
-	padding: 10px 0;
-}
-
-.gnb_container {
-	max-width: 1200px;
-	margin: 0 auto;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0 20px;
-}
-
-.moana_gnb h1 {
-	margin: 0;
-	display: flex;
-	align-items: center;
-}
-
-.box__inner h1 a {
-	color: #fff;
-	text-decoration: none;
-	font-size: 22px;
-	font-weight: bold;
-}
-
-.list__tab {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	gap: 20px;
-}
-
-.list__tab .list-item a {
-	color: #fff;
-	text-decoration: none;
-	font-weight: bold;
-	padding: 5px 0;
-	position: relative;
-	transition: color 0.3s ease;
-}
-
-.list__tab .list-item a:hover, .list__tab .list-item a.link__tab--active
-	{
-	color: #eee;
-}
-
-.list__tab .list-item a.link__tab--active::after {
-	content: '';
-	position: absolute;
-	left: 0;
-	bottom: -5px;
-	width: 100%;
-	height: 2px;
-	background-color: #fff;
-}
-
-.link-container {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-}
-
-.link__booking-history {
-	background-color: transparent;
-	border: 1px solid #fff;
-	color: #fff;
-	padding: 8px 15px;
-	border-radius: 20px;
-	text-decoration: none;
-	font-size: 14px;
-	transition: background-color 0.3s ease, color 0.3s ease;
-	white-space: nowrap;
-}
-
-.link__booking-history:hover {
-	background-color: #fff;
-	color: #5ac4c9;
-}
-
-.box__inner {
-	display: flex;
-	align-items: center;
-	gap: 20px;
-}
+/* [수정됨] 헤더(.moana_gnb 등) 관련 스타일은 모두 제거했습니다. 
+   이제 common-head에서 스타일을 가져오므로 충돌하지 않습니다. */
 
 body {
-	margin: 0;
-	background-color: #f8f9fa;
+    background-color: #f8f9fa; /* 페이지 배경색 유지 */
 }
+
+/* --- 편도 리스트 페이지 전용 스타일 --- */
 
 .filter-card-button {
 	text-align: left;
@@ -214,6 +131,7 @@ body {
 	flex-grow: 0;
 }
 
+/* 모달 스타일 */
 .modal-overlay {
 	display: none;
 	position: fixed;
@@ -466,7 +384,7 @@ body {
 	margin-right: 1rem;
 }
 
-/* --- 필터 및 슬라이더 스타일 --- */
+/* --- 필터 및 슬라이더 --- */
 .filter-card {
 	border: 1px solid #dee2e6;
 	border-radius: 0.375rem;
@@ -569,7 +487,7 @@ body {
 	cursor: pointer;
 }
 
-/* --- 📅 상단 날짜/가격 스트립 CSS (추가됨) --- */
+/* --- 상단 날짜/가격 스트립 --- */
 .date-strip-container {
     display: flex;
     background-color: #fff;
@@ -627,32 +545,8 @@ body {
 </style>
 </head>
 <body>
-	<div class="moana_gnb" role="complementary">
-		<div class="gnb_container">
-			<div class="box__inner">
-				<h1>
-					<a href="/">무성의 여행</a>
-				</h1>
-			</div>
-
-			<ul class="list__tab">
-				<li class="list-item"><a class="link__tab" href="/">항공</a></li>
-				<li class="list-item"><a class="link__tab" href="/chat">추천챗</a></li>
-			</ul>
-
-			<div class="link-container">
-				<a href="/revList" class="link__booking-history sp_sd--after"
-					th:if="${session.loginUser != null}">나의 예약내역</a> <a
-					th:if="${session.loginUser == null}"
-					class="link__booking-history sp_sd--after" href="/member/login">로그인</a>
-				<a th:if="${session.loginUser != null}"
-					th:text="${session.loginUser.UserName}"
-					class="link__booking-history sp_sd--after"></a> <a
-					th:if="${session.loginUser != null}"
-					class="link__booking-history sp_sd--after" href="/member/logout">로그아웃</a>
-			</div>
-		</div>
-	</div>
+    <!-- 공통 헤더 적용 (activeMenu='home') -->
+	<header th:replace="layout/header_fragment :: common-header(activeMenu='home')"></header>
 
 	<main class="container py-5">
 
