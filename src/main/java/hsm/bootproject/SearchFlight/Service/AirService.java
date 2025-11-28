@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.IntStream;
 
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -23,6 +24,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,8 +42,6 @@ import hsm.bootproject.SearchFlight.dto.airportDto;
 import hsm.bootproject.SearchFlight.dto.searchAirDto;
 import hsm.bootproject.SearchFlight.repository.SearchLogRepository;
 import hsm.bootproject.SearchFlight.repository.basicAreaRepository;
-
-import java.util.stream.IntStream;
 
 @Service
 public class AirService {
@@ -243,7 +243,8 @@ public class AirService {
 
 		return new ArrayList<>(resultsMap.values());
 	}
-
+	
+	@Cacheable(value = "flightSearchResults")
 	public List<searchAirDto> searchAirPort(airParmDto airparmDto) throws IOException {
 		String auth = token();
 
@@ -446,6 +447,7 @@ public class AirService {
 		}
 	}
 	
+	@Cacheable(value = "surroundingPrices")
 	public Map<String, String> getSurroundingPrices(airParmDto originalDto) {
 	    Map<String, String> priceMap = new ConcurrentHashMap<>(); 
 	    

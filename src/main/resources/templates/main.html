@@ -2,1579 +2,1392 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <title>무성의 여행</title>
 
-<!-- 공통 헤드 (폰트, 기본 스타일 등) 가져오기 -->
 <th:block th:replace="layout/header_fragment :: common-head"></th:block>
 
-<link rel="stylesheet"
-	href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
-/* [수정됨] 헤더 관련 스타일(body, .moana_gnb 등)은 header_fragment로 이관했으므로 
-   여기서는 모두 제거했습니다. 메인 페이지 전용 스타일만 남겨둡니다. 
-*/
-
-/* --- 메인 컨텐츠 영역 --- */
-main {
-	width: 100%;
-}
-
-/* --- Hero 섹션 --- */
-.hero-section {
-	position: relative;
-	width: 100%;
-	margin-bottom: 100px;
-}
-
-.bg-image-full {
-	background-image: url(/image/самолётик.png);
-	background-size: cover; /* 100% 대신 cover 권장 */
-	background-position: center;
-	height: 40vh; /* 높이 약간 조정 */
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	background-color: #ddd;
-}
-
-/* --- 검색 위젯 --- */
-.search-widget-container {
-	position: absolute;
-	bottom: -80px;
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 10;
-	background-color: white;
-	border-radius: 16px;
-	box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); /* 그림자 부드럽게 개선 */
-	padding: 12px 24px 20px 24px;
-	width: 100%;
-	max-width: 950px;
-	box-sizing: border-box;
-}
-
-.top-section {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	border-bottom: 1px solid #eee;
-	padding-bottom: 8px;
-	margin-bottom: 16px;
-}
-
-.tabs .tab-label {
-	background: none;
-	border: none;
-	font-size: 16px;
-	padding: 8px 12px;
-	margin-right: 12px;
-	cursor: pointer;
-	color: #888;
-	display: inline-block;
-}
-
-.tabs input[type="radio"]:checked+.tab-label {
-	color: #5ac4c9; /* 브랜드 컬러로 통일 */
-	font-weight: bold;
-	box-shadow: inset 0 -2px 0 #5ac4c9;
-}
-
-.direct-flight-option {
-	display: flex;
-	align-items: center;
-	font-size: 14px;
-	color: #555;
-}
-
-.direct-flight-option input {
-	margin-right: 6px;
-}
-
-.search-fields {
-	display: flex;
-	align-items: center;
-	gap: 16px;
-}
-
-.search-fields button {
-	background: none;
-	border: none;
-	text-align: left;
-	padding: 10px 4px;
-	font-size: 18px;
-	font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-	cursor: pointer;
-	flex-grow: 1;
-}
-
-.field-location {
-	color: #333;
-	font-weight: bold;
-	min-width: 120px;
-}
-
-.field-placeholder {
-	color: #999;
-	white-space: nowrap;
-}
-
-.swap-button {
-	border: 1px solid #ddd;
-	border-radius: 50%;
-	width: 32px;
-	height: 32px;
-	min-width: 32px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-size: 16px;
-	color: #555;
-	flex-grow: 0;
-}
-
-.submit-button {
-	color: #5ac4c9; /* 버튼 텍스트 색상 브랜드 컬러로 변경 */
-	font-weight: bold;
-	border-radius: 8px;
-	padding: 14px 24px;
-	flex-grow: 0;
-}
-
-/* --- 모달 공통 스타일 --- */
-.modal-overlay {
-	display: none;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.5);
-	justify-content: center;
-	align-items: center;
-	z-index: 1000;
-}
-
-.modal-content {
-	background-color: white;
-	padding: 24px;
-	border-radius: 16px;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-	width: 400px;
-	max-height: 80vh;
-	overflow-y: auto;
-	position: relative;
-}
-
-.modal-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 20px;
-}
-
-.modal-header h2 {
-	margin: 0;
-	font-size: 20px;
-}
-
-.close-button {
-	background: none;
-	border: none;
-	font-size: 24px;
-	cursor: pointer;
-}
-
-/* --- 여행지 추천 대형 모달 스타일 --- */
-.modal-large {
-	width: 800px;
-	max-width: 95%;
-	max-height: 90vh;
-	padding: 0;
-	overflow: hidden;
-	display: flex;
-	flex-direction: column;
-}
-
-.modal-large .modal-header {
-	padding: 20px 24px;
-	border-bottom: 1px solid #eee;
-	background-color: #fff;
-	z-index: 10;
-	margin-bottom: 0;
-}
-
-.modal-large .modal-body {
-	padding: 24px;
-	overflow-y: auto;
-	background-color: #f9f9f9;
-}
-
-.dest-desc {
-	font-size: 16px;
-	color: #555;
-	margin-bottom: 30px;
-	line-height: 1.6;
-}
-
-.rec-title {
-	font-size: 18px;
-	font-weight: bold;
-	color: #333;
-	margin-bottom: 15px;
-}
-
-/* 추천 액티비티 그리드 */
-.activity-grid {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 20px;
-}
-
-.activity-item {
-	background: white;
-	border-radius: 12px;
-	overflow: hidden;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-	transition: transform 0.2s;
-}
-
-.activity-item:hover {
-	transform: translateY(-3px);
-}
-
-.activity-img {
-	width: 100%;
-	height: 160px;
-	object-fit: cover;
-}
-
-.activity-info {
-	padding: 15px;
-}
-
-.activity-info h5 {
-	margin: 0 0 5px 0;
-	font-size: 16px;
-	font-weight: bold;
-	color: #333;
-}
-
-.activity-info p {
-	margin: 0;
-	font-size: 13px;
-	color: #666;
-	line-height: 1.4;
-}
-
-@media ( max-width : 600px) {
-	.activity-grid {
-		grid-template-columns: 1fr;
-	}
-}
-
-/* --- 검색 모달 내부 --- */
-.modal-search-input {
-	width: 100%;
-	padding: 12px;
-	border: 1px solid #ddd;
-	border-radius: 8px;
-	font-size: 16px;
-	box-sizing: border-box;
-	margin-bottom: 24px;
-}
-
-.popular-searches h3 {
-	font-size: 16px;
-	color: #555;
-	margin-top: 20px;
-	margin-bottom: 12px;
-}
-
-.tags-container {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-}
-
-.tag {
-	background-color: #f0f0f0;
-	color: #333;
-	padding: 8px 16px;
-	border-radius: 20px;
-	font-size: 14px;
-	cursor: pointer;
-	transition: background-color 0.2s;
-}
-
-.tag:hover {
-	background-color: #e0e0e0;
-}
-
-.search-result-item {
-	padding: 10px 5px;
-	cursor: pointer;
-	border-bottom: 1px solid #f0f0f0;
-}
-
-.search-result-item:hover {
-	background-color: #f5f5f5;
-}
-
-.location-main {
-	font-weight: bold;
-	font-size: 16px;
-}
-
-.location-sub {
-	font-size: 14px;
-	color: #888;
-}
-
-.no-results {
-	padding: 20px;
-	text-align: center;
-	color: #999;
-}
-
-/* flatpickr 커스텀 스타일 */
-.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange
-	{
-	background: #5ac4c9; /* 브랜드 컬러로 변경 */
-	border-color: #5ac4c9;
-}
-
-.flatpickr-day.inRange {
-	background: #e0f7fa; /* 연한 민트색 */
-	box-shadow: -5px 0 0 #e0f7fa, 5px 0 0 #e0f7fa;
-	border-color: transparent;
-}
-
-.passenger-section, .seat-class-section {
-	margin-bottom: 24px;
-}
-
-.passenger-section h4, .seat-class-section h4 {
-	margin-top: 0;
-	margin-bottom: 12px;
-	font-size: 16px;
-	color: #333;
-}
-
-.passenger-row {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 16px;
-}
-
-.passenger-label small {
-	color: #888;
-	font-size: 12px;
-}
-
-.passenger-controls {
-	display: flex;
-	align-items: center;
-	gap: 15px;
-}
-
-.passenger-controls .count {
-	font-size: 18px;
-	width: 25px;
-	text-align: center;
-}
-
-.control-btn {
-	width: 32px;
-	height: 32px;
-	border-radius: 50%;
-	border: 1px solid #ddd;
-	background-color: white;
-	font-size: 20px;
-	cursor: pointer;
-	color: #5ac4c9;
-}
-
-.control-btn:disabled {
-	color: #ccc;
-	cursor: not-allowed;
-}
-
-.seat-class-options {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 10px;
-}
-
-.seat-class-options label {
-	display: flex;
-	align-items: center;
-	gap: 5px;
-	font-size: 14px;
-}
-
-.confirm-btn {
-	width: 100%;
-	padding: 14px;
-	background-color: #5ac4c9;
-	color: white;
-	border: none;
-	border-radius: 8px;
-	font-size: 16px;
-	font-weight: bold;
-	cursor: pointer;
-}
-
-#alertModal .modal-content {
-	width: 320px;
-	padding: 30px;
-	text-align: center;
-}
-
-#alertModal p {
-	font-size: 16px;
-	line-height: 1.6;
-	margin: 0 0 20px 0;
-	font-weight: bold;
-	color: #333;
-}
-
-#alertModal button {
-	width: 100%;
-	padding: 12px;
-	background-color: #5ac4c9;
-	color: white;
-	border: none;
-	border-radius: 8px;
-	font-size: 16px;
-	font-weight: bold;
-	cursor: pointer;
-}
-
-#loadingModal {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.6);
-	z-index: 2000;
-	display: none;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
-	color: white;
-}
-
-.spinner {
-	width: 50px;
-	height: 50px;
-	border: 5px solid #f3f3f3;
-	border-top: 5px solid #5ac4c9;
-	border-radius: 50%;
-	animation: spin 1s linear infinite;
-	margin-bottom: 20px;
-}
-
-#loadingModal p {
-	font-size: 18px;
-	font-weight: bold;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-.popular-destinations-section {
-	padding: 40px 0;
-	margin-top: 100px;
-}
-
-.content-container {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 0 20px;
-	box-sizing: border-box;
-}
-
-.popular-destinations-section h2 {
-	font-size: 24px;
-	font-weight: bold;
-	color: #333;
-	margin-top: 0;
-	margin-bottom: 8px;
-}
-
-.popular-destinations-section p {
-	font-size: 16px;
-	color: #777;
-	margin-bottom: 30px;
-}
-
-.popular-destinations-section h3 {
-	font-size: 20px;
-	font-weight: bold;
-	color: #333;
-	margin-top: 40px;
-	margin-bottom: 20px;
-	padding-bottom: 10px;
-	border-bottom: 1px solid #eee;
-}
-
-.destination-grid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 24px;
-}
-
-.destination-card {
-	background-color: #fff;
-	border-radius: 12px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-	overflow: hidden;
-	transition: all 0.3s ease;
-	cursor: pointer;
-}
-
-.destination-card:hover {
-	transform: translateY(-5px);
-	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.destination-card img {
-	width: 100%;
-	height: 200px;
-	object-fit: cover;
-}
-
-.card-details {
-	padding: 16px;
-}
-
-.card-details h4 {
-	font-size: 18px;
-	font-weight: bold;
-	color: #222;
-	margin: 0 0 4px 0;
-}
-
-.card-details small {
-	font-size: 14px;
-	color: #888;
-}
-
-.activities-preview {
-	margin-top: 12px;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-}
-
-.activity-tag {
-	background-color: #f0f2f5;
-	color: #555;
-	font-size: 12px;
-	padding: 4px 8px;
-	border-radius: 20px;
-	white-space: nowrap;
-}
-
-@media ( max-width : 992px) {
-	.destination-grid {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-
-@media ( max-width : 576px) {
-	.destination-grid {
-		grid-template-columns: 1fr;
-	}
-	.popular-destinations-section h2 {
-		font-size: 20px;
-	}
-	.popular-destinations-section p {
-		font-size: 14px;
-	}
-	.popular-destinations-section h3 {
-		font-size: 18px;
-	}
-}
-
-.trend-section {
-    padding: 20px 0 40px 0;
-    background-color: #fff;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-}
-.trend-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 한 줄에 6개 */
-    gap: 15px;
-    margin-top: 20px;
-}
-.trend-card {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 20px 15px;
-    text-align: center;
-    position: relative;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-.trend-card:hover {
-    transform: translateY(-5px);
-    border-color: #5ac4c9;
-    box-shadow: 0 5px 15px rgba(90, 196, 201, 0.2);
-}
-.trend-rank {
-    position: absolute;
-    top: -10px;
-    left: -5px;
-    background-color: #ff7675;
-    color: white;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 14px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-/* 1,2,3등은 색상 다르게 강조 */
-.trend-card:nth-child(1) .trend-rank { background-color: #d63031; transform: scale(1.1); }
-.trend-card:nth-child(2) .trend-rank { background-color: #e17055; }
-.trend-card:nth-child(3) .trend-rank { background-color: #fdcb6e; color: #333; }
-
-.trend-city {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    margin: 10px 0 5px 0;
-    display: block;
-}
-.trend-code {
-    font-size: 13px;
-    color: #999;
-    background-color: #f5f5f5;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-.trend-count {
-    display: block;
-    margin-top: 12px;
-    font-size: 13px;
-    color: #5ac4c9;
-    font-weight: bold;
-}
-
-@media (max-width: 992px) {
-    .trend-grid { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 576px) {
-    .trend-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-.trend-container {
-    margin-bottom: 50px;
-    position: relative;
-}
-
-/* 라디오 버튼 숨기기 */
-.trend-tab-input {
-    display: none;
-}
-
-/* 탭 메뉴 영역 */
-.trend-tabs {
-    display: flex;
-    gap: 20px;
-    margin-top: 30px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #eee;
-}
-
-.trend-tab-label {
-    font-size: 20px;
-    font-weight: bold;
-    color: #888;
-    cursor: pointer;
-    padding-bottom: 10px;
-    position: relative;
-    transition: all 0.3s;
-}
-
-/* 선택된 탭 스타일 (라디오 버튼 체크 시) */
-#tab-domestic:checked ~ .trend-tabs label[for="tab-domestic"],
-#tab-overseas:checked ~ .trend-tabs label[for="tab-overseas"] {
-    color: #333;
-    border-bottom: 3px solid #ff7675; /* 포인트 컬러 */
-    margin-bottom: -2px;
-}
-
-/* 그리드 기본 숨김 */
-.trend-content {
-    display: none; 
-    grid-template-columns: repeat(6, 1fr);
-    gap: 15px;
-    animation: fadeIn 0.5s;
-}
-
-/* 선택된 탭의 그리드만 보이기 */
-#tab-domestic:checked ~ #content-domestic,
-#tab-overseas:checked ~ #content-overseas {
-    display: grid;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* 반응형 (기존 trend-grid 미디어 쿼리와 동일) */
-@media (max-width: 992px) {
-    .trend-content { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 576px) {
-    .trend-content { grid-template-columns: repeat(2, 1fr); }
-}
+
+    :root {
+        --primary-color: #5ac4c9;
+        --primary-light: #e0f7fa;
+        --text-dark: #333;
+        --text-gray: #888;
+        --bg-light: #f9f9f9;
+        --white: #ffffff;
+        --border-color: #eee;
+        --shadow-soft: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+
+    .hidden-input {
+        display: none;
+    }
+
+    /* --- Hero 섹션 (수정됨) --- */
+    .hero-section {
+        position: relative;
+        width: 100%;
+        height: 51vh; /* 시원한 높이 */
+        margin-bottom: 100px;
+        /* overflow: hidden; 제거함 -> 검색창이 튀어나와야 하므로 */
+    }
+
+    /* 비디오를 감싸는 래퍼 (새로 추가됨) */
+    .video-wrapper {
+        position: absolute; 
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden; /* 비디오가 넘치지 않게 여기서 자름 */
+        z-index: 0;
+    }
+
+    .bg-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* 화면 비율에 맞게 꽉 채움 */
+    }
+
+    .video-overlay {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3); /* 영상 명도 조절 (0.3 추천) */
+        z-index: 1;
+    }
+
+    /* --- 검색 위젯 (수정됨) --- */
+    .search-widget-container {
+        position: absolute;
+        bottom: -80px; /* 섹션 밖으로 80px 튀어나옴 */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10; /* 영상보다 위에 위치 */
+        background-color: var(--white);
+        border-radius: 16px;
+        box-shadow: var(--shadow-soft);
+        padding: 12px 24px 20px 24px;
+        width: 95%; /* 모바일 대응을 위해 % 사용 */
+        max-width: 950px;
+        box-sizing: border-box;
+    }
+
+    .top-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 8px;
+        margin-bottom: 16px;
+    }
+
+    .tabs .tab-label {
+        font-size: 16px;
+        padding: 8px 12px;
+        margin-right: 12px;
+        cursor: pointer;
+        color: var(--text-gray);
+        display: inline-block;
+        transition: color 0.2s;
+    }
+
+    .tabs input[type="radio"]:checked + .tab-label {
+        color: var(--primary-color);
+        font-weight: bold;
+        box-shadow: inset 0 -2px 0 var(--primary-color);
+    }
+
+    .direct-flight-option {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .direct-flight-option input {
+        margin-right: 6px;
+    }
+
+    .search-fields {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .search-fields button {
+        background: none;
+        border: none;
+        text-align: left;
+        padding: 10px 4px;
+        font-size: 18px;
+        font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+        cursor: pointer;
+        flex-grow: 1;
+    }
+
+    .field-location {
+        color: var(--text-dark);
+        font-weight: bold;
+        min-width: 120px;
+    }
+
+    .field-placeholder {
+        color: #999;
+        white-space: nowrap;
+    }
+
+    .swap-button {
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+        color: #555;
+        flex-grow: 0;
+        background-color: var(--white);
+    }
+
+    .submit-button {
+        background-color: var(--bg-light); /* 기본 배경 없으므로 밝은 회색 혹은 transparent */
+        color: var(--primary-color);
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 14px 24px;
+        flex-grow: 0;
+    }
+    
+    /* 모달 내 '검색하러 가기' 등 강조 버튼 */
+    .btn-primary-action {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    /* --- 모달 공통 --- */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background-color: var(--white);
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        width: 400px;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        font-size: 20px;
+    }
+
+    .close-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    /* --- 여행지 추천 대형 모달 --- */
+    .modal-large {
+        width: 800px;
+        max-width: 95%;
+        max-height: 90vh;
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-large .modal-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--white);
+        z-index: 10;
+        margin-bottom: 0;
+    }
+
+    .modal-large .modal-body {
+        padding: 24px;
+        overflow-y: auto;
+        background-color: var(--bg-light);
+    }
+
+    .dest-desc {
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+
+    .rec-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--text-dark);
+        margin-bottom: 15px;
+    }
+
+    /* 추천 액티비티 그리드 */
+    .activity-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .activity-item {
+        background: var(--white);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s;
+    }
+
+    .activity-item:hover {
+        transform: translateY(-3px);
+    }
+
+    .activity-img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+
+    .activity-info {
+        padding: 15px;
+    }
+
+    .activity-info h5 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--text-dark);
+    }
+
+    .activity-info p {
+        margin: 0;
+        font-size: 13px;
+        color: #666;
+        line-height: 1.4;
+    }
+
+    @media (max-width: 600px) {
+        .activity-grid { grid-template-columns: 1fr; }
+        .search-fields { flex-direction: column; align-items: stretch; }
+    }
+
+    /* --- 검색 모달 내부 --- */
+    .modal-search-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        box-sizing: border-box;
+        margin-bottom: 24px;
+    }
+
+    .popular-searches h3 {
+        font-size: 16px;
+        color: #555;
+        margin-top: 20px;
+        margin-bottom: 12px;
+    }
+
+    .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .tag {
+        background-color: #f0f0f0;
+        color: var(--text-dark);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .tag:hover {
+        background-color: #e0e0e0;
+    }
+
+    .search-result-item {
+        padding: 10px 5px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .search-result-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .location-main {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .location-sub {
+        font-size: 14px;
+        color: var(--text-gray);
+    }
+
+    .no-results {
+        padding: 20px;
+        text-align: center;
+        color: #999;
+    }
+
+    /* Flatpickr 커스텀 */
+    .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .flatpickr-day.inRange {
+        background: var(--primary-light);
+        box-shadow: -5px 0 0 var(--primary-light), 5px 0 0 var(--primary-light);
+        border-color: transparent;
+    }
+
+    /* --- 탑승객 모달 --- */
+    .passenger-section, .seat-class-section {
+        margin-bottom: 24px;
+    }
+
+    .passenger-section h4, .seat-class-section h4 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        font-size: 16px;
+        color: var(--text-dark);
+    }
+
+    .passenger-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .passenger-label small {
+        color: var(--text-gray);
+        font-size: 12px;
+    }
+
+    .passenger-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .passenger-controls .count {
+        font-size: 18px;
+        width: 25px;
+        text-align: center;
+    }
+
+    .control-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid #ddd;
+        background-color: var(--white);
+        font-size: 20px;
+        cursor: pointer;
+        color: var(--primary-color);
+    }
+
+    .control-btn:disabled {
+        color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .seat-class-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .seat-class-options label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 14px;
+    }
+
+    .confirm-btn {
+        width: 100%;
+        padding: 14px;
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    /* --- 알림 모달 --- */
+    #alertModal .modal-content {
+        width: 320px;
+        padding: 30px;
+        text-align: center;
+    }
+
+    #alertModal p {
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 0 0 20px 0;
+        font-weight: bold;
+        color: var(--text-dark);
+    }
+
+    #alertModal button {
+        width: 100%;
+        padding: 12px;
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    /* --- 로딩 모달 --- */
+    #loadingModal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 2000;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: white;
+    }
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+    
+    #loadingModal p { font-size: 18px; font-weight: bold; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* --- 콘텐츠 섹션 (인기 여행지 등) --- */
+    .popular-destinations-section {
+        padding: 40px 0;
+        margin-top: 100px;
+    }
+
+    .content-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+
+    .popular-destinations-section h2 {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--text-dark);
+        margin: 0 0 8px 0;
+    }
+
+    .popular-destinations-section p {
+        font-size: 16px;
+        color: #777;
+        margin-bottom: 30px;
+    }
+
+    .popular-destinations-section h3 {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--text-dark);
+        margin-top: 40px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .destination-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+
+    .destination-card {
+        background-color: var(--white);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .destination-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .destination-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .card-details { padding: 16px; }
+    .card-details h4 {
+        font-size: 18px;
+        font-weight: bold;
+        color: #222;
+        margin: 0 0 4px 0;
+    }
+    .card-details small { font-size: 14px; color: var(--text-gray); }
+
+    .activities-preview {
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .activity-tag {
+        background-color: #f0f2f5;
+        color: #555;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 992px) { .destination-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 576px) { .destination-grid { grid-template-columns: 1fr; } }
+
+    /* --- 트렌드 섹션 --- */
+    .trend-container {
+        margin-bottom: 50px;
+        position: relative;
+    }
+
+    .trend-tabs {
+        display: flex;
+        gap: 20px;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .trend-tab-label {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--text-gray);
+        cursor: pointer;
+        padding-bottom: 10px;
+        position: relative;
+        transition: all 0.3s;
+    }
+
+    #tab-domestic:checked ~ .trend-tabs label[for="tab-domestic"],
+    #tab-overseas:checked ~ .trend-tabs label[for="tab-overseas"] {
+        color: var(--text-dark);
+        border-bottom: 3px solid #ff7675; /* 포인트 컬러 */
+        margin-bottom: -2px;
+    }
+
+    .trend-content {
+        display: none; 
+        grid-template-columns: repeat(6, 1fr);
+        gap: 15px;
+        animation: fadeIn 0.5s;
+    }
+
+    #tab-domestic:checked ~ #content-domestic,
+    #tab-overseas:checked ~ #content-overseas {
+        display: grid;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .trend-card {
+        background: var(--white);
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 20px 15px;
+        text-align: center;
+        position: relative;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .trend-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary-color);
+        box-shadow: 0 5px 15px rgba(90, 196, 201, 0.2);
+    }
+
+    .trend-rank {
+        position: absolute;
+        top: -10px;
+        left: -5px;
+        background-color: #ff7675;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .trend-card:nth-child(1) .trend-rank { background-color: #d63031; transform: scale(1.1); }
+    .trend-card:nth-child(2) .trend-rank { background-color: #e17055; }
+    .trend-card:nth-child(3) .trend-rank { background-color: #fdcb6e; color: #333; }
+
+    .trend-city {
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--text-dark);
+        margin: 10px 0 5px 0;
+        display: block;
+    }
+
+    .trend-code {
+        font-size: 13px;
+        color: #999;
+        background-color: #f5f5f5;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    .trend-count {
+        display: block;
+        margin-top: 12px;
+        font-size: 13px;
+        color: var(--primary-color);
+        font-weight: bold;
+    }
+
+    @media (max-width: 992px) { .trend-content { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 576px) { .trend-content { grid-template-columns: repeat(2, 1fr); } }
 </style>
 </head>
 <body>
 
-	<!-- 공통 헤더 적용 -->
-	<header th:replace="layout/header_fragment :: common-header(activeMenu='home')"></header>
+    <header th:replace="layout/header_fragment :: common-header(activeMenu='home')"></header>
 
-	<main>
-		<section class="hero-section">
-			<div class="bg-image-full"></div>
-			<form class="search-widget-container" action="/air/searchAirport"
-				method="post">
-				<div class="top-section">
-					<div class="tabs">
-						<input type="radio" name="tripType" value="round-trip"
-							id="round-trip" checked style="display: none;"> <label
-							for="round-trip" class="tab-label">왕복</label> <input type="radio"
-							name="tripType" value="one-way" id="one-way"
-							style="display: none;"> <label for="one-way"
-							class="tab-label">편도</label>
-					</div>
-					<div class="direct-flight-option">
-						<input type="hidden" name="directFlight" id="directFlightInput"
-							value="false"> <input type="checkbox"
-							id="direct-flight-checkbox"> <label
-							for="direct-flight-checkbox">직항</label>
-					</div>
-				</div>
-				<div class="search-fields">
-					<button type="button" id="departureBtn" class="field-location">서울
-						SEL</button>
-					<button type="button" class="swap-button">↔</button>
-					<button type="button" id="arrivalBtn" class="field-placeholder">도착지
-						IN</button>
-
-					<button type="button" id="dateRangeBtn" class="field-placeholder">언제
-						떠나시나요?</button>
-					<input type="hidden" name="departureDate" id="departureDateInput">
-					<input type="hidden" name="returnDate" id="returnDateInput">
-
-					<button type="button" id="passengerBtn" class="field-placeholder">👤
-						탑승객 1명, 일반석</button>
-
-					<input type="hidden" name="departureCode" id="departureCode"
-						value="SEL"> <input type="hidden"
-						name="departureKoLocation" id="departureKoLocation" value="서울">
-					<input type="hidden" name="arrivalCode" id="arrivalCode" value="">
-					<input type="hidden" name="arrivalKoLocation"
-						id="arrivalKoLocation" value=""> <input type="hidden"
-						name="adults" id="adultsInput" value="1"> <input
-						type="hidden" name="children" id="childrenInput" value="0">
-					<input type="hidden" name="infants" id="infantsInput" value="0">
-					<input type="hidden" name="travelClass" id="travelClassInput"
-						value="ECONOMY">
-					<button type="submit" class="submit-button">최저가로 검색</button>
-				</div>
-			</form>
-		</section>
-
-		<section class="popular-destinations-section">
-			<div class="content-container">
-				<h2>대한민국 출발 인기 항공권</h2>
-
-        <div class="trend-container">
-            <input type="radio" id="tab-domestic" name="trendTabs" class="trend-tab-input" checked>
-            <input type="radio" id="tab-overseas" name="trendTabs" class="trend-tab-input">
-
-            <div class="trend-tabs">
-                <label for="tab-domestic" class="trend-tab-label">🔥 국내 급상승</label>
-                <label for="tab-overseas" class="trend-tab-label">✈️ 해외 급상승</label>
+    <main>
+        <section class="hero-section">
+            <div class="video-wrapper">
+                <video autoplay muted loop playsinline class="bg-video">
+                    <source src="/image/3736780-uhd_3840_2160_24fps.mp4" type="video/mp4">
+                </video>
+                <div class="video-overlay"></div>
             </div>
-
-            <div id="content-domestic" class="trend-content">
-                <div class="trend-card" th:each="item, stat : ${domesticTrend}">
-                    <div class="trend-rank" th:text="${stat.count}">1</div>
-                    <span class="trend-city" th:text="${item.cityName}">제주</span>
-                    <span class="trend-code" th:text="${item.iataCode}">CJU</span>
-                    <span class="trend-count" th:text="|⚡ ${item.searchCount}회 검색|">45회</span>
+            
+            <form class="search-widget-container" action="/air/searchAirport" method="GET">
+                <div class="top-section">
+                    <div class="tabs">
+                        <input type="radio" name="tripType" value="round-trip" id="round-trip" checked class="hidden-input"> 
+                        <label for="round-trip" class="tab-label">왕복</label> 
+                        <input type="radio" name="tripType" value="one-way" id="one-way" class="hidden-input"> 
+                        <label for="one-way" class="tab-label">편도</label>
+                    </div>
+                    <div class="direct-flight-option">
+                        <input type="hidden" name="directFlight" id="directFlightInput" value="false"> 
+                        <input type="checkbox" id="direct-flight-checkbox"> 
+                        <label for="direct-flight-checkbox">직항</label>
+                    </div>
                 </div>
-                 <div th:if="${domesticTrend.empty}" style="grid-column: 1/-1; text-align: center; padding: 20px; color: #999;">
-                    아직 집계된 국내 검색 데이터가 없습니다.
+                <div class="search-fields">
+                    <button type="button" id="departureBtn" class="field-location">서울 SEL</button>
+                    <button type="button" class="swap-button">↔</button>
+                    <button type="button" id="arrivalBtn" class="field-placeholder">도착지 IN</button>
+
+                    <button type="button" id="dateRangeBtn" class="field-placeholder">언제 떠나시나요?</button>
+                    <input type="hidden" name="departureDate" id="departureDateInput">
+                    <input type="hidden" name="returnDate" id="returnDateInput">
+
+                    <button type="button" id="passengerBtn" class="field-placeholder">👤 탑승객 1명, 일반석</button>
+
+                    <input type="hidden" name="departureCode" id="departureCode" value="SEL"> 
+                    <input type="hidden" name="departureKoLocation" id="departureKoLocation" value="서울">
+                    <input type="hidden" name="arrivalCode" id="arrivalCode" value="">
+                    <input type="hidden" name="arrivalKoLocation" id="arrivalKoLocation" value=""> 
+                    <input type="hidden" name="adults" id="adultsInput" value="1"> 
+                    <input type="hidden" name="children" id="childrenInput" value="0">
+                    <input type="hidden" name="infants" id="infantsInput" value="0">
+                    <input type="hidden" name="travelClass" id="travelClassInput" value="ECONOMY">
+                    
+                    <button type="submit" class="submit-button">최저가로 검색</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="popular-destinations-section">
+            <div class="content-container">
+                <h2>대한민국 출발 인기 항공권</h2>
+
+                <div class="trend-container">
+                    <input type="radio" id="tab-domestic" name="trendTabs" class="hidden-input" checked>
+                    <input type="radio" id="tab-overseas" name="trendTabs" class="hidden-input">
+
+                    <div class="trend-tabs">
+                        <label for="tab-domestic" class="trend-tab-label">🔥 국내 급상승</label>
+                        <label for="tab-overseas" class="trend-tab-label">✈️ 해외 급상승</label>
+                    </div>
+
+                    <div id="content-domestic" class="trend-content">
+                        <div class="trend-card" th:each="item, stat : ${domesticTrend}">
+                            <div class="trend-rank" th:text="${stat.count}">1</div>
+                            <span class="trend-city" th:text="${item.cityName}">제주</span>
+                            <span class="trend-code" th:text="${item.iataCode}">CJU</span>
+                            <span class="trend-count" th:text="|⚡ ${item.searchCount}회 검색|">45회</span>
+                        </div>
+                        <div th:if="${domesticTrend.empty}" style="grid-column: 1/-1; text-align: center; padding: 20px; color: #999;">
+                            아직 집계된 국내 검색 데이터가 없습니다.
+                        </div>
+                    </div>
+
+                    <div id="content-overseas" class="trend-content">
+                        <div class="trend-card" th:each="item, stat : ${overseasTrend}">
+                            <div class="trend-rank" th:text="${stat.count}">1</div>
+                            <span class="trend-city" th:text="${item.cityName}">오사카</span>
+                            <span class="trend-code" th:text="${item.iataCode}">KIX</span>
+                            <span class="trend-count" th:text="|⚡ ${item.searchCount}회 검색|">15회</span>
+                        </div>
+                        <div th:if="${overseasTrend.empty}" style="grid-column: 1/-1; text-align: center; padding: 20px; color: #999;">
+                            아직 집계된 해외 검색 데이터가 없습니다.
+                        </div>
+                    </div>
+                </div>
+
+                <h3>국내 인기 여행지</h3>
+                <div class="destination-grid">
+                    <div class="destination-card" th:each="dest : ${domesticList}" th:data-city="${dest.cityName}">
+                        <img th:src="${dest.mainImageUrl}" th:alt="${dest.cityName}">
+                        <div class="card-details">
+                            <h4 th:text="${dest.cityName}">도시이름</h4>
+                            <small th:text="${dest.country}">국가</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag" th:each="act, iStat : ${dest.activities}" th:if="${iStat.index < 2}" th:text="${act.title}">액티비티</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>해외 인기 여행지</h3>
+                <div class="destination-grid">
+                    <div class="destination-card" th:each="dest : ${overseasList}" th:data-city="${dest.cityName}">
+                        <img th:src="${dest.mainImageUrl}" th:alt="${dest.cityName}">
+                        <div class="card-details">
+                            <h4 th:text="${dest.cityName}">도시이름</h4>
+                            <small th:text="${dest.country}">국가</small>
+                            <div class="activities-preview">
+                                <span class="activity-tag" th:each="act, iStat : ${dest.activities}" th:if="${iStat.index < 2}" th:text="${act.title}">액티비티</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
+    </main>
 
-            <div id="content-overseas" class="trend-content">
-                <div class="trend-card" th:each="item, stat : ${overseasTrend}">
-                    <div class="trend-rank" th:text="${stat.count}">1</div>
-                    <span class="trend-city" th:text="${item.cityName}">오사카</span>
-                    <span class="trend-code" th:text="${item.iataCode}">KIX</span>
-                    <span class="trend-count" th:text="|⚡ ${item.searchCount}회 검색|">15회</span>
+    <div id="locationModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">출발지 선택</h2>
+                <button class="close-button close-modal-btn" data-target="locationModal">&times;</button>
+            </div>
+            <input type="text" id="searchAir" class="modal-search-input" placeholder="국가, 도시 또는 공항으로 찾아보세요">
+            <div class="popular-searches">
+                <h3>국내 인기 검색</h3>
+                <div class="tags-container">
+                    <span class="tag" data-iata="ICN" data-kolocation="서울/인천">서울/인천</span>
+                    <span class="tag" data-iata="CJU" data-kolocation="제주">제주</span>
+                    <span class="tag" data-iata="PUS" data-kolocation="부산">부산</span>
+                    <span class="tag" data-iata="GMP" data-kolocation="서울/김포">서울/김포</span>
+                    <span class="tag" data-iata="RSU" data-kolocation="여수">여수</span>
                 </div>
-                 <div th:if="${overseasTrend.empty}" style="grid-column: 1/-1; text-align: center; padding: 20px; color: #999;">
-                    아직 집계된 해외 검색 데이터가 없습니다.
+                <h3>동남아 인기 검색</h3>
+                <div class="tags-container">
+                    <span class="tag" data-iata="DAD" data-kolocation="다낭">다낭</span>
+                    <span class="tag" data-iata="BKK" data-kolocation="방콕">방콕</span>
+                    <span class="tag" data-iata="TPE" data-kolocation="타이베이">타이베이</span>
+                    <span class="tag" data-iata="HKG" data-kolocation="홍콩">홍콩</span>
+                    <span class="tag" data-iata="DPS" data-kolocation="발리">발리</span>
+                </div>
+                <h3>일본 인기 검색</h3>
+                <div class="tags-container">
+                    <span class="tag" data-iata="NRT" data-kolocation="도쿄/나리타">도쿄/나리타</span>
+                    <span class="tag" data-iata="KIX" data-kolocation="오사카">오사카</span>
+                    <span class="tag" data-iata="FUK" data-kolocation="후쿠오카">후쿠오카</span>
+                    <span class="tag" data-iata="CTS" data-kolocation="삿포로/산치토세">삿포로/산치토세</span>
+                    <span class="tag" data-iata="OKA" data-kolocation="오키나와">오키나와</span>
+                </div>
+                <h3>유럽 인기 검색</h3>
+                <div class="tags-container">
+                    <span class="tag" data-iata="CDG" data-kolocation="파리">파리</span>
+                    <span class="tag" data-iata="LHR" data-kolocation="런던">런던</span>
+                    <span class="tag" data-iata="FCO" data-kolocation="로마">로마</span>
+                    <span class="tag" data-iata="MAD" data-kolocation="마드리드">마드리드</span>
+                    <span class="tag" data-iata="BCN" data-kolocation="바르셀로나">바르셀로나</span>
+                </div>
+                <h3>북미 및 기타</h3>
+                <div class="tags-container">
+                    <span class="tag" data-iata="JFK" data-kolocation="뉴욕">뉴욕</span>
+                    <span class="tag" data-iata="SYD" data-kolocation="시드니">시드니</span>
+                    <span class="tag" data-iata="LAX" data-kolocation="로스앤젤레스">로스앤젤레스</span>
+                    <span class="tag" data-iata="SFO" data-kolocation="샌프란시스코">샌프란시스코</span>
+                    <span class="tag" data-iata="GUM" data-kolocation="괌">괌</span>
                 </div>
             </div>
         </div>
-				<h3>국내 인기 여행지</h3>
+    </div>
 
-				<div class="destination-grid">
-					<div class="destination-card" th:each="dest : ${domesticList}"
-						th:data-city="${dest.cityName}">
-						<img th:src="${dest.mainImageUrl}" th:alt="${dest.cityName}">
-						<div class="card-details">
-							<h4 th:text="${dest.cityName}">도시이름</h4>
-							<small th:text="${dest.country}">국가</small>
-							<div class="activities-preview">
-								<span class="activity-tag"
-									th:each="act, iStat : ${dest.activities}"
-									th:if="${iStat.index < 2}" th:text="${act.title}">액티비티</span>
-							</div>
-						</div>
-					</div>
-				</div>
+    <div id="passengerModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>인원 및 좌석 등급</h2>
+                <button class="close-button close-modal-btn" data-target="passengerModal">&times;</button>
+            </div>
+            <div class="passenger-section">
+                <h4>인원</h4>
+                <div class="passenger-row" data-type="adult">
+                    <div class="passenger-label">
+                        <div>성인</div>
+                        <small>만 12세 이상</small>
+                    </div>
+                    <div class="passenger-controls">
+                        <button type="button" class="control-btn minus" disabled>-</button>
+                        <span class="count">1</span>
+                        <button type="button" class="control-btn plus">+</button>
+                    </div>
+                </div>
+                <div class="passenger-row" data-type="child">
+                    <div class="passenger-label">
+                        <div>소아</div>
+                        <small>만 2~12세 미만</small>
+                    </div>
+                    <div class="passenger-controls">
+                        <button type="button" class="control-btn minus" disabled>-</button>
+                        <span class="count">0</span>
+                        <button type="button" class="control-btn plus">+</button>
+                    </div>
+                </div>
+                <div class="passenger-row" data-type="infant">
+                    <div class="passenger-label">
+                        <div>유아</div>
+                        <small>만 2세 미만 (보호자와 동반 착석)</small>
+                    </div>
+                    <div class="passenger-controls">
+                        <button type="button" class="control-btn minus" disabled>-</button>
+                        <span class="count">0</span>
+                        <button type="button" class="control-btn plus">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="seat-class-section">
+                <h4>좌석등급</h4>
+                <div class="seat-class-options">
+                    <label><input type="radio" name="travelClassModal" value="ECONOMY" checked> 일반석</label>
+                    <label><input type="radio" name="travelClassModal" value="BUSINESS"> 비즈니스석</label>
+                </div>
+            </div>
+            <button type="button" id="confirmPassengerBtn" class="confirm-btn">선택 완료</button>
+        </div>
+    </div>
 
-				<h3>해외 인기 여행지</h3>
+    <div id="alertModal" class="modal-overlay">
+        <div class="modal-content">
+            <p id="alertModalMessage">메시지가 여기에 표시됩니다.</p>
+            <button id="closeAlertModalBtn" class="close-modal-btn" data-target="alertModal">닫기</button>
+        </div>
+    </div>
 
-				<div class="destination-grid">
-					<div class="destination-card" th:each="dest : ${overseasList}"
-						th:data-city="${dest.cityName}">
-						<img th:src="${dest.mainImageUrl}" th:alt="${dest.cityName}">
-						<div class="card-details">
-							<h4 th:text="${dest.cityName}">도시이름</h4>
-							<small th:text="${dest.country}">국가</small>
-							<div class="activities-preview">
-								<span class="activity-tag"
-									th:each="act, iStat : ${dest.activities}"
-									th:if="${iStat.index < 2}" th:text="${act.title}">액티비티</span>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-	</main>
+    <div id="loadingModal">
+        <div class="spinner"></div>
+        <p>최저가 항공권을 검색중입니다...</p>
+    </div>
 
-	<div id="locationModal" class="modal-overlay">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 id="modalTitle">출발지 선택</h2>
-				<button id="closeModalBtn" class="close-button">&times;</button>
-			</div>
-			<input type="text" id="searchAir" class="modal-search-input"
-				placeholder="국가, 도시 또는 공항으로 찾아보세요">
-			<div class="popular-searches">
-				<h3>국내 인기 검색</h3>
-				<div class="tags-container">
-					<span class="tag" data-iata="ICN" data-kolocation="서울/인천">서울/인천</span>
-					<span class="tag" data-iata="CJU" data-kolocation="제주">제주</span> <span
-						class="tag" data-iata="PUS" data-kolocation="부산">부산</span> <span
-						class="tag" data-iata="GMP" data-kolocation="서울/김포">서울/김포</span> <span
-						class="tag" data-iata="RSU" data-kolocation="여수">여수</span>
-				</div>
-				<h3>동남아 인기 검색</h3>
-				<div class="tags-container">
-					<span class="tag" data-iata="DAD" data-kolocation="다낭">다낭</span> <span
-						class="tag" data-iata="BKK" data-kolocation="방콕">방콕</span> <span
-						class="tag" data-iata="TPE" data-kolocation="타이베이">타이베이</span> <span
-						class="tag" data-iata="HKG" data-kolocation="홍콩">홍콩</span> <span
-						class="tag" data-iata="DPS" data-kolocation="발리">발리</span>
-				</div>
-				<h3>일본 인기 검색</h3>
-				<div class="tags-container">
-					<span class="tag" data-iata="NRT" data-kolocation="도쿄/나리타">도쿄/나리타</span>
-					<span class="tag" data-iata="KIX" data-kolocation="오사카">오사카</span>
-					<span class="tag" data-iata="FUK" data-kolocation="후쿠오카">후쿠오카</span>
-					<span class="tag" data-iata="CTS" data-kolocation="삿포로/산치토세">삿포로/산치토세</span>
-					<span class="tag" data-iata="OKA" data-kolocation="오키나와">오키나와</span>
-				</div>
-				<h3>유럽 인기 검색</h3>
-				<div class="tags-container">
-					<span class="tag" data-iata="CDG" data-kolocation="파리">파리</span> <span
-						class="tag" data-iata="LHR" data-kolocation="런던">런던</span> <span
-						class="tag" data-iata="FCO" data-kolocation="로마">로마</span> <span
-						class="tag" data-iata="MAD" data-kolocation="마드리드">마드리드</span> <span
-						class="tag" data-iata="BCN" data-kolocation="바르셀로나">바르셀로나</span>
-				</div>
-				<h3>북미 및 기타</h3>
-				<div class="tags-container">
-					<span class="tag" data-iata="JFK" data-kolocation="뉴욕">뉴욕</span> <span
-						class="tag" data-iata="SYD" data-kolocation="시드니">시드니</span> <span
-						class="tag" data-iata="LAX" data-kolocation="로스앤젤레스">로스앤젤레스</span>
-					<span class="tag" data-iata="SFO" data-kolocation="샌프란시스코">샌프란시스코</span>
-					<span class="tag" data-iata="GUM" data-kolocation="괌">괌</span>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div id="destinationModal" class="modal-overlay">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="destModalTitle">여행지 이름</h2>
+                <button class="close-button close-modal-btn" data-target="destinationModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="destModalDesc" class="dest-desc">여행지 설명이 들어갑니다.</p>
+                <h3 class="rec-title">✨ 추천 즐길거리</h3>
+                <div id="activityGrid" class="activity-grid"></div>
+                <div style="margin-top: 30px; text-align: center; padding-bottom: 10px;">
+                    <button type="button" id="btnBookFlight" class="submit-button btn-primary-action" style="width: 100%;">
+                        ✈️ 항공권 검색하러 가기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<div id="passengerModal" class="modal-overlay">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2>인원 및 좌석 등급</h2>
-				<button class="close-button">&times;</button>
-			</div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 
-			<div class="passenger-section">
-				<h4>인원</h4>
-				<div class="passenger-row" data-type="adult">
-					<div class="passenger-label">
-						<div>성인</div>
-						<small>만 12세 이상</small>
-					</div>
-					<div class="passenger-controls">
-						<button type="button" class="control-btn minus" disabled>-</button>
-						<span class="count">1</span>
-						<button type="button" class="control-btn plus">+</button>
-					</div>
-				</div>
-				<div class="passenger-row" data-type="child">
-					<div class="passenger-label">
-						<div>소아</div>
-						<small>만 2~12세 미만</small>
-					</div>
-					<div class="passenger-controls">
-						<button type="button" class="control-btn minus" disabled>-</button>
-						<span class="count">0</span>
-						<button type="button" class="control-btn plus">+</button>
-					</div>
-				</div>
-				<div class="passenger-row" data-type="infant">
-					<div class="passenger-label">
-						<div>유아</div>
-						<small>만 2세 미만 (보호자와 동반 착석)</small>
-					</div>
-					<div class="passenger-controls">
-						<button type="button" class="control-btn minus" disabled>-</button>
-						<span class="count">0</span>
-						<button type="button" class="control-btn plus">+</button>
-					</div>
-				</div>
-			</div>
-
-			<div class="seat-class-section">
-				<h4>좌석등급</h4>
-				<div class="seat-class-options">
-					<label><input type="radio" name="travelClassModal"
-						value="ECONOMY" checked> 일반석</label> <label><input
-						type="radio" name="travelClassModal" value="BUSINESS">
-						비즈니스석</label>
-				</div>
-			</div>
-
-			<button type="button" id="confirmPassengerBtn" class="confirm-btn">선택
-				완료</button>
-		</div>
-	</div>
-
-	<div id="alertModal" class="modal-overlay">
-		<div class="modal-content">
-			<p id="alertModalMessage">메시지가 여기에 표시됩니다.</p>
-			<button id="closeAlertModalBtn">닫기</button>
-		</div>
-	</div>
-
-	<div id="loadingModal">
-		<div class="spinner"></div>
-		<p>최저가 항공권을 검색중입니다...</p>
-	</div>
-
-	<div id="destinationModal" class="modal-overlay">
-		<div class="modal-content modal-large">
-			<div class="modal-header">
-				<h2 id="destModalTitle">여행지 이름</h2>
-				<button class="close-button" onclick="closeDestinationModal()">&times;</button>
-			</div>
-			<div class="modal-body">
-				<p id="destModalDesc" class="dest-desc">여행지 설명이 들어갑니다.</p>
-
-				<h3 class="rec-title">✨ 추천 즐길거리</h3>
-				<div id="activityGrid" class="activity-grid"></div>
-				<div
-					style="margin-top: 30px; text-align: center; padding-bottom: 10px;">
-					<button type="button" id="btnBookFlight" class="submit-button"
-						style="width: 100%; background-color: #ff7675; color: white; border: none; cursor: pointer;">
-						✈️ 항공권 검색하러 가기</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-		<script
-			src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-		<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
-
-
-		<script>	
-	// --- 요소 선택 ---
-	const departureBtn = document.getElementById('departureBtn');
-	const arrivalBtn = document.getElementById('arrivalBtn');
-	const departureCodeInput = document.getElementById('departureCode');
-	const arrivalCodeInput = document.getElementById('arrivalCode');
-	const departureKoLocationInput = document.getElementById('departureKoLocation');
-	const arrivalKoLocationInput = document.getElementById('arrivalKoLocation');
-	const locationModal = document.getElementById('locationModal');
-	const modalContentDiv = locationModal.querySelector('.modal-content');
-	const popularSearchesContainer = modalContentDiv.querySelector('.popular-searches');
-	const defaultModalContentHtml = popularSearchesContainer.innerHTML;
-
-	let activeSelection = null;
-
-	// --- 함수 정의: 위치 모달 관련 ---
-
-	function openDepartureModal() {
-	    activeSelection = 'departure';
-	    resetModalToDefault('출발지 선택');
-	    locationModal.style.display = 'flex';
-	    modalContentDiv.querySelector('#searchAir').focus();
-	}
-
-	function openArrivalModal() {
-	    activeSelection = 'arrival';
-	    resetModalToDefault('도착지 선택');
-	    locationModal.style.display = 'flex';
-	    modalContentDiv.querySelector('#searchAir').focus();
-	}
-
-	function resetModalToDefault(title) {
-	    modalContentDiv.querySelector('#modalTitle').textContent = title;
-	    popularSearchesContainer.innerHTML = defaultModalContentHtml;
-	    modalContentDiv.querySelector('#searchAir').value = "";
-
-	    const tags = popularSearchesContainer.querySelectorAll('.tag');
-	    for (const tag of tags) {
-	        tag.addEventListener('click', handleTagClick);
-	    }
-	}
-
-	function closeModal() {
-	    locationModal.style.display = 'none';
-	}
-
-	function renderSearchResults(airList) {
-	    let airListHtml = '';
-	    if (airList && airList.length > 0) {
-	        for (const air of airList) {
-	            airListHtml += `
-	                <div class="search-result-item" data-kolocation="${air.kolocation}" data-iata="${air.iataCode}">
-	                    <div class="location-main">${air.kolocation} (${air.iataCode})</div>
-	                    <div class="location-sub">${air.enlocation}</div>
-	                </div>`;
-	        }
-	    } else {
-	        airListHtml = '<div class="no-results">검색 결과가 없습니다.</div>';
-	    }
-	    popularSearchesContainer.innerHTML = airListHtml;
-	}
-
-	function selectLocation(kolocation, iataCode) {
-	    const displayText = `${kolocation} ${iataCode}`;
-
-	    if (activeSelection === 'departure') {
-	        departureBtn.textContent = displayText;
-	        departureCodeInput.value = iataCode;
-	        departureKoLocationInput.value = kolocation;
-	    } else if (activeSelection === 'arrival') {
-	        arrivalBtn.textContent = displayText;
-	        arrivalCodeInput.value = iataCode;
-	        arrivalKoLocationInput.value = kolocation;
-	        arrivalBtn.classList.remove('field-placeholder');
-	        arrivalBtn.classList.add('field-location');
-	    }
-	    closeModal();
-	}
-	
-	function handleTagClick(event) {
-	    const clickedTag = event.currentTarget;
-	    const kolocation = clickedTag.dataset.kolocation || clickedTag.textContent;
-	    const iataCode = clickedTag.dataset.iata;
-	    selectLocation(kolocation, iataCode);
-	}
-
-	// --- 이벤트 리스너: 위치 모달 관련 ---
-
-	departureBtn.addEventListener('click', openDepartureModal);
-	arrivalBtn.addEventListener('click', openArrivalModal);
-
-	locationModal.addEventListener('click', function(event) {
-	    const target = event.target;
-
-	    if (target.id === 'closeModalBtn' || target.classList.contains('close-button') || target === locationModal) {
-	        closeModal(); 
-	        return;
-	    }
-	    
-	    const resultItem = target.closest('.search-result-item');
-	    if (resultItem) {
-	        const kolocation = resultItem.dataset.kolocation;
-	        const iataCode = resultItem.dataset.iata;
-	        selectLocation(kolocation, iataCode);
-	    }
-	});
-
-	locationModal.addEventListener('keydown', function(event) {
-	    if (event.target.id === 'searchAir' && event.key === 'Enter') {
-	        event.preventDefault();
-	        $.ajax({
-	            url: "/air/searchAir", type: "get", dataType: "json",
-	            data: { "text": event.target.value },
-	            success: function(res) {
-	                renderSearchResults(res);
-            }
-	        });
-	    }
-	});
-
-	const initialTags = document.querySelectorAll('.tag');
-	for (const tag of initialTags) {
-	    tag.addEventListener('click', handleTagClick);
-	}
-	
-	const swapBtn = document.querySelector('.swap-button');
-    swapBtn.addEventListener('click', function() {
-        const departureText = departureBtn.textContent;
-        const departureCode = departureCodeInput.value;
-        const departureKo = departureKoLocationInput.value;
-        
-        const arrivalText = arrivalBtn.textContent;
-        const arrivalCode = arrivalCodeInput.value;
-        const arrivalKo = arrivalKoLocationInput.value;
-        
-        departureBtn.textContent = arrivalText;
-        departureCodeInput.value = arrivalCode;
-        departureKoLocationInput.value = arrivalKo;
-
-        arrivalBtn.textContent = departureText;
-        arrivalCodeInput.value = departureCode;
-        arrivalKoLocationInput.value = departureKo;
-        
-        const departureHasLocation = departureBtn.classList.contains('field-location');
-        const arrivalHasLocation = arrivalBtn.classList.contains('field-location');
-
-        if (arrivalHasLocation) {
-            departureBtn.classList.add('field-location');
-            departureBtn.classList.remove('field-placeholder');
-        } else {
-            departureBtn.classList.add('field-placeholder');
-            departureBtn.classList.remove('field-location');
-        }
-
-        if (departureHasLocation) {
-            arrivalBtn.classList.add('field-location');
-            arrivalBtn.classList.remove('field-placeholder');
-        } else {
-            arrivalBtn.classList.add('field-placeholder');
-            arrivalBtn.classList.remove('field-location');
-        }
-    });
-	
-	// --- 날짜 선택 (flatpickr) 관련 ---
-	const dateRangeBtn = document.getElementById('dateRangeBtn');
-	const departureDateInput = document.getElementById('departureDateInput');
-	const returnDateInput = document.getElementById('returnDateInput');
-    const oneWayRadio = document.getElementById('one-way');
-    const roundTripRadio = document.getElementById('round-trip');
-	
-	dateRangeBtn.addEventListener('click', (event) => event.preventDefault());
-	
-	function formatDate(date) {
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0');
-		const day = String(date.getDate()).padStart(2, '0');
-		return `${year}-${month}-${day}`;
-	}
-
-	function formatDisplayDate(date) {
-		const month = date.getMonth() + 1;
-		const day = date.getDate();
-		const week = ['일', '월', '화', '수', '목', '금', '토'];
-		const dayOfWeek = week[date.getDay()];
-		return `${month}.${day}(${dayOfWeek})`;
-	}
-
-    function resetDateSelection() {
-        dateRangeBtn.textContent = '언제 떠나시나요?';
-        dateRangeBtn.classList.add('field-placeholder');
-        dateRangeBtn.classList.remove('field-location');
-        departureDateInput.value = '';
-        returnDateInput.value = '';
-        datePicker.clear();
-    }
-
-	const datePicker = flatpickr(dateRangeBtn, {
-		mode: 'range',
-		dateFormat: "Y-m-d",
-		locale: "ko",
-		minDate: "today",
-		onClose: function(selectedDates) {
-            const isOneWay = oneWayRadio.checked;
-            if (isOneWay && selectedDates.length >= 1) {
-                const selectedDate = selectedDates[0];
-                departureDateInput.value = formatDate(selectedDate);
-                returnDateInput.value = '';
-                dateRangeBtn.textContent = formatDisplayDate(selectedDate);
-                dateRangeBtn.classList.remove('field-placeholder');
-	            dateRangeBtn.classList.add('field-location');
-            } else if (!isOneWay && selectedDates.length === 2) {
-				const startDate = selectedDates[0];
-				const endDate = selectedDates[1];
-				departureDateInput.value = formatDate(startDate);
-				returnDateInput.value = formatDate(endDate);
-				dateRangeBtn.textContent = `${formatDisplayDate(startDate)} ~ ${formatDisplayDate(endDate)}`;
-                dateRangeBtn.classList.remove('field-placeholder');
-	            dateRangeBtn.classList.add('field-location');
-			}
-		}
-	});
-
-    oneWayRadio.addEventListener('change', function() {
-        if (this.checked) {
-            datePicker.set('mode', 'single');
-            resetDateSelection();
-        }
-    });
-
-    roundTripRadio.addEventListener('change', function() {
-        if (this.checked) {
-            datePicker.set('mode', 'range');
-            resetDateSelection();
-        }
-    });
+    <script>
     
-    // --- 탑승객 모달 관련 ---
-    const passengerBtn = document.getElementById('passengerBtn');
-    const passengerModal = document.getElementById('passengerModal');
-    const passengerModalContent = passengerModal.querySelector('.modal-content');
-    const confirmPassengerBtn = document.getElementById('confirmPassengerBtn');
-    const adultsInput = document.getElementById('adultsInput');
-    const childrenInput = document.getElementById('childrenInput');
-    const infantsInput = document.getElementById('infantsInput');
-    const travelClassInput = document.getElementById('travelClassInput');
-
-    function openPassengerModal() {
-        passengerModal.style.display = 'flex';
-    }
-
-    function closePassengerModal() {
-        passengerModal.style.display = 'none';
-    }
-
-    function updateButtonStates() {
-        const adults = parseInt(passengerModal.querySelector('.passenger-row[data-type="adult"] .count').textContent);
-        const children = parseInt(passengerModal.querySelector('.passenger-row[data-type="child"] .count').textContent);
-        const infants = parseInt(passengerModal.querySelector('.passenger-row[data-type="infant"] .count').textContent);
-        const totalAllPassengers = adults + children + infants;
-        
-        const adultControls = passengerModal.querySelector('.passenger-row[data-type="adult"]');
-        const childControls = passengerModal.querySelector('.passenger-row[data-type="child"]');
-        const infantControls = passengerModal.querySelector('.passenger-row[data-type="infant"]');
-        
-        const isTotalMaxed = (totalAllPassengers >= 9);
-      
-        adultControls.querySelector('.plus').disabled = isTotalMaxed;
-        adultControls.querySelector('.minus').disabled = (adults <= 1 || adults <= infants);
-        childControls.querySelector('.plus').disabled = isTotalMaxed;
-        childControls.querySelector('.minus').disabled = (children <= 0);
-        infantControls.querySelector('.plus').disabled = isTotalMaxed || (infants >= adults);
-        infantControls.querySelector('.minus').disabled = (infants <= 0);
-    }
-
-    passengerBtn.addEventListener('click', openPassengerModal);
-
-    passengerModal.addEventListener('click', (event) => {
-        if (event.target === passengerModal || event.target.classList.contains('close-button')) {
-            closePassengerModal();
-        }
-    });
-  
-    passengerModalContent.addEventListener('click', (event) => {
-        const button = event.target;
-        if (!button.classList.contains('control-btn') || button.disabled) return;
-
-        const row = button.closest('.passenger-row');
-        const countSpan = row.querySelector('.count');
-        let currentCount = parseInt(countSpan.textContent);
-
-        if (button.classList.contains('plus')) {
-            countSpan.textContent = currentCount + 1;
-        } else if (button.classList.contains('minus')) {
-            countSpan.textContent = currentCount - 1;
-        }
-        updateButtonStates();
-    });
-
-    confirmPassengerBtn.addEventListener('click', () => {
-        const adults = parseInt(passengerModal.querySelector('.passenger-row[data-type="adult"] .count').textContent);
-        const children = parseInt(passengerModal.querySelector('.passenger-row[data-type="child"] .count').textContent);
-        const infants = parseInt(passengerModal.querySelector('.passenger-row[data-type="infant"] .count').textContent);
-        const selectedClassRadio = passengerModal.querySelector('input[name="travelClassModal"]:checked');
-        const travelClassValue = selectedClassRadio.value;
-        const travelClassName = selectedClassRadio.parentElement.textContent.trim();
-        const totalPassengers = adults + children + infants;
-
-        adultsInput.value = adults;
-        childrenInput.value = children;
-        infantsInput.value = infants;
-        travelClassInput.value = travelClassValue;
-
-        passengerBtn.textContent = `👤 탑승객 ${totalPassengers}명, ${travelClassName}`;
-        passengerBtn.classList.remove('field-placeholder');
-        passengerBtn.classList.add('field-location');
-        closePassengerModal();
-    });
-
-    updateButtonStates();
-
-    // --- 직항 체크박스 관련 ---
-    const directFlightCheckbox = document.getElementById('direct-flight-checkbox');
-    const directFlightInput = document.getElementById('directFlightInput');
-
-    directFlightCheckbox.addEventListener('change', function() {
-        directFlightInput.value = this.checked ? 'true' : 'false';
-    });
-    
-    // --- 폼 제출 유효성 검사 및 로딩 모달 ---
-    const searchForm = document.querySelector('.search-widget-container');
-    const arrivalCodeInputForValidation = document.getElementById('arrivalCode');
-    const departureDateInputForValidation = document.getElementById('departureDateInput');
-    const alertModal = document.getElementById('alertModal');
-    const alertModalMessage = document.getElementById('alertModalMessage');
-    const closeAlertModalBtn = document.getElementById('closeAlertModalBtn');
-    const loadingModal = document.getElementById('loadingModal');
-
-    function showAlertModal(message) {
-        alertModalMessage.innerHTML = message.replace(/\n/g, '<br>');
-        alertModal.style.display = 'flex';
-    }
-
-    const longHaulList = ["JFK", "LAX", "SFO", "SYD", "CDG", "LHR", "FCO", "MAD", "BCN"]; 
-    const asiaResortList = ["DAD", "BKK", "DPS", "GUM", "CEB", "NHA", "HKG"]; 
-    const smallDomesticList = ["KPO", "RSU", "KWJ", "USN", "HIN", "KUV", "WJU", "YNY"]; 
-    const noFlightFromSeoul = ["CJJ", "WJU", "KUV", "YNY"]; 
-
-    const impossibleRoutes = {
-        "SEL": ["ICN", "GMP","KPO", ...noFlightFromSeoul],
-        "ICN": [...smallDomesticList, "GMP", ...noFlightFromSeoul, "CJJ"],
-        "GMP": ["ICN", ...longHaulList, ...asiaResortList, "FUK", "OKA", "CTS", "NRT", ...noFlightFromSeoul, "CJJ"],
-        "KPO": ["ICN", "SEL", ...longHaulList, ...asiaResortList], 
-        "RSU": ["ICN", "SEL", ...longHaulList, ...asiaResortList],
-        "KWJ": ["ICN", "SEL", ...longHaulList, ...asiaResortList, "YNY"],
-        "USN": ["ICN", "SEL", "PUS", ...longHaulList, ...asiaResortList], 
-        "JFK": smallDomesticList,
-        "LHR": smallDomesticList,
-        "CDG": smallDomesticList,
-        "LAX": smallDomesticList,
-        "GUM": smallDomesticList
+    /* =========================================
+       1. 상수 및 데이터 정의 (Constants)
+       ========================================= */
+    const CITY_CODE_MAP = {
+        "제주": "CJU", "부산": "PUS", "부산/김해": "PUS", "여수": "RSU",
+        "양양": "YNY", "광주": "KWJ", "포항": "KPO", "포항/경주": "KPO",
+        "서울": "SEL", "서울/김포": "GMP", "서울/인천": "ICN", "울산": "USN",
+        "청주": "CJJ", "무안": "MWX", "대구": "TAE",
+        "오사카": "KIX", "도쿄": "NRT", "도쿄/나리타": "NRT", "후쿠오카": "FUK",
+        "삿포로": "CTS", "오키나와": "OKA", "다낭": "DAD", "방콕": "BKK",
+        "타이베이": "TPE", "홍콩": "HKG", "발리": "DPS", "파리": "CDG",
+        "런던": "LHR", "로마": "FCO", "뉴욕": "JFK", "시드니": "SYD", "괌": "GUM"
     };
 
-    searchForm.addEventListener('submit', function(event) {
-        event.preventDefault();
+    const LONG_HAUL_LIST = ["JFK", "LAX", "SFO", "SYD", "CDG", "LHR", "FCO", "MAD", "BCN"];
+    const ASIA_RESORT_LIST = ["DAD", "BKK", "DPS", "GUM", "CEB", "NHA", "HKG"];
+    const SMALL_DOMESTIC_LIST = ["KPO", "RSU", "KWJ", "USN", "HIN", "KUV", "WJU", "YNY"];
+    const NO_FLIGHT_FROM_SEOUL = ["CJJ", "WJU", "KUV", "YNY"];
 
-        const depCode = document.getElementById('departureCode').value;
-        const arrCode = arrivalCodeInputForValidation.value;
-        const depDate = departureDateInputForValidation.value;
+    const IMPOSSIBLE_ROUTES = {
+        "SEL": ["ICN", "GMP", "KPO", ...NO_FLIGHT_FROM_SEOUL],
+        "ICN": [...SMALL_DOMESTIC_LIST, "GMP", ...NO_FLIGHT_FROM_SEOUL, "CJJ"],
+        "GMP": ["ICN", ...LONG_HAUL_LIST, ...ASIA_RESORT_LIST, "FUK", "OKA", "CTS", "NRT", ...NO_FLIGHT_FROM_SEOUL, "CJJ"],
+        "KPO": ["ICN", "SEL", ...LONG_HAUL_LIST, ...ASIA_RESORT_LIST],
+        "RSU": ["ICN", "SEL", ...LONG_HAUL_LIST, ...ASIA_RESORT_LIST],
+        "KWJ": ["ICN", "SEL", ...LONG_HAUL_LIST, ...ASIA_RESORT_LIST, "YNY"],
+        "USN": ["ICN", "SEL", "PUS", ...LONG_HAUL_LIST, ...ASIA_RESORT_LIST],
+        "JFK": SMALL_DOMESTIC_LIST,
+        "LHR": SMALL_DOMESTIC_LIST,
+        "CDG": SMALL_DOMESTIC_LIST,
+        "LAX": SMALL_DOMESTIC_LIST,
+        "GUM": SMALL_DOMESTIC_LIST
+    };
 
-        if (arrCode === '') {
-            showAlertModal('도착지를 선택해주세요.');
-            return;
-        }
-        if (depDate === '') {
-            showAlertModal('날짜를 선택해주세요.');
-            return;
-        }
+    /* =========================================
+       2. DOM 요소 (DOM Elements)
+       ========================================= */
+    // Main Search Inputs
+    const els = {
+        departureBtn: document.getElementById('departureBtn'),
+        arrivalBtn: document.getElementById('arrivalBtn'),
+        depCodeInput: document.getElementById('departureCode'),
+        arrCodeInput: document.getElementById('arrivalCode'),
+        depKoInput: document.getElementById('departureKoLocation'),
+        arrKoInput: document.getElementById('arrivalKoLocation'),
+        dateRangeBtn: document.getElementById('dateRangeBtn'),
+        depDateInput: document.getElementById('departureDateInput'),
+        retDateInput: document.getElementById('returnDateInput'),
+        passengerBtn: document.getElementById('passengerBtn'),
+        directFlightCheckbox: document.getElementById('direct-flight-checkbox'),
+        directFlightInput: document.getElementById('directFlightInput'),
+        oneWayRadio: document.getElementById('one-way'),
+        roundTripRadio: document.getElementById('round-trip'),
+        searchForm: document.querySelector('.search-widget-container'),
+        swapBtn: document.querySelector('.swap-button')
+    };
 
-        if (impossibleRoutes[depCode] && impossibleRoutes[depCode].includes(arrCode)) {
-            const depName = document.getElementById('departureBtn').innerText.split(' ')[0];
-            const arrName = document.getElementById('arrivalBtn').innerText.split(' ')[0];
-            // [수정됨] 백틱(`)이 빠져 있던 오류 해결
-            showAlertModal(`🚫 운항하지 않는 노선입니다.\n\n[${depName}]에서 [${arrName}]로 가는\n직항 항공편은 없습니다.`);
-            return; 
-        }
-        
-        loadingModal.style.display = 'flex';
-        setTimeout(() => { 
-            this.submit(); 
-        }, 100);
-    });
+    // Modals
+    const modals = {
+        location: document.getElementById('locationModal'),
+        passenger: document.getElementById('passengerModal'),
+        alert: document.getElementById('alertModal'),
+        loading: document.getElementById('loadingModal'),
+        destination: document.getElementById('destinationModal')
+    };
 
-    closeAlertModalBtn.addEventListener('click', function() {
-        alertModal.style.display = 'none';
-    });
+    // Passenger Modal Inputs
+    const passengerInputs = {
+        adults: document.getElementById('adultsInput'),
+        children: document.getElementById('childrenInput'),
+        infants: document.getElementById('infantsInput'),
+        travelClass: document.getElementById('travelClassInput')
+    };
 
-    // ==========================================
-    // 여행지 추천 모달 (AJAX 연동 버전)
-    // ==========================================
+    let activeSelection = null; // 'departure' or 'arrival'
+    const defaultLocationContent = modals.location.querySelector('.popular-searches').innerHTML;
 
-    const destModal = document.getElementById('destinationModal');
-    const destModalTitle = document.getElementById('destModalTitle');
-    const destModalDesc = document.getElementById('destModalDesc');
-    const activityGrid = document.getElementById('activityGrid');
-
-    const destCards = document.querySelectorAll('.destination-card');
-    destCards.forEach(card => {
-        card.addEventListener('click', function() {
-            const city = this.getAttribute('data-city'); 
-            if(city) {
-                openDestinationModal(city);
-            }
+    /* =========================================
+       3. 초기화 및 유틸리티 (Init & Utils)
+       ========================================= */
+    
+    // 모달 닫기 버튼 공통 처리
+    document.querySelectorAll('.close-modal-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+            document.getElementById(targetId).style.display = 'none';
         });
     });
 
-    const cityCodeMap = {
-            "제주": "CJU",
-            "부산": "PUS", "부산/김해": "PUS",
-            "여수": "RSU",
-            "양양": "YNY",
-            "광주": "KWJ",
-            "포항": "KPO", "포항/경주": "KPO",
-            "서울": "SEL", "서울/김포": "GMP", "서울/인천": "ICN",
-            "울산": "USN",
-            "청주": "CJJ",
-            "무안": "MWX",
-            "대구": "TAE",
-            
-            // 해외
-            "오사카": "KIX",
-            "도쿄": "NRT", "도쿄/나리타": "NRT",
-            "후쿠오카": "FUK",
-            "삿포로": "CTS",
-            "오키나와": "OKA",
-            "다낭": "DAD",
-            "방콕": "BKK",
-            "타이베이": "TPE",
-            "홍콩": "HKG",
-            "발리": "DPS",
-            "파리": "CDG",
-            "런던": "LHR",
-            "로마": "FCO",
-            "뉴욕": "JFK",
-            "시드니": "SYD",
-            "괌": "GUM"
-        };
+    // 배경 클릭 시 모달 닫기
+    Object.values(modals).forEach(modal => {
+        if (!modal) return;
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.style.display = 'none';
+        });
+    });
 
-        function openDestinationModal(city) {
-            $.ajax({
-                url: '/api/destination/detail',
-                type: 'GET',
-                data: { cityName: city },
-                dataType: 'json',
-                success: function(data) {
-                    // 1. 모달 내용 채우기
-                    destModalTitle.textContent = city;
-                    destModalDesc.textContent = data.desc;
-                    
-                    // 2. 액티비티 그리드 생성
-                    let html = '';
-                    if (data.activities && data.activities.length > 0) {
-                        data.activities.forEach(item => {
-                            html += `
-                                <div class="activity-item">
-                                    <img src="${item.img}" class="activity-img" alt="${item.title}">
-                                    <div class="activity-info">
-                                        <h5>${item.title}</h5>
-                                        <p>${item.text}</p>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        html = '<p style="grid-column: 1 / -1; text-align: center;">등록된 추천 활동이 없습니다.</p>';
-                    }
-                    activityGrid.innerHTML = html;
-
-                    // 3. 버튼 설정
-                    const bookBtn = document.getElementById('btnBookFlight');
-                    bookBtn.textContent = `✈️ ${city} 항공권 검색하러 가기`;
-
-                    // 4. 버튼 클릭 이벤트 (여기가 중요!)
-                    bookBtn.onclick = function() {
-                        const arrivalBtn = document.getElementById('arrivalBtn');
-                        const arrivalKoInput = document.getElementById('arrivalKoLocation');
-                        const arrivalCodeInput = document.getElementById('arrivalCode');
-
-                        // (1) 한글 이름 채우기
-                        arrivalBtn.textContent = city; 
-                        arrivalBtn.classList.remove('field-placeholder');
-                        arrivalBtn.classList.add('field-location');
-                        arrivalKoInput.value = city; 
-                        
-                        // (2) [핵심 수정] 공항 코드(IATA) 강제 주입 로직
-                        // 우선순위 1: 서버에서 받은 데이터, 우선순위 2: 우리가 만든 맵, 우선순위 3: 없으면 빈값
-                        let targetCode = data.iataCode;
-                        
-                        if (!targetCode) {
-                            // 맵에서 찾아보고, 그래도 없으면 도시 이름으로 한 번 더 찾아봄
-                            targetCode = cityCodeMap[city] || cityCodeMap[data.cityName];
-                        }
-
-                        if (targetCode) {
-                            arrivalCodeInput.value = targetCode;
-                            console.log(`도착지 코드 설정 완료: ${city} -> ${targetCode}`);
-                        } else {
-                            console.error(`⚠️ 오류: [${city}]에 해당하는 공항 코드를 찾을 수 없습니다.`);
-                            alert("죄송합니다. 해당 여행지의 공항 코드를 찾을 수 없습니다.");
-                            return; // 코드 없으면 진행 중단
-                        }
-
-                        // (3) 모달 닫고 이동
-                        closeDestinationModal();
-
-                        document.querySelector('.hero-section').scrollIntoView({ 
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-
-                        setTimeout(() => {
-                            datePicker.open(); 
-                        }, 500); 
-                    };
-
-                    destModal.style.display = 'flex';
-                },
-                error: function(err) {
-                    console.error(err);
-                    alert('정보를 불러오는데 실패했습니다.');
-                }
-            });
-        }
-
-    function closeDestinationModal() {
-        destModal.style.display = 'none';
+    function showAlert(msg) {
+        document.getElementById('alertModalMessage').innerHTML = msg.replace(/\n/g, '<br>');
+        modals.alert.style.display = 'flex';
     }
 
-    destModal.addEventListener('click', function(event) {
-        if (event.target === destModal) {
-            closeDestinationModal();
+    function formatDate(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    function formatDisplayDate(date) {
+        const week = ['일', '월', '화', '수', '목', '금', '토'];
+        return `${date.getMonth() + 1}.${date.getDate()}(${week[date.getDay()]})`;
+    }
+
+    /* =========================================
+       4. 위치 선택 (Location Logic)
+       ========================================= */
+    
+    function openLocationModal(type) {
+        activeSelection = type;
+        const title = type === 'departure' ? '출발지 선택' : '도착지 선택';
+        
+        // Reset Logic
+        const content = modals.location.querySelector('.modal-content');
+        content.querySelector('#modalTitle').textContent = title;
+        content.querySelector('.popular-searches').innerHTML = defaultLocationContent;
+        const input = content.querySelector('#searchAir');
+        input.value = "";
+        
+        // Re-attach tag listeners
+        content.querySelectorAll('.tag').forEach(tag => tag.addEventListener('click', handleTagClick));
+        
+        modals.location.style.display = 'flex';
+        input.focus();
+    }
+
+    function handleTagClick(e) {
+        const tag = e.currentTarget;
+        selectLocation(tag.dataset.kolocation || tag.textContent, tag.dataset.iata);
+    }
+
+    function selectLocation(koLoc, iata) {
+        const display = `${koLoc} ${iata}`;
+        if (activeSelection === 'departure') {
+            els.departureBtn.textContent = display;
+            els.depCodeInput.value = iata;
+            els.depKoInput.value = koLoc;
+        } else {
+            els.arrivalBtn.textContent = display;
+            els.arrCodeInput.value = iata;
+            els.arrKoInput.value = koLoc;
+            els.arrivalBtn.classList.replace('field-placeholder', 'field-location');
+        }
+        modals.location.style.display = 'none';
+    }
+
+    function renderSearchResults(list) {
+        const container = modals.location.querySelector('.popular-searches');
+        if (!list || list.length === 0) {
+            container.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
+            return;
+        }
+        container.innerHTML = list.map(air => `
+            <div class="search-result-item" data-kolocation="${air.kolocation}" data-iata="${air.iataCode}">
+                <div class="location-main">${air.kolocation} (${air.iataCode})</div>
+                <div class="location-sub">${air.enlocation}</div>
+            </div>
+        `).join('');
+    }
+
+    els.departureBtn.addEventListener('click', () => openLocationModal('departure'));
+    els.arrivalBtn.addEventListener('click', () => openLocationModal('arrival'));
+
+    // 검색 결과 클릭 이벤트 위임
+    modals.location.addEventListener('click', (e) => {
+        const item = e.target.closest('.search-result-item');
+        if (item) selectLocation(item.dataset.kolocation, item.dataset.iata);
+    });
+
+    // 위치 검색 (Enter)
+    document.getElementById('searchAir').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            $.ajax({
+                url: "/air/searchAir",
+                type: "get",
+                dataType: "json",
+                data: { "text": e.target.value },
+                success: renderSearchResults
+            });
         }
     });
-</script>
+
+    // 태그 초기화
+    document.querySelectorAll('.tag').forEach(tag => tag.addEventListener('click', handleTagClick));
+
+    // Swap 버튼 로직
+    els.swapBtn.addEventListener('click', () => {
+        // 값 교환
+        [els.departureBtn.textContent, els.arrivalBtn.textContent] = [els.arrivalBtn.textContent, els.departureBtn.textContent];
+        [els.depCodeInput.value, els.arrCodeInput.value] = [els.arrCodeInput.value, els.depCodeInput.value];
+        [els.depKoInput.value, els.arrKoInput.value] = [els.arrKoInput.value, els.depKoInput.value];
+
+        // 스타일 클래스 교환
+        const depHasLoc = els.departureBtn.classList.contains('field-location');
+        const arrHasLoc = els.arrivalBtn.classList.contains('field-location');
+        
+        els.departureBtn.className = arrHasLoc ? 'field-location' : 'field-placeholder';
+        els.arrivalBtn.className = depHasLoc ? 'field-location' : 'field-placeholder';
+    });
+
+    /* =========================================
+       5. 날짜 선택 (Flatpickr)
+       ========================================= */
+    
+    function resetDate() {
+        els.dateRangeBtn.textContent = '언제 떠나시나요?';
+        els.dateRangeBtn.className = 'field-placeholder';
+        els.depDateInput.value = '';
+        els.retDateInput.value = '';
+        datePicker.clear();
+    }
+
+    const datePicker = flatpickr(els.dateRangeBtn, {
+        mode: 'range',
+        dateFormat: "Y-m-d",
+        locale: "ko",
+        minDate: "today",
+        onClose: (selectedDates) => {
+            const isOneWay = els.oneWayRadio.checked;
+            if (isOneWay && selectedDates.length >= 1) {
+                const s = selectedDates[0];
+                els.depDateInput.value = formatDate(s);
+                els.retDateInput.value = '';
+                els.dateRangeBtn.textContent = formatDisplayDate(s);
+                els.dateRangeBtn.className = 'field-location';
+            } else if (!isOneWay && selectedDates.length === 2) {
+                const [s, e] = selectedDates;
+                els.depDateInput.value = formatDate(s);
+                els.retDateInput.value = formatDate(e);
+                els.dateRangeBtn.textContent = `${formatDisplayDate(s)} ~ ${formatDisplayDate(e)}`;
+                els.dateRangeBtn.className = 'field-location';
+            }
+        }
+    });
+
+    els.oneWayRadio.addEventListener('change', function() {
+        if(this.checked) { datePicker.set('mode', 'single'); resetDate(); }
+    });
+    els.roundTripRadio.addEventListener('change', function() {
+        if(this.checked) { datePicker.set('mode', 'range'); resetDate(); }
+    });
+    // Prevent default click behavior on button
+    els.dateRangeBtn.addEventListener('click', e => e.preventDefault());
+
+
+    /* =========================================
+       6. 탑승객 선택 (Passenger Logic)
+       ========================================= */
+    
+    els.passengerBtn.addEventListener('click', () => modals.passenger.style.display = 'flex');
+
+    function updatePassengerUI() {
+        const adults = parseInt(modals.passenger.querySelector('[data-type="adult"] .count').textContent);
+        const children = parseInt(modals.passenger.querySelector('[data-type="child"] .count').textContent);
+        const infants = parseInt(modals.passenger.querySelector('[data-type="infant"] .count').textContent);
+        const total = adults + children + infants;
+
+        const setBtn = (row, type, condition) => {
+            modals.passenger.querySelector(`[data-type="${row}"] .${type}`).disabled = condition;
+        };
+
+        const isMax = total >= 9;
+        setBtn('adult', 'plus', isMax);
+        setBtn('adult', 'minus', adults <= 1 || adults <= infants);
+        setBtn('child', 'plus', isMax);
+        setBtn('child', 'minus', children <= 0);
+        setBtn('infant', 'plus', isMax || infants >= adults);
+        setBtn('infant', 'minus', infants <= 0);
+    }
+
+    modals.passenger.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('control-btn')) return;
+        const btn = e.target;
+        if (btn.disabled) return;
+        
+        const countSpan = btn.closest('.passenger-row').querySelector('.count');
+        let val = parseInt(countSpan.textContent);
+        countSpan.textContent = btn.classList.contains('plus') ? val + 1 : val - 1;
+        updatePassengerUI();
+    });
+
+    document.getElementById('confirmPassengerBtn').addEventListener('click', () => {
+        const adults = modals.passenger.querySelector('[data-type="adult"] .count').textContent;
+        const children = modals.passenger.querySelector('[data-type="child"] .count').textContent;
+        const infants = modals.passenger.querySelector('[data-type="infant"] .count').textContent;
+        const radio = modals.passenger.querySelector('input[name="travelClassModal"]:checked');
+        
+        passengerInputs.adults.value = adults;
+        passengerInputs.children.value = children;
+        passengerInputs.infants.value = infants;
+        passengerInputs.travelClass.value = radio.value;
+
+        const total = parseInt(adults) + parseInt(children) + parseInt(infants);
+        els.passengerBtn.textContent = `👤 탑승객 ${total}명, ${radio.parentElement.textContent.trim()}`;
+        els.passengerBtn.className = 'field-location';
+        modals.passenger.style.display = 'none';
+    });
+
+    // 직항 체크박스
+    els.directFlightCheckbox.addEventListener('change', function() {
+        els.directFlightInput.value = this.checked ? 'true' : 'false';
+    });
+
+
+    /* =========================================
+       7. 폼 제출 및 유효성 검사 (Submit & Validation)
+       ========================================= */
+    
+    els.searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const dep = els.depCodeInput.value;
+        const arr = els.arrCodeInput.value;
+        const date = els.depDateInput.value;
+
+        if (!arr) return showAlert('도착지를 선택해주세요.');
+        if (!date) return showAlert('날짜를 선택해주세요.');
+
+        // 불가능한 경로 체크
+        if (IMPOSSIBLE_ROUTES[dep] && IMPOSSIBLE_ROUTES[dep].includes(arr)) {
+            const depName = els.departureBtn.textContent.split(' ')[0];
+            const arrName = els.arrivalBtn.textContent.split(' ')[0];
+            return showAlert(`🚫 운항하지 않는 노선입니다.\n\n[${depName}]에서 [${arrName}]로 가는\n직항 항공편은 없습니다.`);
+        }
+
+        modals.loading.style.display = 'flex';
+        setTimeout(() => this.submit(), 100);
+    });
+
+    /* =========================================
+       8. 여행지 추천 모달 (Destination Detail)
+       ========================================= */
+    
+    document.querySelectorAll('.destination-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const city = this.dataset.city;
+            if(city) openDestinationModal(city);
+        });
+    });
+
+    function openDestinationModal(city) {
+        $.ajax({
+            url: '/api/destination/detail',
+            type: 'GET',
+            data: { cityName: city },
+            dataType: 'json',
+            success: (data) => {
+                const mContent = modals.destination.querySelector('.modal-content');
+                mContent.querySelector('#destModalTitle').textContent = city;
+                mContent.querySelector('#destModalDesc').textContent = data.desc;
+
+                // Activity Grid
+                const grid = mContent.querySelector('#activityGrid');
+                if (data.activities && data.activities.length > 0) {
+                    grid.innerHTML = data.activities.map(item => `
+                        <div class="activity-item">
+                            <img src="${item.img}" class="activity-img" alt="${item.title}">
+                            <div class="activity-info">
+                                <h5>${item.title}</h5>
+                                <p>${item.text}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center;">등록된 추천 활동이 없습니다.</p>';
+                }
+
+                // "항공권 검색하러 가기" 버튼 설정
+                const bookBtn = mContent.querySelector('#btnBookFlight');
+                bookBtn.textContent = `✈️ ${city} 항공권 검색하러 가기`;
+                
+                bookBtn.onclick = () => {
+                    els.arrivalBtn.textContent = city;
+                    els.arrivalBtn.className = 'field-location';
+                    els.arrKoInput.value = city;
+
+                    // 코드 찾기 (API 데이터 > 맵 > 에러)
+                    let targetCode = data.iataCode || CITY_CODE_MAP[city] || CITY_CODE_MAP[data.cityName];
+
+                    if (targetCode) {
+                        els.arrCodeInput.value = targetCode;
+                    } else {
+                        alert("죄송합니다. 해당 여행지의 공항 코드를 찾을 수 없습니다.");
+                        return;
+                    }
+
+                    modals.destination.style.display = 'none';
+                    document.querySelector('.hero-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => datePicker.open(), 500);
+                };
+
+                modals.destination.style.display = 'flex';
+            },
+            error: () => alert('정보를 불러오는데 실패했습니다.')
+        });
+    }
+	
+    // 초기 버튼 상태 업데이트
+    updatePassengerUI();
+
+    </script>
 </body>
 </html>

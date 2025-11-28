@@ -1,12 +1,8 @@
 package hsm.bootproject.SearchFlight.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class airParmDto {
 
 	private String tripType; // "round-trip" 또는 "one-way"

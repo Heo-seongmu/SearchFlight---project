@@ -1,7 +1,6 @@
 package hsm.bootproject.SearchFlight.controller;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -158,91 +156,91 @@ public class AirController {
         return "redirect:/revList";
     }
 	
-	@PostMapping("/PsgInfo")
-    public String showPsgInfoPage(PsgInfoRequestDto psgInfoRequestDto, Model model) {
-		
-		Member loginUser = (Member) session.getAttribute("loginUser");
+	@PostMapping("/prePsgInfo") 
+	public String preProcessPsgInfo(PsgInfoRequestDto psgInfoRequestDto) {
+	    // 1. 선택한 항공권 정보를 세션에 "tempBookingInfo"라는 이름으로 저장
+	    session.setAttribute("tempBookingInfo", psgInfoRequestDto);
 	    
-	    if (loginUser == null) {
-	        // 로그인이 안 되어 있다면 로그인 페이지로 리다이렉트합니다.
-	        // (MemberController 로직에 의해, 로그인 후 'searchParams'를 확인하고 검색 결과 리스트로 이동하게 됩니다)
-	        return "redirect:/member/login"; 
+	    // 2. 실제 페이지로 이동해라! (리다이렉트 -> GET 요청 발생)
+	    return "redirect:/air/PsgInfo";
+	}
+
+	// [1-2] 화면용 (GET): 세션에서 데이터 꺼내서 화면 보여주기
+	@GetMapping("/PsgInfo")
+	public String showPsgInfoPage(Model model) {
+	    // 세션에서 데이터 꺼내기
+	    PsgInfoRequestDto dto = (PsgInfoRequestDto) session.getAttribute("tempBookingInfo");
+	    
+	    // 데이터가 없으면(오류 상황) 메인으로 쫓아냄
+	    if (dto == null) {
+	        return "redirect:/";
 	    }
 
-	    // [추가 2] 로그인 된 사용자 정보도 모델에 담아두면(선택사항), HTML에서 이름/이메일 자동채우기 편함
-	    model.addAttribute("loginUser", loginUser);
-        
-        // 1. (기존) DTO를 모델에 추가
-        model.addAttribute("bookingInfo", psgInfoRequestDto);
-        
-     
-        
-        // 2. 국내선/국제선 여부 판별
-        boolean isDomesticFlight = false;
-        if (psgInfoRequestDto.getDepartureFlight() != null) {
-            String originIata = psgInfoRequestDto.getDepartureFlight().getOriginCode();
-            String destIata = psgInfoRequestDto.getDepartureFlight().getDestinationCode();
-            
-            // AirService를 통해 두 공항이 *모두* 국내 공항인지 확인
-            if (airService.isDomesticAirport(originIata) && airService.isDomesticAirport(destIata)) {
-                isDomesticFlight = true;
-            }
-        }
-        
-        // 3. 판별 결과를 "isDomestic" 라는 이름으로 Model에 추가
-        model.addAttribute("isDomestic", isDomesticFlight);      
-        // 4. (기존) 로그 출력
-        System.out.println("--- PsgInfo 페이지로 전달되는 데이터 ---");
-        System.out.println("가는 편: " + psgInfoRequestDto.getDepartureFlight().getId());
-        System.out.println("국내선 여부: " + isDomesticFlight); // ⭐️ 확인용 로그 추가
-        if (psgInfoRequestDto.getReturnFlight() != null) {
-            System.out.println("오는 편: " + psgInfoRequestDto.getReturnFlight().getId());
-        }
-        System.out.println("승객: 성인 " + psgInfoRequestDto.getAdults());
-        System.out.println("------------------------------------");
+	    // --- 기존 로직 복사 시작 ---
+	    Member loginUser = (Member) session.getAttribute("loginUser");
+	    if (loginUser != null) {
+	        model.addAttribute("loginUser", loginUser);
+	    }
 
-        // 5. (기존) 뷰 반환
-        return "/PsgInfo"; 
-    }
+	    model.addAttribute("bookingInfo", dto);
+
+	    // 국내선 여부 판별 로직 (기존 코드 활용)
+	    boolean isDomesticFlight = false;
+	    if (dto.getDepartureFlight() != null) {
+	        String originIata = dto.getDepartureFlight().getOriginCode();
+	        String destIata = dto.getDepartureFlight().getDestinationCode();
+	        if (airService.isDomesticAirport(originIata) && airService.isDomesticAirport(destIata)) {
+	            isDomesticFlight = true;
+	        }
+	    }
+	    model.addAttribute("isDomestic", isDomesticFlight);
+
+	    return "PsgInfo"; 
+	}
 	
 	@PostMapping("/confirmBooking")
-    public String confirmBooking(
-            @ModelAttribute BookingFormDto bookingForm, // 1. 폼 데이터가 DTO에 자동 바인딩됨
-            // HttpSession session, // (이미 @Autowired 되어 있으므로 파라미터로 안 받아도 됨)
-            Model model) {           // 2. 다음 페이지로 데이터 전달할 Model
+	public String processBookingForm(BookingFormDto bookingForm) {
+	    Member loginUser = (Member) session.getAttribute("loginUser");
+	    if (loginUser == null) {
+	        return "redirect:/member/login";
+	    }
 
-        Member loginUser = (Member) session.getAttribute("loginUser");
+	    // DTO 변환 로직
+	    BookingConfirmationDto confirmationDto = new BookingConfirmationDto();
+	    confirmationDto.setMemberId(loginUser.getId());
+	    confirmationDto.setMemberName(loginUser.getUserName());
+	    confirmationDto.setMemberEmail(loginUser.getEmail());
+	    
+	    confirmationDto.setBookerName(bookingForm.getBookerName());
+	    confirmationDto.setBookerEmail(bookingForm.getBookerEmail());
+	    confirmationDto.setBookerPhone(bookingForm.getBookerPhone());
+	    
+	    confirmationDto.setBookingDetails(bookingForm);
+	    confirmationDto.setFinalTotalPrice(bookingForm.getDepartureFlight().getTotalPrice());
+	    confirmationDto.setDomestic(bookingForm.isDomestic());
 
-        if (loginUser == null) {
-            // 로그인 페이지로 리다이렉트
-        	return "redirect:/member/login?redirectURL=/air/searchAirport";
-        }
+	    // 핵심: 세션에 저장 ("pendingBooking" 이름으로)
+	    session.setAttribute("pendingBooking", confirmationDto);
 
-        BookingConfirmationDto confirmationDto = new BookingConfirmationDto();
+	    // 결제/확인 페이지로 리다이렉트
+	    return "redirect:/air/payment";
+	}
 
-        // 3-1. 회원 정보 매핑
-        confirmationDto.setMemberId(loginUser.getId());
-        confirmationDto.setMemberName(loginUser.getUserName());
-        confirmationDto.setMemberEmail(loginUser.getEmail());
+	// [2-2] 화면용 (GET): 세션 데이터로 화면 그리기
+	@GetMapping("/payment")
+	public String showPaymentPage(Model model) {
+	    // 세션에서 데이터 꺼내기
+	    BookingConfirmationDto dto = (BookingConfirmationDto) session.getAttribute("pendingBooking");
 
-        // 3-2. 예약자 정보 매핑 (폼에서 받은 값)
-        confirmationDto.setBookerName(bookingForm.getBookerName());
-        confirmationDto.setBookerEmail(bookingForm.getBookerEmail());
-        confirmationDto.setBookerPhone(bookingForm.getBookerPhone());
+	    if (dto == null) {
 
-        // 3-3. 항공/탑승객 상세 정보 매핑 (폼 DTO 통째로 전달)
-        confirmationDto.setBookingDetails(bookingForm);
+	        return "redirect:/";
+	    }
 
-        // 3-4. 최종 결제 금액 계산
-        BigDecimal totalPrice = bookingForm.getDepartureFlight().getTotalPrice();
+	    model.addAttribute("confirmationData", dto);
 
-        confirmationDto.setFinalTotalPrice(totalPrice);
-        confirmationDto.setDomestic(bookingForm.isDomestic());
-        session.setAttribute("pendingBooking", confirmationDto);
-        model.addAttribute("confirmationData", confirmationDto);
-
-        return "revPage"; 
-    }
+	    return "revPage";
+	}
 
 	@PostMapping("/processPayment")
     @ResponseBody //
@@ -275,6 +273,8 @@ public class AirController {
             response.put("bookingId", savedBooking.getId());
             response.put("arrivalKoLocation", confirmationDto.getBookingDetails().getArrivalKoLocation());
             response.put("arrivalAirportCode", confirmationDto.getBookingDetails().getDepartureFlight().getDestinationCode());
+            
+            //
             
             return ResponseEntity.ok(response); // 200 OK (성공)
 

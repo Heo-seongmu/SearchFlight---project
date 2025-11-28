@@ -17,9 +17,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long>{
 	           "WHERE b.member = :member " +
 	           "AND b.departureAirline = :departureAirline " +
 	           "AND b.departureTime = :departureTime " +
-	           "AND b.returnAirline = :returnAirline " +
-	           "AND b.returnTime = :returnTime " +
-	           "AND b.bookingStatus <> 'CANCELLED'") // <> 는 '같지 않다'는 의미
+	           // [중요] 오는 편 정보가 둘 다 없거나(편도), 둘 다 같거나(왕복)
+	           "AND ( (:returnAirline IS NULL AND b.returnAirline IS NULL) OR b.returnAirline = :returnAirline ) " +
+	           "AND ( (:returnTime IS NULL AND b.returnTime IS NULL) OR b.returnTime = :returnTime ) " +
+	           "AND b.bookingStatus <> 'CANCELLED'") 
 	    boolean existsDuplicateBooking(
 	        @Param("member") Member member,
 	        @Param("departureAirline") String departureAirline,
@@ -28,6 +29,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long>{
 	        @Param("returnTime") LocalDateTime returnTime
 	    );
 
-	List<Booking> findByMemberIdAndBookingStatusOrderByCreatedAtDesc(Long memberId, String string); 
-	
-}
+	    List<Booking> findByMemberIdAndBookingStatusOrderByCreatedAtDesc(Long memberId, String status); 
+	}

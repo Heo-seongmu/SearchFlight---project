@@ -4,272 +4,285 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>무성의 여행 로그인</title>
+<!-- 폰트: Noto Sans KR (깔끔한 고딕체) -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style type="text/css">
-* {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
+    /* --- [Reset & Base] --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f0f2f5; /* 부드러운 회색 배경 */
+        color: #333;
+    }
 
-body {
-	font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-		"Malgun Gothic", "맑은 고딕", sans-serif;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	min-height: 100vh;
-	background-color: #f8f8f8;
-	color: #333;
-}
+    a { text-decoration: none; color: inherit; transition: opacity 0.2s; }
+    a:hover { opacity: 0.8; }
 
-a {
-	text-decoration: none;
-	color: inherit;
-}
+    /* --- [Layout: Card Container] --- */
+    .login-wrapper {
+        width: 100%;
+        max-width: 420px;
+        padding: 20px;
+    }
 
-/* 전체 컨테이너 */
-.login-container {
-	width: 100%;
-	max-width: 400px;
-	padding: 20px;
-}
+    .login-container {
+        background-color: #ffffff;
+        padding: 40px 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
+        text-align: center;
+    }
 
-/* 로그인 폼 중앙 정렬 */
-.login-form {
-	text-align: center;
-}
+    /* --- [Logo] --- */
+    .logo {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #3d5afe;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+    .logo-desc {
+        color: #888;
+        font-size: 0.9rem;
+        margin-bottom: 30px;
+    }
 
-.logo {
-	font-size: 2.5rem;
-	font-weight: 900;
-	color: #3d5afe; /* 로고 색상 */
-	margin-bottom: 20px;
-}
+    /* --- [Form Elements] --- */
+    .email-login-form { width: 100%; }
 
-/* 소셜 로그인 스타일 */
-.social-login {
-    margin-bottom: 20px;
-}
-.social-btn {
-	display: block;
-	width: 100%;
-	padding: 15px;
-	margin-bottom: 10px;
-	border-radius: 8px;
-	font-size: 1rem;
-	font-weight: 500;
-	border: 1px solid #ddd;
-	background-color: #fff;
-	cursor: pointer;
-    text-align: center;
-}
-/* 카카오 버튼 스타일 */
-.social-btn.kakao {
-    background-color: #FEE500; /* 카카오 노란색 */
-    color: #191919; /* 카카오 검은색 텍스트 */
-    border: none;
-}
+    .input-group {
+        position: relative;
+        margin-bottom: 16px;
+    }
 
-/* '또는' 구분선 스타일 */
-.divider {
-	margin: 30px 0;
-	display: flex;
-	align-items: center;
-	text-align: center;
-	color: #aaa;
-    font-size: 0.9rem;
-}
+    .input-group input {
+        width: 100%;
+        padding: 14px 14px 14px 48px; /* 아이콘 공간 확보 */
+        border: 1px solid #e1e4e8;
+        background-color: #f9f9f9;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        color: #333;
+        transition: all 0.2s ease;
+        outline: none;
+    }
 
-.divider::before, .divider::after {
-	content: '';
-	flex: 1;
-	border-bottom: 1px solid #eee;
-}
+    .input-group input::placeholder { color: #aaa; }
 
-.divider span {
-	padding: 0 15px;
-}
+    .input-group input:focus {
+        background-color: #fff;
+        border-color: #3d5afe;
+        box-shadow: 0 0 0 3px rgba(61, 90, 254, 0.1);
+    }
 
-/* 이메일 로그인 폼 */
-.email-login-form {
-    width: 100%;
-}
+    /* 아이콘 스타일 */
+    .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        fill: #b0b8c1;
+        transition: fill 0.2s;
+    }
+    
+    .input-group input:focus ~ .input-icon { fill: #3d5afe; }
 
-/* 아이콘을 포함하는 입력 필드 그룹 */
-.input-group {
-    position: relative;
-    margin-bottom: 15px;
-}
+    .input-icon-right {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        fill: #b0b8c1;
+        cursor: pointer;
+    }
+    .input-icon-right:hover { fill: #3d5afe; }
 
-/* 입력 필드 스타일 */
-.input-group input {
-    width: 100%;
-    padding: 15px 15px 15px 50px; 
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.2s;
-}
+    /* --- [Buttons] --- */
+    .btn-submit {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        background-color: #3d5afe;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(61, 90, 254, 0.2);
+    }
+    .btn-submit:hover {
+        background-color: #304ffe;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(61, 90, 254, 0.3);
+    }
+    .btn-submit:active { transform: translateY(0); }
 
-.input-group input:focus {
-    border-color: #3d5afe;
-}
+    .btn-signup {
+        display: block;
+        width: 100%;
+        padding: 13px;
+        margin-top: 12px;
+        background-color: #fff;
+        color: #3d5afe;
+        border: 1px solid #3d5afe;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s;
+    }
+    .btn-signup:hover {
+        background-color: #f0f2ff;
+    }
 
-/* 입력 필드 아이콘 (왼쪽) */
-.input-icon {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    fill: #aaa; 
-}
+    /* --- [Divider] --- */
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 24px 0;
+        color: #bbb;
+        font-size: 0.85rem;
+    }
+    .divider::before, .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background-color: #eee;
+    }
+    .divider span { padding: 0 10px; }
 
-/* 비밀번호 보이기/숨기기 아이콘 (오른쪽) */
-.input-icon-right {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    fill: #aaa;
-    cursor: pointer;
-}
+    /* --- [Social Login] --- */
+    .social-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        transition: transform 0.2s;
+        position: relative;
+    }
+    
+    .social-btn.kakao {
+        background-color: #FEE500;
+        color: #3c1e1e;
+        font-weight: 600;
+    }
+    .social-btn:hover { transform: translateY(-1px); }
 
-/* 로그인 옵션 (로그인 유지) */
-.login-options {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start; 
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-    color: #555;
-}
+    /* 카카오 아이콘 (선택 사항, 없어도 무방하나 있으면 더 좋음) */
+    .kakao-icon {
+        margin-right: 8px;
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+    }
 
-.login-options input[type="checkbox"] {
-    accent-color: #3d5afe;
-    margin-right: 8px;
-    width: 16px;
-    height: 16px;
-}
-
-.login-options label {
-    cursor: pointer;
-}
-
-/* 기본 로그인 버튼 (파란색) */
-.btn-submit {
-	display: block;
-	width: 100%;
-	padding: 15px;
-	background-color: #3d5afe; 
-    color: #fff;
-	border: none;
-	border-radius: 8px;
-	font-size: 1.1rem;
-    font-weight: 500;
-	cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.btn-submit:hover {
-    background-color: #304ffe;
-}
-
-/* 회원가입 버튼 스타일 */
-.btn-signup {
-    display: block;
-    width: 100%;
-    padding: 15px;
-    margin-top: 10px; /* 로그인 버튼과의 간격 */
-    background-color: #fff;
-    color: #3d5afe;
-    border: 1px solid #3d5afe;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 500;
-    cursor: pointer;
-    text-align: center;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.btn-signup:hover {
-    background-color: #f0f2ff;
-}
-
-/* 아이디/비밀번호 찾기 링크 */
-.find-links {
-	margin-top: 25px;
-	font-size: 0.9rem;
-	color: #888;
-}
-
-.find-links a {
-	margin: 0 10px;
-    color: #777;
-}
-
-.find-links a:hover {
-    text-decoration: underline;
-}
-
-/* 로그인 실패 메시지 */
-.error-message {
-    color: #e53935;
-    font-size: 0.9rem;
-    margin-top: 15px;
-    display: none; /* 평소에는 숨김 */
-}
+    /* --- [Messages] --- */
+    .error-message {
+        background-color: #ffebee;
+        color: #c62828;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        margin-top: 16px;
+        text-align: center;
+        border: 1px solid #ffcdd2;
+        display: none; /* Thymeleaf 조건에 따라 display 덮어씀 */
+    }
+    
+    .success-message {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        margin-top: 16px;
+        border: 1px solid #c8e6c9;
+        display: none;
+    }
 </style>
 </head>
 <body>
-	<div class="login-container">
-		<main class="login-form">
-			<div class="logo">MuSeonG</div>
+    <div class="login-wrapper">
+        <div class="login-container">
+            <header>
+                <div class="logo">MuSeonG</div>
+                <div class="logo-desc">여행의 시작, 무성의 하게 하세요!</div>
+            </header>
             
-            <form id="email-form" class="email-login-form" action="/member/login" method="post">
-                <div class="input-group">
-                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2.5a5.5 5.5 0 0 1 5.5 5.5c0 3.038-2.462 5.5-5.5 5.5S6.5 11.038 6.5 8a5.5 5.5 0 0 1 5.5-5.5M12 1a7 7 0 1 0 0 14A7 7 0 0 0 12 1zm0 14.5a9.5 9.5 0 0 1-9.5 9.5v-2.003c0-2.61 3.14-4.997 9.5-4.997s9.5 2.387 9.5 4.997v2.003A9.5 9.5 0 0 1 12 15.5z"></path>
-                    </svg>
-                    <input type="text" id="loginId" name="loginId" placeholder="아이디" required>
-                </div>
-                
-                <div class="input-group">
-                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
-                    </svg>
-                    <input type="password" id="password" name="password" placeholder="비밀번호" required>
+            <main class="login-form">
+                <form id="email-form" class="email-login-form" action="/member/login" method="post">
+                    <div class="input-group">
+                        <input type="text" id="loginId" name="loginId" placeholder="아이디를 입력하세요" required>
+                        <!-- 아이디 아이콘 -->
+                        <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 2.5a5.5 5.5 0 0 1 5.5 5.5c0 3.038-2.462 5.5-5.5 5.5S6.5 11.038 6.5 8a5.5 5.5 0 0 1 5.5-5.5M12 1a7 7 0 1 0 0 14A7 7 0 0 0 12 1zm0 14.5a9.5 9.5 0 0 1-9.5 9.5v-2.003c0-2.61 3.14-4.997 9.5-4.997s9.5 2.387 9.5 4.997v2.003A9.5 9.5 0 0 1 12 15.5z"></path>
+                        </svg>
+                    </div>
                     
-                    <svg id="togglePasswordShow" class="input-icon-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 13c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path>
-                    </svg>
-                     <svg id="togglePasswordHide" class="input-icon-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
-                        <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L21.73 22 20.46 20.73 2.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"></path>
-                    </svg>
-                </div>
-    			
-    			
-                <button type="submit" class="btn-submit">로그인</button>
-            </form>
-            
-            <div th:if="${param.error}" class="error-message" style="display:block;">
-                아이디 또는 비밀번호를 확인하세요.
-            </div>
-            <div th:if="${param.signup == 'success'}" class="error-message" style="display:block; color: #3d5afe;">
-                회원가입이 완료되었습니다. 로그인해주세요.
-            </div>
+                    <div class="input-group">
+                        <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
+                        <!-- 자물쇠 아이콘 -->
+                        <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                        </svg>
+                        
+                        <!-- 눈 아이콘 (보이기) -->
+                        <svg id="togglePasswordShow" class="input-icon-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 13c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path>
+                        </svg>
+                        <!-- 눈 아이콘 (숨기기) -->
+                        <svg id="togglePasswordHide" class="input-icon-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+                            <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L21.73 22 20.46 20.73 2.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"></path>
+                        </svg>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">로그인</button>
+                </form>
 
-            <a href="/member/join" class="btn-signup">회원가입</a>
-            <br>
-             <div class="social-login">
-				<a href="/member/kakaoLogin" class="social-btn kakao">카카오 회원가입</a> 
-			</div>
-		</main>
-	</div>
+                <!-- 에러 및 성공 메시지 -->
+                <div th:if="${param.error}" class="error-message" style="display:block;">
+                    아이디 또는 비밀번호를 확인해주세요.
+                </div>
+                <div th:if="${param.signup == 'success'}" class="success-message" style="display:block;">
+                    회원가입이 완료되었습니다.<br>로그인해주세요.
+                </div>
+
+                <div class="divider">
+                    <span>또는</span>
+                </div>
+
+                <a href="/member/join" class="btn-signup">회원가입</a>
+                <br>
+                <div class="social-login">
+                    <a href="/member/kakaoLogin" class="social-btn kakao">
+                        <!-- 카카오 말풍선 아이콘 SVG -->
+                        <svg class="kakao-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3C5.373 3 0 7.18 0 12.336c0 3.326 2.227 6.257 5.586 7.957-.25 2.768-1.785 5.535-1.84 5.626 0 0-.036.27.142.365.18.098.393.01.393.01 2.455-1.624 5.257-3.23 6.945-4.242.257.036.517.054.774.054 6.627 0 12-4.18 12-9.336S18.627 3 12 3z" fill="#3c1e1e"/></svg>
+                        카카오로 회원가입
+                    </a> 
+                </div>
+            </main>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

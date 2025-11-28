@@ -16,6 +16,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -69,9 +70,7 @@ public class HotelService {
 	  }
 	}
 	
-    /**
-     * [수정] 평점 로직이 모두 제거되고, 번역 기능만 남았습니다.
-     */
+	@Cacheable(value = "hotelSearchResults")
     public List<HotelInfo> hotelList(String destination) throws IOException {
         
         // 1. Amadeus 'by-city' API 호출 (호텔 10개 목록 가져오기)
@@ -102,7 +101,8 @@ public class HotelService {
         
         return hotels; // 번역과 평점이 모두 채워진 리스트 반환
     }
-
+	
+	
     private List<HotelInfo> getHotelsByCity(String destination) throws IOException {
         String auth = token(); 
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {

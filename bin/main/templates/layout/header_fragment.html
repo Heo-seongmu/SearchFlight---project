@@ -160,7 +160,7 @@
                 th:if="${session.loginUser != null}">나의 예약</a> 
             
             <a th:if="${session.loginUser == null}"
-                class="btn-primary-login" href="member/login">로그인</a>
+                class="btn-primary-login" href="/member/login">로그인</a>
             
             <div th:if="${session.loginUser != null}" class="user-profile">
                 <span class="user-avatar-icon">👤</span>
@@ -168,7 +168,7 @@
             </div>
             
             <a th:if="${session.loginUser != null}"
-                class="link__text-btn" href="member/logout" style="font-size: 13px; color: #888;">로그아웃</a>
+                class="link__text-btn" href="/member/logout" style="font-size: 13px; color: #888;">로그아웃</a>
         </div>
     </div>
 </header>

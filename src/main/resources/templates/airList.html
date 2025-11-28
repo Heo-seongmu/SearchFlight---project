@@ -16,13 +16,10 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" rel="stylesheet">
 
 <style type="text/css">
-/* [수정됨] 헤더(.moana_gnb)와 관련된 옛날 스타일은 모두 삭제했습니다.
-   이제 common-head에서 불러오는 스타일이 적용됩니다.
-*/
+.moana_gnb a {
+    text-decoration: none !important;
+}
 
-/* --- 항공권 리스트 페이지 전용 스타일 --- */
-
-/* 필터/검색 정보 카드 버튼 스타일 */
 .filter-card-button {
 	text-align: left;
 	width: 100%;
@@ -804,7 +801,7 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form action="/air/searchAirport" method="POST" class="flight-search-form">
+					<form action="/air/searchAirport" method="GET" class="flight-search-form">
 						<div class="d-flex nav-tabs mb-4">
 							<div>
 								<input type="radio" name="tripType" value="round-trip" id="modal-round-trip" checked style="display: none;"> <label for="modal-round-trip" class="nav-link-label">왕복</label>
@@ -955,9 +952,7 @@
 				<h4>좌석등급</h4>
 				<div class="seat-class-options">
 					<label><input type="radio" name="travelClassModal" value="ECONOMY" checked> 일반석</label> 
-                    <label><input type="radio" name="travelClassModal" value="PREMIUM_ECONOMY"> 프리미엄 일반석</label> 
                     <label><input type="radio" name="travelClassModal" value="BUSINESS"> 비즈니스석</label> 
-                    <label><input type="radio" name="travelClassModal" value="FIRST"> 일등석</label>
 				</div>
 			</div>
 			<button type="button" id="confirmPassengerBtn" class="confirm-btn">선택 완료</button>
@@ -975,8 +970,8 @@
 	<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
 
-	<!-- 스크립트 내용은 기존과 동일하므로 아래에 그대로 붙여넣습니다 -->
 	<script th:inline="javascript">
+	const isLoggedIn = /*[[${session.loginUser != null}]]*/ false; 
     /* 🟢 서버에서 넘어온 날짜별 가격 데이터 (Map) */
     const datePriceMap = /*[[${datePriceMap}]]*/ {}; 
 
@@ -1271,6 +1266,16 @@
     }
     
     async function selectReturnFlight(selectedButton) {
+    	
+    	if (!isLoggedIn) {
+            if(confirm("로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?")) {
+                // 현재 페이지 주소(검색 결과)를 가지고 로그인 페이지로 이동
+                const currentUrl = encodeURIComponent(window.location.href);
+                window.location.href = '/member/login?redirectURL=' + currentUrl;
+            }
+            return; // 함수 종료 (폼 제출 안 함)
+        }
+    	
         const returnModalElement = document.getElementById('returnFlightListModal');
         const departureInfo = JSON.parse(returnModalElement.dataset.departureInfo);
         const returnInfo = {
@@ -1283,14 +1288,10 @@
             totalPrice: parseFloat((selectedButton.dataset.totalPrice || "0").toString().replace(/,/g, ''))
         };
     
-        returnModal.hide();
-        const loadingModal = document.getElementById('loadingModal');
-        loadingModal.querySelector('p').textContent = '예약 정보 페이지로 이동중입니다...';
-        loadingModal.style.display = 'flex';
     
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/air/PsgInfo'; 
+        form.action = '/air/prePsgInfo'; 
     
         createHiddenInput(form, 'departureKoLocation', departureInfo.departureKoLocation);
         createHiddenInput(form, 'arrivalKoLocation', departureInfo.arrivalKoLocation);
@@ -1331,7 +1332,9 @@
     const oneWayRadio = document.getElementById('modal-one-way');
 
     const datePicker = flatpickr(modalDateRangeBtn, {
-        dateFormat: "Y-m-d", locale: "ko",
+        dateFormat: "Y-m-d", 
+        locale: "ko",
+        minDate: "today", // 오늘 이전 날짜 선택 비활성화
         onClose: function(selectedDates, dateStr, instance) {
             const mode = instance.config.mode;
             if (mode === 'range' && selectedDates.length === 2) {
