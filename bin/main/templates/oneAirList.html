@@ -402,32 +402,56 @@ body {
 	color: #555;
 }
 
+#duration-slider, #price-slider {
+    height: 8px;           /* 트랙 두께를 조금 더 두껍게 */
+    margin: 10px 12px 25px 12px; /* 좌우 여백을 주어 핸들 잘림 방지 */
+}
+
+/* 슬라이더 배경 트랙 (회색 부분) */
 .noUi-target {
-	background: #f0f0f0;
-	border-radius: 4px;
-	border: none;
-	box-shadow: none;
+    background: #e9ecef;
+    border-radius: 4px;
+    border: none;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); /* 안쪽 그림자로 깊이감 추가 */
 }
 
+/* 선택된 범위 (색상 채워지는 부분) - 사이트 테마색 적용 */
 .noUi-connect {
-	background: #0d6efd;
+    background: #5ac4c9; 
 }
 
+/* 핸들 (움직이는 동그라미) 디자인 변경 */
 .noUi-handle {
-	border: 3px solid #fff;
-	border-radius: 50%;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-	cursor: pointer;
+    width: 22px !important;       /* 크기 키움 */
+    height: 22px !important;
+    right: -11px !important;      /* 중앙 정렬 보정 */
+    top: -8px !important;         /* 트랙 중앙에 오도록 위로 올림 */
+    
+    border: 2px solid #fff;       /* 흰색 테두리로 깔끔하게 */
+    background: #5ac4c9;          /* 내부를 테마색으로 */
+    border-radius: 50%;           /* 완벽한 원형 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+    cursor: grab;
+    outline: none;
 }
 
-.noUi-handle:focus {
-	outline: none;
+/* 핸들을 잡았을 때 효과 */
+.noUi-handle:active {
+    cursor: grabbing;
+    transform: scale(1.1);        /* 클릭 시 살짝 커짐 */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* noUiSlider 기본 핸들 내부의 지저분한 선 제거 */
+.noUi-handle::before,
+.noUi-handle::after {
+    display: none;
+}
+
+/* 툴팁 (숫자 표시) 기본적으로 숨김 (스크립트에서 처리하므로) */
 .noUi-tooltip {
-	display: none !important;
+    display: none;
 }
-
 .btn-group-time-filter {
 	display: flex;
 	flex-wrap: wrap;

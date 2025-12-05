@@ -40,4 +40,8 @@ public class ChatMessage {
 
     @CreationTimestamp
     private Instant createdAt; // 메시지 생성 시간 (정렬에 사용)
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoom chatRoom;
 }

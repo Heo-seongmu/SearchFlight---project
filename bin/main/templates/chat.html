@@ -5,14 +5,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>무성의 채팅 - 여행 추천</title>
 
-<!-- 공통 헤드 (폰트, 기본 스타일 등) 가져오기 -->
 <th:block th:replace="layout/header_fragment :: common-head"></th:block>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- 폰트: Noto Sans KR -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Open+Sans:wght@400;700&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <link rel="stylesheet" href="css/animate.css">
 <link rel="stylesheet" href="css/icomoon.css">
@@ -22,438 +24,613 @@
 <script src="js/modernizr-2.6.2.min.js"></script>
 
 <style type="text/css">
-    /* [수정됨] 헤더(.moana_gnb 등) 관련 스타일 삭제함. 
-       이제 common-head에서 스타일을 가져오므로 충돌하지 않습니다. */
+html {
+	scroll-behavior: smooth;
+}
 
-    /* === 기본 설정 === */
-    html {
-        scroll-behavior: smooth; /* 부드러운 스크롤 */
-    }
-    body {
-        font-family: 'Noto Sans KR', 'Open Sans', sans-serif;
-        background-color: #f0f2f5;
-        color: #333;
-    }
+body {
+	font-family: 'Noto Sans KR', 'Open Sans', sans-serif;
+	background-color: #f0f2f5;
+	color: #333;
+}
 
-    /* === [메인 레이아웃] 컨테이너 === */
-    .container {
-        max-width: 1400px !important;
-        width: 95%;
-        margin-top: 30px;
-        margin-bottom: 80px; /* 하단 여백 충분히 */
-        padding: 0;
-    }
+/* === [레이아웃 수정] 전체 컨테이너 === */
+.chat-layout-wrapper {
+	display: flex;
+	max-width: 1600px;
+	width: 95%;
+	/* margin을 조정하고 높이를 화면 크기의 85%로 설정하여 꽉 차게 보이도록 수정 */
+	margin: 20px auto;
+	gap: 20px;
+	height: 85vh; /* 기존 800px -> 85vh (화면 높이의 85%) */
+	min-height: 600px; /* 너무 작아지는 것 방지 */
+}
 
-    /* === 통합 인터페이스 카드 === */
-    .main-interface-card {
-        background: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        display: flex;
-        flex-direction: column;
-        min-height: 600px; /* 최소 높이만 지정 */
-        height: auto; /* 높이 자동 확장 */
-    }
+/* === 1. 사이드바 스타일 (신규 추가) === */
+.sidebar-area {
+	width: 280px;
+	background: #fff;
+	border-radius: 20px;
+	box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+}
 
-    /* 1. 채팅 영역 (내부 스크롤 제거) */
-    #chatBox {
-        background-color: #fff;
-        padding: 40px 30px; /* 상하 패딩 넉넉하게 */
-        overflow: visible; /* 스크롤바 제거, 다 보여주기 */
-        min-height: 200px;
-    }
+.btn-new-chat {
+	width: 100%;
+	padding: 12px;
+	background-color: #5ac4c9;
+	color: #fff;
+	border: none;
+	border-radius: 12px;
+	font-weight: 700;
+	margin-bottom: 20px;
+	transition: 0.2s;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+}
 
-    /* 말풍선 스타일 */
-    .msgContent {
-        display: inline-block;
-        padding: 12px 20px;
-        border-radius: 18px;
-        max-width: 80%;
-        text-align: left;
-        font-size: 16px;
-        line-height: 1.6;
-        position: relative;
-    }
-    .receiveMsg { text-align: left; margin-bottom: 25px; } /* 메시지 간 간격 확대 */
-    .receiveMsg .msgContent {
-        background-color: #f1f3f5;
-        color: #333;
-        border-radius: 4px 18px 18px 18px;
-    }
-    .sendMsg { text-align: end; margin-bottom: 25px; }
-    .sendMsg .msgContent {
-        background-color: #5ac4c9;
-        color: #fff;
-        border-radius: 18px 4px 18px 18px;
-        font-weight: 500;
-    }
+.btn-new-chat:hover {
+	background-color: #4aa0a5;
+}
 
-    /* 2. 선택 옵션 영역 (구분선 및 여백) */
-    #recommendationFormContainer {
-        background-color: #fcfcfc;
-        padding: 30px 30px;
-        border-top: 2px solid #f1f3f5; /* 채팅과 명확한 구분선 */
-        border-bottom: 1px solid #eee;
-    }
+.history-list {
+	flex: 1;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
 
-    .selection-label {
-        color: #555;
-        font-weight: 700;
-        font-size: 15px;
-        margin-bottom: 10px;
-        display: block;
-    }
+.history-item {
+	padding: 12px 15px;
+	border-radius: 10px;
+	background-color: #f8f9fa;
+	color: #555;
+	font-size: 14px;
+	cursor: pointer;
+	transition: 0.2s;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 
-    .selection-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 0;
-    }
+.history-item:hover {
+	background-color: #e9ecef;
+}
 
-    /* 버튼 스타일 */
-    .btn-option {
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 20px;
-        padding: 8px 16px;
-        font-size: 14px;
-        color: #555;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        outline: none;
-        font-weight: 500;
-    }
-    .btn-option:hover {
-        background-color: #f8f9fa;
-        border-color: #ccc;
-        color: #333;
-    }
-    .btn-option.active {
-        background-color: #5ac4c9;
-        border-color: #5ac4c9;
-        color: #fff;
-        font-weight: 700;
-        box-shadow: 0 2px 5px rgba(90, 196, 201, 0.3);
-    }
-    
-    input[type="date"] {
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 6px 12px;
-        color: #555;
-        font-family: 'Noto Sans KR', sans-serif;
-        font-size: 14px;
-        width: 100%;
-    }
+.history-item.active {
+	background-color: #e6f7ff;
+	color: #5ac4c9;
+	font-weight: bold;
+	border: 1px solid #5ac4c9;
+}
 
-    /* 3. 입력창 영역 (하단) */
-    .input-area-wrapper {
-        background-color: #fff;
-        padding: 20px 30px 30px 30px; /* 하단 여백 추가 */
-    }
+/* === 2. 메인 인터페이스 (기존 스타일 유지 + Flex 조정) === */
+.main-interface-card {
+	flex: 1; /* 남은 공간 차지 */
+	background: #ffffff;
+	border-radius: 20px;
+	box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+	display: flex;
+	flex-direction: column;
+	height: 100%; /* 부모 높이 상속 */
+	overflow: hidden;
+}
 
-    #fh5co-subscribe {
-        position: relative;
-        background: #f8f9fa;
-        border-radius: 30px;
-        padding: 5px;
-        border: 1px solid #e9ecef;
-        box-shadow: none;
-        display: flex;
-        align-items: center;
-    }
+/* 채팅 영역 (내부 스크롤) */
+#chatBox {
+	background-color: #fff;
+	padding: 40px 30px;
+	overflow-y: auto; /* 스크롤 활성화 */
+	flex: 1; /* 가변 높이 */
+}
 
-    #fh5co-subscribe .form-group {
-        width: 100%;
-        margin-bottom: 0;
-        display: flex;
-        align-items: center;
-    }
+/* 말풍선 스타일 (기존 유지) */
+.msgContent {
+	display: inline-block;
+	padding: 12px 20px;
+	border-radius: 18px;
+	max-width: 80%;
+	text-align: left;
+	font-size: 16px;
+	line-height: 1.6;
+}
 
-    #fh5co-subscribe .form-control {
-        width: 100%;
-        background-color: transparent;
-        border: none;
-        color: #333;
-        border-radius: 30px;
-        padding: 12px 20px;
-        box-shadow: none;
-        height: auto;
-        font-size: 15px;
-    }
-    
-    #fh5co-subscribe .form-control:focus {
-        outline: none;
-        box-shadow: none;
-    }
+.receiveMsg {
+	text-align: left;
+	margin-bottom: 25px;
+}
 
-    #fh5co-subscribe .btn-primary {
-        background-color: #5ac4c9;
-        border-color: #5ac4c9;
-        border-radius: 25px;
-        padding: 10px 25px;
-        margin-right: 5px;
-        font-weight: bold;
-        color: #fff;
-        border: none;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        transition: background-color 0.3s;
-        white-space: nowrap;
-        height: auto;
-    }
+.receiveMsg .msgContent {
+	background-color: #f1f3f5;
+	color: #333;
+	border-radius: 4px 18px 18px 18px;
+}
 
-    #fh5co-subscribe .btn-primary:hover {
-        background-color: #4aa0a5;
-    }
+.sendMsg {
+	text-align: end;
+	margin-bottom: 25px;
+}
 
-    #newSearchContainer {
-        padding: 15px 30px;
-        background-color: #fff;
-        border-top: 1px solid #eee;
-        text-align: center;
-    }
-    #newSearchContainer .btn-new-search {
-        background-color: #6c757d; color: #fff; border: none;
-        border-radius: 25px; padding: 10px 20px;
-        font-weight: bold; cursor: pointer; transition: 0.3s;
-        font-size: 14px;
-    }
-    #newSearchContainer .btn-new-search:hover { background-color: #5a6268; }
+.sendMsg .msgContent {
+	background-color: #5ac4c9;
+	color: #fff;
+	border-radius: 18px 4px 18px 18px;
+	font-weight: 500;
+}
 
-    /* 추천 카드 스타일 */
-    .recommendation-container {
-        display: flex; flex-direction: row; flex-wrap: wrap; gap: 20px; margin-top: 20px; width: 100%;
-    }
-    .recommendation-card {
-        background-color: #fff; 
-        border: 1px solid #eee; 
-        border-radius: 20px;
-        padding: 30px; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        flex: 1 1 300px; 
-        min-width: 300px; 
-        position: relative; 
-        overflow: hidden;
-    }
-    .recommendation-card::before {
-        content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background-color: #5ac4c9;
-    }
-    .rec-header { 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        margin-bottom: 20px; 
-        border-bottom: 1px solid #f0f0f0; 
-        padding-bottom: 15px; 
-    }
-    .rec-city { font-size: 20px; font-weight: 700; color: #222; }
-    .rec-country { 
-        font-size: 14px; 
-        color: #5ac4c9; 
-        background: rgba(90, 196, 201, 0.1); 
-        padding: 5px 12px; 
-        border-radius: 15px; 
-    }
-    
-    .rec-body p {
-        font-size: 16px;
-        color: #555;
-        line-height: 1.8; 
-        margin-bottom: 20px; 
-        word-break: keep-all; 
-    }
+/* 옵션 영역 (기존 유지) */
+#recommendationFormContainer {
+	background-color: #fcfcfc;
+	padding: 30px;
+	border-top: 2px solid #f1f3f5;
+	border-bottom: 1px solid #eee;
+	flex-shrink: 0; /* 크기 고정 */
+}
 
-    .rec-activities {
-        background-color: #f9fbfb;
-        padding: 20px; 
-        border-radius: 15px;
-        margin-bottom: 20px;
-    }
-    .rec-activities strong {
-        display: block;
-        margin-bottom: 12px;
-        font-size: 16px;
-        color: #333;
-    }
-    .rec-activities ul {
-        margin: 0;
-        padding-left: 20px;
-    }
-    .rec-activities li {
-        font-size: 15px;
-        color: #666;
-        margin-bottom: 8px; 
-        line-height: 1.6;
-    }
+.selection-label {
+	color: #555;
+	font-weight: 700;
+	font-size: 15px;
+	margin-bottom: 10px;
+	display: block;
+}
 
-    .btn-flight-search {
-        display: block; 
-        width: 100%; 
-        margin-top: 25px; 
-        padding: 15px;
-        background-color: #5ac4c9; 
-        color: #fff; 
-        border: none; 
-        border-radius: 12px;
-        font-weight: bold; 
-        cursor: pointer; 
-        font-size: 16px;
-        transition: background-color 0.3s;
-    }
-    .btn-flight-search:hover {
-        background-color: #4aa0a5;
-        text-decoration: none;
-        color: #fff;
-    }
+.selection-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 0;
+}
 
-    /* 로딩 모달 */
-    #flightSearchLoadingModal {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(0,0,0,0.6); z-index: 2000;
-        display: none; justify-content: center; align-items: center; flex-direction: column; color: #fff;
-        backdrop-filter: blur(4px);
-    }
-    #flightSearchLoadingModal .spinner-large { 
-        width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #5ac4c9;
-        border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
-    }
-    .spinner {
-        display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(0,0,0,.1); border-radius: 50%;
-        border-top-color: #5ac4c9; animation: spin 1s ease-in-out infinite; margin-right: 8px; vertical-align: middle;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+.btn-option {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 20px;
+	padding: 8px 16px;
+	font-size: 14px;
+	color: #555;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	outline: none;
+	font-weight: 500;
+}
+
+.btn-option:hover {
+	background-color: #f8f9fa;
+	border-color: #ccc;
+	color: #333;
+}
+
+.btn-option.active {
+	background-color: #5ac4c9;
+	border-color: #5ac4c9;
+	color: #fff;
+	font-weight: 700;
+	box-shadow: 0 2px 5px rgba(90, 196, 201, 0.3);
+}
+
+.btn-option:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+input[type="date"] {
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 6px 12px;
+	color: #555;
+	font-family: 'Noto Sans KR', sans-serif;
+	font-size: 14px;
+	width: 100%;
+}
+
+/* 입력창 영역 (기존 유지) */
+.input-area-wrapper {
+	background-color: #fff;
+	padding: 20px 30px 30px 30px;
+	flex-shrink: 0;
+}
+
+#fh5co-subscribe {
+	position: relative;
+	background: #f8f9fa;
+	border-radius: 30px;
+	padding: 5px;
+	border: 1px solid #e9ecef;
+	display: flex;
+	align-items: center;
+}
+
+#fh5co-subscribe .form-group {
+	width: 100%;
+	margin-bottom: 0;
+	display: flex;
+	align-items: center;
+}
+
+#fh5co-subscribe .form-control {
+	width: 100%;
+	background-color: transparent;
+	border: none;
+	color: #333;
+	border-radius: 30px;
+	padding: 12px 20px;
+	height: auto;
+	font-size: 15px;
+	box-shadow: none;
+}
+
+#fh5co-subscribe .form-control:focus {
+	outline: none;
+	box-shadow: none;
+}
+
+#fh5co-subscribe .btn-primary {
+	background-color: #5ac4c9;
+	border-color: #5ac4c9;
+	border-radius: 25px;
+	padding: 10px 25px;
+	margin-right: 5px;
+	font-weight: bold;
+	color: #fff;
+	border: none;
+	transition: background-color 0.3s;
+	white-space: nowrap;
+	height: auto;
+}
+
+#fh5co-subscribe .btn-primary:hover {
+	background-color: #4aa0a5;
+}
+
+/* 추천 카드 스타일 (기존 유지) */
+.recommendation-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 20px;
+	margin-top: 20px;
+	width: 100%;
+}
+
+.recommendation-card {
+	background-color: #fff;
+	border: 1px solid #eee;
+	border-radius: 20px;
+	padding: 30px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+	flex: 1 1 300px;
+	min-width: 300px;
+	position: relative;
+	overflow: hidden;
+}
+
+.recommendation-card::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 8px;
+	background-color: #5ac4c9;
+}
+
+.rec-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #f0f0f0;
+	padding-bottom: 15px;
+}
+
+.rec-city {
+	font-size: 20px;
+	font-weight: 700;
+	color: #222;
+}
+
+.rec-country {
+	font-size: 14px;
+	color: #5ac4c9;
+	background: rgba(90, 196, 201, 0.1);
+	padding: 5px 12px;
+	border-radius: 15px;
+}
+
+.rec-body p {
+	font-size: 16px;
+	color: #555;
+	line-height: 1.8;
+	margin-bottom: 20px;
+	word-break: keep-all;
+}
+
+.rec-activities {
+	background-color: #f9fbfb;
+	padding: 20px;
+	border-radius: 15px;
+	margin-bottom: 20px;
+}
+
+.rec-activities strong {
+	display: block;
+	margin-bottom: 12px;
+	font-size: 16px;
+	color: #333;
+}
+
+.rec-activities ul {
+	margin: 0;
+	padding-left: 20px;
+}
+
+.rec-activities li {
+	font-size: 15px;
+	color: #666;
+	margin-bottom: 8px;
+	line-height: 1.6;
+}
+
+.btn-flight-search {
+	display: block;
+	width: 100%;
+	margin-top: 25px;
+	padding: 15px;
+	background-color: #5ac4c9;
+	color: #fff;
+	border: none;
+	border-radius: 12px;
+	font-weight: bold;
+	cursor: pointer;
+	font-size: 16px;
+	transition: background-color 0.3s;
+}
+
+.btn-flight-search:hover {
+	background-color: #4aa0a5;
+	text-decoration: none;
+	color: #fff;
+}
+
+/* 로딩, 기타 유틸 (기존 유지) */
+#newSearchContainer {
+	padding: 15px 30px;
+	background-color: #fff;
+	border-top: 1px solid #eee;
+	text-align: center;
+}
+
+#newSearchContainer .btn-new-search {
+	background-color: #6c757d;
+	color: #fff;
+	border: none;
+	border-radius: 25px;
+	padding: 10px 20px;
+	font-weight: bold;
+	cursor: pointer;
+	transition: 0.3s;
+	font-size: 14px;
+}
+
+#flightSearchLoadingModal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	z-index: 2000;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	color: #fff;
+	backdrop-filter: blur(4px);
+}
+
+#flightSearchLoadingModal .spinner-large {
+	width: 50px;
+	height: 50px;
+	border: 5px solid #f3f3f3;
+	border-top: 5px solid #5ac4c9;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+	margin-bottom: 15px;
+}
+
+.spinner {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	border: 2px solid rgba(0, 0, 0, .1);
+	border-radius: 50%;
+	border-top-color: #5ac4c9;
+	animation: spin 1s ease-in-out infinite;
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>
 </head>
 <body>
-    <div id="flightSearchLoadingModal">
-        <div class="spinner-large"></div>
-        <p>항공권 페이지로 이동 중입니다...</p>
-    </div>
+	<div id="flightSearchLoadingModal">
+		<div class="spinner-large"></div>
+		<p>항공권 페이지로 이동 중입니다...</p>
+	</div>
 
-    <!-- 공통 헤더 적용 (activeMenu='chat'으로 설정하여 '여행 추천챗'에 불 들어오게 함) -->
-    <header th:replace="layout/header_fragment :: common-header(activeMenu='chat')"></header>
+	<header
+		th:replace="layout/header_fragment :: common-header(activeMenu='chat')"></header>
 
-    <div class="container">
-        <div class="main-interface-card">
-            
-            <!-- 1. 채팅창 (높이 무제한) -->
-            <div id="chatBox"></div>
+	<div class="chat-layout-wrapper">
 
-            <!-- 2. 선택 UI -->
-            <div id="recommendationFormContainer">
-                <input type="hidden" id="selectDeparture" value="ICN">
-                <input type="hidden" id="selectRegion" value="any">
-                <input type="hidden" id="selectTheme" value="any">
-                <input type="hidden" id="selectDuration" value="any">
-                <input type="hidden" id="selectBudget" value="any">
+		<aside class="sidebar-area">
+			<button class="btn-new-chat" onclick="startNewChat()">
+				<i class="bi bi-plus-lg"></i> 새로운 채팅
+			</button>
+			<div class="history-list" id="historyList">
+				<div
+					style="text-align: center; color: #999; margin-top: 20px; font-size: 13px;">
+					<div class="spinner"></div>
+					목록 불러오는 중...
+				</div>
+			</div>
+		</aside>
 
-                <div class="row" style="margin-bottom: 15px;">
-                    <div class="col-md-6 col-12 mb-3 mb-md-0">
-                        <label class="selection-label">🛫 어디서 출발하시나요?</label>
-                        <div class="selection-group" id="groupDeparture">
-                            <button type="button" class="btn-option active" data-value="ICN">인천</button>
-                            <button type="button" class="btn-option" data-value="GMP">김포</button>
-                            <button type="button" class="btn-option" data-value="PUS">김해</button>
-                            <button type="button" class="btn-option" data-value="CJU">제주</button>
-                            <button type="button" class="btn-option" data-value="TAE">대구</button>
-                            <button type="button" class="btn-option" data-value="RSU">여수</button>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-12">
-                        <label class="selection-label" for="inputDateUI">📅 언제 떠나시나요?</label>
-                        <input type="date" id="inputDateUI">
-                    </div>
-                </div>
+		<main class="main-interface-card">
 
-                <div class="row" style="margin-bottom: 15px;">
-                    <div class="col-md-6 col-12 mb-3 mb-md-0">
-                        <label class="selection-label">🌏 어디로 가고 싶으세요?</label>
-                        <div class="selection-group" id="groupRegion">
-                            <button type="button" class="btn-option active" data-value="any">어디든 좋아요</button>
-                            <button type="button" class="btn-option" data-value="asia">아시아</button>
-                            <button type="button" class="btn-option" data-value="europe">유럽</button>
-                            <button type="button" class="btn-option" data-value="america">미주</button>
-                            <button type="button" class="btn-option" data-value="oceania">오세아니아</button>
-                            <button type="button" class="btn-option" data-value="korea">국내</button>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-12">
-                        <label class="selection-label">🎡 어떤 여행을 원하세요?</label>
-                        <div class="selection-group" id="groupTheme">
-                            <button type="button" class="btn-option active" data-value="any">상관없어요</button>
-                            <button type="button" class="btn-option" data-value="healing">🏝 휴양/힐링</button>
-                            <button type="button" class="btn-option" data-value="food">🍜 미식</button>
-                            <button type="button" class="btn-option" data-value="tour">🏰 관광</button>
-                            <button type="button" class="btn-option" data-value="activity">🏄 액티비티</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 col-12 mb-3 mb-md-0">
-                        <label class="selection-label">🌙 여행 기간은?</label>
-                        <div class="selection-group" id="groupDuration">
-                            <button type="button" class="btn-option active" data-value="any">상관없어요</button>
-                            <button type="button" class="btn-option" data-value="1-2">1박 2일</button>
-                            <button type="button" class="btn-option" data-value="2-3">2박 3일</button>
-                            <button type="button" class="btn-option" data-value="3-4">3박 4일</button>
-                            <button type="button" class="btn-option" data-value="4-5">4박 5일</button>
-                            <button type="button" class="btn-option" data-value="long">6일 이상</button>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-12">
-                        <label class="selection-label">💰 1인당 예산은?</label>
-                        <div class="selection-group" id="groupBudget">
-                            <button type="button" class="btn-option active" data-value="any">상관없어요</button>
-                            <button type="button" class="btn-option" data-value="low">50만원 ↓</button>
-                            <button type="button" class="btn-option" data-value="medium">50~100만</button>
-                            <button type="button" class="btn-option" data-value="high">100~200만</button>
-                            <button type="button" class="btn-option" data-value="luxury">200만원 ↑</button>
-                        </div>
-                    </div>
+			<div id="chatBox">
+			<div class="receiveMsg">
+                <div class="msgContent">
+                    안녕하세요! '무성의 여행'입니다. ✈️<br>
+                    어떤 여행을 계획하고 계신가요?
                 </div>
             </div>
+			</div>
 
-            <div id="newSearchContainer" style="display: none;">
-                <button id="btnNewSearch" class="btn-new-search">🔄 새로운 여행 추천받기</button>
-            </div>
+			<div id="recommendationFormContainer">
+				<input type="hidden" id="selectDeparture" value="ICN"> <input
+					type="hidden" id="selectRegion" value="any"> <input
+					type="hidden" id="selectTheme" value="any"> <input
+					type="hidden" id="selectDuration" value="any"> <input
+					type="hidden" id="selectBudget" value="any">
 
-            <!-- 3. 입력창 (하단) -->
-            <div class="input-area-wrapper">
-                <form id="fh5co-subscribe">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="추가 요청 사항을 입력하세요 (예: 조용한 곳이 좋아)"> 
-                        <button type="submit" class="btn btn-primary" id="btnSendChat">
-                             전송 ✈️
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+				<div class="row" style="margin-bottom: 15px;">
+					<div class="col-md-6 col-12 mb-3 mb-md-0">
+						<label class="selection-label">🛫 어디서 출발하시나요?</label>
+						<div class="selection-group" id="groupDeparture">
+							<button type="button" class="btn-option active" data-value="ICN">인천</button>
+							<button type="button" class="btn-option" data-value="GMP">김포</button>
+							<button type="button" class="btn-option" data-value="PUS">김해</button>
+							<button type="button" class="btn-option" data-value="CJU">제주</button>
+							<button type="button" class="btn-option" data-value="TAE">대구</button>
+							<button type="button" class="btn-option" data-value="RSU">여수</button>
+						</div>
+					</div>
+					<div class="col-md-6 col-12">
+						<label class="selection-label" for="inputDateUI">📅 언제
+							떠나시나요?</label> <input type="date" id="inputDateUI">
+					</div>
+				</div>
 
-    <script src="js/jquery.min.js"></script>
-    <script src="js/jquery.easing.1.3.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.waypoints.min.js"></script>
-    <script src="js/simplyCountdown.js"></script>
-    <script src="js/main.js"></script>
-    <script type="text/javascript" src="/webjars/sockjs-client/1.5.1/sockjs.js"></script>
-    <script type="text/javascript" src="/webjars/stomp-websocket/2.3.4/stomp.js"></script>
+				<div class="row" style="margin-bottom: 15px;">
+					<div class="col-md-6 col-12 mb-3 mb-md-0">
+						<label class="selection-label">🌏 어디로 가고 싶으세요?</label>
+						<div class="selection-group" id="groupRegion">
+							<button type="button" class="btn-option active" data-value="any">어디든
+								좋아요</button>
+							<button type="button" class="btn-option" data-value="asia">아시아</button>
+							<button type="button" class="btn-option" data-value="europe">유럽</button>
+							<button type="button" class="btn-option" data-value="america">미주</button>
+							<button type="button" class="btn-option" data-value="oceania">오세아니아</button>
+							<button type="button" class="btn-option" data-value="korea">국내</button>
+						</div>
+					</div>
+					<div class="col-md-6 col-12">
+						<label class="selection-label">🎡 어떤 여행을 원하세요?</label>
+						<div class="selection-group" id="groupTheme">
+							<button type="button" class="btn-option active" data-value="any">상관없어요</button>
+							<button type="button" class="btn-option" data-value="healing">🏝
+								휴양/힐링</button>
+							<button type="button" class="btn-option" data-value="food">🍜
+								미식</button>
+							<button type="button" class="btn-option" data-value="tour">🏰
+								관광</button>
+							<button type="button" class="btn-option" data-value="activity">🏄
+								액티비티</button>
+						</div>
+					</div>
+				</div>
 
-    <script>
+				<div class="row">
+					<div class="col-md-6 col-12 mb-3 mb-md-0">
+						<label class="selection-label">🌙 여행 기간은?</label>
+						<div class="selection-group" id="groupDuration">
+							<button type="button" class="btn-option active" data-value="any">상관없어요</button>
+							<button type="button" class="btn-option" data-value="1-2">1박
+								2일</button>
+							<button type="button" class="btn-option" data-value="2-3">2박
+								3일</button>
+							<button type="button" class="btn-option" data-value="3-4">3박
+								4일</button>
+							<button type="button" class="btn-option" data-value="4-5">4박
+								5일</button>
+							<button type="button" class="btn-option" data-value="long">6일
+								이상</button>
+						</div>
+					</div>
+					<div class="col-md-6 col-12">
+						<label class="selection-label">💰 1인당 예산은?</label>
+						<div class="selection-group" id="groupBudget">
+							<button type="button" class="btn-option active" data-value="any">상관없어요</button>
+							<button type="button" class="btn-option" data-value="low">50만원
+								↓</button>
+							<button type="button" class="btn-option" data-value="medium">50~100만</button>
+							<button type="button" class="btn-option" data-value="high">100~200만</button>
+							<button type="button" class="btn-option" data-value="luxury">200만원
+								↑</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="newSearchContainer" style="display: none;">
+				<button id="btnNewSearch" class="btn-new-search">🔄 새로운 여행
+					추천받기</button>
+			</div>
+
+			<div class="input-area-wrapper">
+				<form id="fh5co-subscribe">
+					<div class="form-group">
+						<input type="text" class="form-control"
+							placeholder="추가 요청 사항을 입력하세요 (예: 조용한 곳이 좋아)">
+						<button type="submit" class="btn btn-primary" id="btnSendChat">
+							전송 ✈️</button>
+					</div>
+				</form>
+			</div>
+		</main>
+	</div>
+
+	<script src="js/jquery.min.js"></script>
+	<script src="js/jquery.easing.1.3.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery.waypoints.min.js"></script>
+	<script src="js/simplyCountdown.js"></script>
+	<script src="js/main.js"></script>
+	<script type="text/javascript"
+		src="/webjars/sockjs-client/1.5.1/sockjs.js"></script>
+	<script type="text/javascript"
+		src="/webjars/stomp-websocket/2.3.4/stomp.js"></script>
+
+	<script>
     let stompClient = null;
+    let currentRoomId = null; // 현재 방 ID
+    let chatMode = 'recommend'; 
+    let localConversationHistory = []; // 문맥 유지용
+
     const chatBox = document.getElementById('chatBox');
+    const historyList = document.getElementById('historyList');
     const messageInput = document.querySelector('#fh5co-subscribe .form-control');
     const sendButton = document.getElementById('btnSendChat'); 
-    const newSearchButton = document.getElementById('btnNewSearch'); 
-    
-    let localConversationHistory = [];
+    const newSearchButton = document.getElementById('btnNewSearch');
     const flightSearchLoadingModal = document.getElementById('flightSearchLoadingModal');
-    
-    let chatMode = 'recommend'; 
 
+    // 출발지별 선택 가능한 지역
     const departurePermissions = {
         'ICN': ['any', 'asia', 'europe', 'america', 'oceania', 'korea'],
         'GMP': ['asia', 'korea'],
@@ -463,6 +640,265 @@
         'RSU': ['korea']
     };
 
+    document.addEventListener('DOMContentLoaded', () => {
+        // 날짜 오늘로 설정
+        const dateInput = document.getElementById('inputDateUI');
+        if (dateInput) {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const todayString = `${year}-${month}-${day}`;
+            dateInput.value = todayString;
+            dateInput.setAttribute('min', todayString);
+        }
+
+        setupOptionButtons();
+        updateRegionOptions(); 
+        
+        // [핵심] 사이드바 목록 로드
+        loadChatRooms();
+        
+        // 소켓 연결
+        connect();
+    });
+
+    // 1. 사이드바 채팅방 목록 로드 (수정됨)
+    async function loadChatRooms() {
+        try {
+            const res = await fetch('/chat/rooms');
+            if(res.ok) {
+                const rooms = await res.json();
+                renderSidebar(rooms);
+            }
+        } catch(e) {
+            console.error(e);
+            historyList.innerHTML = '<div style="padding:15px; text-align:center; font-size:13px; color:#aaa;">목록을 불러올 수 없습니다.</div>';
+        }
+    }
+
+    function renderSidebar(rooms) {
+        historyList.innerHTML = '';
+        if(!rooms || rooms.length === 0) {
+            historyList.innerHTML = '<div style="padding:20px; text-align:center; color:#ccc; font-size:13px;">기록 없음</div>';
+            return;
+        }
+
+        rooms.forEach(room => {
+            const div = document.createElement('div');
+            div.className = 'history-item';
+            if(room.id === currentRoomId) div.classList.add('active');
+            
+            // 날짜는 포맷팅 (YYYY-MM-DD 만 표시하거나 제거 가능)
+            // 제목(Region - Theme)을 강조해서 보여줌
+            div.innerHTML = `
+                <div style="font-weight:700; font-size:15px; color:#333; margin-bottom:4px;">
+                    ${room.title}
+                </div>
+                <div style="font-size:12px; color:#888;">
+                    ${room.date ? room.date.split(' ')[0] : '날짜 없음'}
+                </div>
+            `;
+            
+            div.onclick = () => loadRoomChat(room.id);
+            historyList.appendChild(div);
+        });
+    }
+
+    // 2. 특정 채팅방 클릭 시 내용 로드
+    async function loadRoomChat(roomId) {
+        if(currentRoomId === roomId) return;
+        currentRoomId = roomId;
+
+        chatBox.innerHTML = '';
+        setChatMode('follow-up'); // 기존 대화는 바로 질문 모드
+        
+        // 사이드바 UI 갱신
+        document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+        // active 클래스 다시 부여를 위해 목록 재로드 (간편함)
+        loadChatRooms();
+
+        try {
+            const res = await fetch('/chat/messages?roomId=' + roomId);
+            const messages = await res.json();
+            
+            // 문맥 초기화 후 다시 쌓기
+            localConversationHistory = [];
+
+            messages.forEach(msg => {
+                // 문맥에 추가
+                if(msg.sender === 'AI') {
+                    try {
+                        const data = JSON.parse(msg.content);
+                        displayMessage('AI', data);
+                        localConversationHistory.push({ sender: "AI", content: msg.content });
+                    } catch(e) {
+                        displayMessage('AI', { chat_response: msg.content });
+                        localConversationHistory.push({ sender: "AI", content: msg.content });
+                    }
+                } else {
+                    displayMessage('user', msg.content);
+                    localConversationHistory.push({ sender: "user", content: msg.content });
+                }
+            });
+            scrollToBottom();
+        } catch(e) {
+            console.error(e);
+        }
+    }
+
+    // 3. 새 채팅 시작
+    function startNewChat() {
+        currentRoomId = null;
+        localConversationHistory = [];
+        chatBox.innerHTML = `
+            <div class="receiveMsg">
+                <div class="msgContent">
+                    안녕하세요! '무성의 여행'입니다. ✈️<br>
+                    어떤 여행을 계획하고 계신가요?
+                </div>
+            </div>`;
+        setChatMode('recommend');
+        document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+    }
+
+ // 4. 소켓 연결 함수 수정
+    function connect() {
+        const socket = new SockJS('/ws-chatin');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function(frame) {
+            stompClient.subscribe('/user/queue/reply', function(message) {
+                const payload = JSON.parse(message.body);
+                
+                // [중요] 첫 질문 시 방 생성된 경우 ID 업데이트
+                if(currentRoomId === null && payload.roomId) {
+                    currentRoomId = payload.roomId;
+                    loadChatRooms(); // 사이드바 갱신
+                }
+
+                // ============================================================
+                // [추가된 코드] AI 응답이 오면 즉시 '질문 모드'로 변경하여 조건창 숨김
+                // ============================================================
+                if (chatMode === 'recommend') {
+                    setChatMode('follow-up'); 
+                }
+                // ============================================================
+
+                try {
+                    const aiData = JSON.parse(payload.content);
+                    displayMessage('AI', aiData);
+                    localConversationHistory.push({ sender: "AI", content: payload.content });
+                } catch(e) {
+                    displayMessage('AI', { chat_response: payload.content });
+                    localConversationHistory.push({ sender: "AI", content: payload.content });
+                }
+                
+                // 로딩 메시지 제거
+                const loaders = document.querySelectorAll('.loading-msg');
+                loaders.forEach(l => l.remove());
+                
+                // 스크롤 최하단으로 이동
+                setTimeout(scrollToBottom, 100); 
+            });
+        });
+    }
+
+    sendButton.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', (e) => { if(e.key==='Enter') { e.preventDefault(); sendMessage(e); }});
+
+    function sendMessage(event) {
+        if(event) event.preventDefault();
+        const text = messageInput.value.trim();
+        
+        if(chatMode === 'recommend' && text === '') { /* 패스 */ }
+        else if(text === '') return;
+
+        let contentToSend = text;
+        
+        // [중요] 메시지 형식을 '키: 값' 형태로 변경하여 서버가 파싱하기 쉽게 만듦
+        if(chatMode === 'recommend') {
+            const date = document.getElementById('inputDateUI').value;
+            if(!date) { alert('날짜를 선택해주세요'); return; }
+            
+            const getVal = (id) => document.querySelector(`#${id} .active`)?.textContent || '선택안함';
+            
+            // 변경된 포맷: "지역: 아시아, 테마: 힐링" 형태로 전송
+            contentToSend = `[조건] 출발지: ${getVal('groupDeparture')}, 날짜: ${date}, 지역: ${getVal('groupRegion')}, 테마: ${getVal('groupTheme')}, 기간: ${getVal('groupDuration')}, 예산: ${getVal('groupBudget')} \n[추가요청] ${text}`;
+        }
+
+        if(text) displayMessage('user', text);
+        messageInput.value = '';
+
+        chatBox.insertAdjacentHTML('beforeend', `<div class="receiveMsg loading-msg"><div class="msgContent"><div class="spinner"></div> 작성 중...</div></div>`);
+        scrollToBottom();
+
+        localConversationHistory.push({ sender: "user", content: contentToSend });
+
+        const payload = {
+            roomId: currentRoomId,
+            type: chatMode,
+            content: contentToSend,
+            history: localConversationHistory
+        };
+        if(stompClient) stompClient.send("/app/sendMessage", {}, JSON.stringify(payload));
+    }
+    // === UI 유틸리티 (기존 기능 복원) ===
+
+    function displayMessage(sender, data) {
+        const isUser = sender.toLowerCase() === 'user';
+        const className = isUser ? 'sendMsg' : 'receiveMsg';
+        
+        let html = '';
+        if(isUser) {
+            html = data; 
+        } else {
+            if(data.chat_response) html += `<div>${data.chat_response.replace(/\n/g, '<br>')}</div>`;
+            if(data.recommendations) {
+                html += `<div class="recommendation-container" style="margin-top:15px;">`;
+                data.recommendations.forEach((rec, idx) => {
+                    html += `
+                        <div class="recommendation-card">
+                            <div class="rec-header">
+                                <span class="rec-city">${idx+1}. ${rec.city}</span>
+                                <span class="rec-country">${rec.country}</span>
+                            </div>
+                            <p style="font-size:14px; color:#666;">${rec.reason}</p>
+                            ${rec.activities ? `<div class="rec-activities"><strong>즐길거리:</strong><ul>${rec.activities.map(a=>`<li>${a}</li>`).join('')}</ul></div>` : ''}
+                            ${rec.iataCode ? `<button class="btn-flight-search" onclick="searchFlights('${rec.iataCode}','${rec.city}')">✈️ 항공권 조회</button>` : ''}
+                        </div>`;
+                });
+                html += `</div>`;
+            }
+        }
+
+        const div = document.createElement('div');
+        div.className = className;
+        div.innerHTML = `<div class="msgContent">${html}</div>`;
+        chatBox.appendChild(div);
+        scrollToBottom();
+    }
+
+    function setChatMode(mode) {
+        chatMode = mode;
+        const form = document.getElementById('recommendationFormContainer');
+        const newBtn = document.getElementById('newSearchContainer');
+        
+        if(mode === 'recommend') {
+            form.style.display = 'block';
+            newBtn.style.display = 'none';
+            messageInput.placeholder = '추가 요청사항 (예: 조용한 곳이 좋아)';
+        } else {
+            form.style.display = 'none';
+            newBtn.style.display = 'block';
+            messageInput.placeholder = '추천 여행지에 대해 물어보세요...';
+        }
+    }
+
+    newSearchButton.addEventListener('click', () => {
+        setChatMode('recommend');
+    });
+
+    // [중요] 옵션 버튼 설정 (기존 로직 유지)
     function setupOptionButtons() {
         const groups = [
             { groupId: 'groupDeparture', inputId: 'selectDeparture', callback: updateRegionOptions }, 
@@ -489,21 +925,22 @@
     }
 
     function updateRegionOptions() {
-        const departureValue = document.getElementById('selectDeparture').value;
+        const dep = document.getElementById('selectDeparture').value;
+        const allow = departurePermissions[dep] || [];
         const regionContainer = document.getElementById('groupRegion');
         const regionButtons = regionContainer.querySelectorAll('.btn-option');
-        const allowedRegions = departurePermissions[departureValue] || [];
+        
         let isCurrentSelectionInvalid = false;
 
         regionButtons.forEach(btn => {
-            const regionCode = btn.getAttribute('data-value');
-            if (allowedRegions.includes(regionCode)) {
+            const val = btn.getAttribute('data-value');
+            if(allow.includes(val)) {
                 btn.disabled = false;
                 btn.classList.remove('disabled');
             } else {
                 btn.disabled = true;
                 btn.classList.add('disabled');
-                if (btn.classList.contains('active')) {
+                if(btn.classList.contains('active')) {
                     isCurrentSelectionInvalid = true;
                     btn.classList.remove('active');
                 }
@@ -519,225 +956,11 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const dateInput = document.getElementById('inputDateUI');
-        if (dateInput) {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            const todayString = `${year}-${month}-${day}`;
-            dateInput.value = todayString;
-            dateInput.setAttribute('min', todayString);
-        }
-
-        loadChatHistory(); 
-        setupOptionButtons();
-        updateRegionOptions(); 
-    });
-
-    sendButton.addEventListener('click', sendMessage, true);
-    messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            sendMessage(e);
-        }
-    });
-    newSearchButton.addEventListener('click', function() {
-        setChatMode('recommend');
-    });
-
-    async function loadChatHistory() {
-        try {
-            const response = await fetch('/chat/history');
-            if (!response.ok) throw new Error('History fetch failed');
-            const history = await response.json();
-            localConversationHistory = history;
-            history.forEach(message => {
-                if (message.sender.toLowerCase() === 'ai') {
-                    try {
-                        const aiData = JSON.parse(message.content);
-                        displayMessage(message.sender, aiData);
-                    } catch (e) {
-                        displayMessage(message.sender, { chat_response: message.content });
-                    }
-                }
-            });
-        } catch (error) {
-            console.error('Error loading chat history:', error);
-        } finally {
-            connect();
-        }
+    function scrollToBottom() {
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
-
-    function connect() {
-        const socket = new SockJS('/ws-chatin');
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, function(frame) {
-            stompClient.subscribe('/user/queue/reply', function(message) {
-                removeLoadingIndicator();
-                const chatMessagePayload = JSON.parse(message.body);
-                const aiRawJson = chatMessagePayload.content;
-                try {
-                    const aiData = JSON.parse(aiRawJson);
-                    displayMessage("AI", aiData); 
-                    localConversationHistory.push({
-                        sender: "AI",
-                        content: aiRawJson
-                    });
-                } catch (e) {
-                    console.error("JSON Parsing Error:", e);
-                    const errorData = { chat_response: aiRawJson }; 
-                    displayMessage("AI", errorData);
-                }
-            });
-        });
-    }
-
-    function sendMessage(event) {
-        event.preventDefault();
-        const userText = messageInput.value.trim();
-        let llmPrompt; 
-        let userDisplayMessage; 
-        let messageType = chatMode; 
-
-        if (chatMode === 'recommend') {
-            const departureDate = document.getElementById('inputDateUI').value;
-            const getActiveText = (groupId) => {
-                const activeBtn = document.querySelector(`#${groupId} .btn-option.active`);
-                return activeBtn ? activeBtn.textContent : "선택 안함";
-            };
-            
-            if (!departureDate) {
-                alert('출발 날짜를 선택해주세요.');
-                return;
-            }
-            
-            const departure = getActiveText('groupDeparture');
-            const region = getActiveText('groupRegion');
-            const theme = getActiveText('groupTheme');
-            const duration = getActiveText('groupDuration');
-            const budget = getActiveText('groupBudget');
-
-            llmPrompt = `[선택 조건] - 출발지: ${departure}, 출발 날짜: ${departureDate}, 지역: ${region}, 테마: ${theme}, 기간: ${duration}, 경비: ${budget} \n[사용자 추가 요청] - ${userText}`;
-            userDisplayMessage = userText || "여행지 추천해줘"; 
-        } else {
-            if (!userText) {
-                alert('질문을 입력해주세요.');
-                return;
-            }
-            llmPrompt = userText;
-            userDisplayMessage = userText;
-        }
-
-        if (stompClient) {
-            displayMessage("user", userDisplayMessage);
-            displayLoadingIndicator(); 
-
-            localConversationHistory.push({ sender: "user", content: llmPrompt });
-            const payload = { type: messageType, content: llmPrompt, history: localConversationHistory };
-            stompClient.send("/app/sendMessage", {}, JSON.stringify(payload));
-            messageInput.value = '';
-        }
-    }
-
-    function displayMessage(sender, content) {
-        const messageElement = document.createElement('div');
-        let messageHTML = '';
-
-        if (sender.toLowerCase() === 'ai') {
-            messageElement.classList.add('receiveMsg');
-
-            let aiData = content;
-            if (typeof content === 'string') {
-                try { aiData = JSON.parse(content); } catch (e) { aiData = { chat_response: content }; }
-            }
-
-            let htmlContent = '';
-            if (aiData.chat_response) {
-                htmlContent += `<div>${aiData.chat_response.replace(/\n/g, '<br>')}</div>`;
-            }
-
-            if (aiData.recommendations && Array.isArray(aiData.recommendations) && aiData.recommendations.length > 0) {
-                htmlContent += `<div class="recommendation-container">`;
-                aiData.recommendations.forEach((rec, index) => {
-                    htmlContent += `
-                        <div class="recommendation-card">
-                            <div class="rec-header">
-                                <span class="rec-city">${index + 1}. ${rec.city}</span>
-                                <span class="rec-country">${rec.country}</span>
-                            </div>
-                            <div class="rec-body">
-                                <p><b>💡 추천 이유:</b> ${rec.reason}</p>
-                            </div>
-                            ${rec.activities && rec.activities.length > 0 ? `
-                                <div class="rec-activities">
-                                    <strong>✨ 즐길거리:</strong>
-                                    <ul>
-                                        ${rec.activities.map(act => `<li>${act}</li>`).join('')}
-                                    </ul>
-                                </div>
-                            ` : ''}
-                            ${rec.iataCode && rec.iataCode !== "N/A" ? `
-                                <button class="btn-flight-search" 
-                                        onclick="searchFlights('${rec.iataCode}', '${rec.city}')">
-                                    ✈️ ${rec.city} 항공권 조회
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
-                });
-                htmlContent += `</div>`;
-                setChatMode('follow-up'); 
-            }
-
-            messageHTML = `<div><div class="msgContent">${htmlContent}</div></div>`;
-
-        } else { 
-            messageElement.classList.add('sendMsg');
-            const userContent = content || "(내용 없음)";
-            messageHTML = `<div><div class="msgContent">${userContent.replace(/\n/g, '<br>')}</div></div>`;
-        }
-
-        messageElement.innerHTML = messageHTML;
-        chatBox.appendChild(messageElement);
-        
-        // [수정] 화면 전체를 아래로 스크롤 (채팅창 내부 스크롤 아님)
-        window.scrollTo(0, document.body.scrollHeight);
-    }
-
-    function setChatMode(mode) {
-        const recommendContainer = document.getElementById('recommendationFormContainer');
-        const newSearchContainer = document.getElementById('newSearchContainer');
-        
-        chatMode = mode;
-        if (mode === 'follow-up') {
-            if(recommendContainer) recommendContainer.style.display = 'none';
-            if(newSearchContainer) newSearchContainer.style.display = 'block';
-            messageInput.placeholder = '추천 여행지에 대해 궁금한 점을 물어보세요...';
-        } else { 
-            if(recommendContainer) recommendContainer.style.display = 'block';
-            if(newSearchContainer) newSearchContainer.style.display = 'none';
-            messageInput.placeholder = '추가 요청 사항을 입력하세요';
-        }
-    }
-
-    function displayLoadingIndicator() {
-        removeLoadingIndicator();
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('receiveMsg');
-        messageElement.id = 'loadingIndicator';
-        messageElement.innerHTML = `<div><div class="msgContent" style="background:#f8f9fa;"> <div class="spinner"></div> 여행지를 찾고 있습니다...</div></div>`;
-        chatBox.appendChild(messageElement);
-        // [수정] 로딩 시에도 화면 아래로
-        window.scrollTo(0, document.body.scrollHeight);
-    }
-
-    function removeLoadingIndicator() {
-        const loader = document.getElementById('loadingIndicator');
-        if (loader) loader.remove();
-    }
-
+    
+    // [중요] 항공권 검색 (기존 로직 복원)
     function searchFlights(arrivalCode, arrivalCityName) {
         if (flightSearchLoadingModal) flightSearchLoadingModal.style.display = 'flex';
         
@@ -788,6 +1011,6 @@
     window.onbeforeunload = function() {
         if (stompClient !== null) stompClient.disconnect();
     };
-</script>
+    </script>
 </body>
 </html>

@@ -7,7 +7,7 @@
 <title
 	th:text="${viewType == 'cancelled' ? '무성의 여행 - 취소 내역' : '무성의 여행 - 예약 내역'}">무성의
 	여행 예약 내역</title>
-	
+
 <!-- 공통 헤드 (폰트, 기본 스타일 등) 가져오기 -->
 <th:block th:replace="layout/header_fragment :: common-head"></th:block>
 
@@ -17,7 +17,7 @@
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
 .moana_gnb a {
-    text-decoration: none !important;
+	text-decoration: none !important;
 }
 
 .main-container {
@@ -341,35 +341,39 @@
 .spinner {
 	width: 50px;
 	height: 50px;
-	border: 5px solid #f0f0f0; 
-	border-top: 5px solid #5ac4c9; 
+	border: 5px solid #f0f0f0;
+	border-top: 5px solid #5ac4c9;
 	border-radius: 50%;
 	animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-
 .spinner-container {
 	display: flex;
-	flex-direction: column; 
-	align-items: center;    
-	gap: 16px;              
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
 }
 
 .spinner-text {
 	font-size: 18px;
 	font-weight: bold;
-	color: #ffffff; 
-	margin: 0; 
+	color: #ffffff;
+	margin: 0;
 }
 </style>
 </head>
 <body>
-    <!-- 공통 헤더 적용 (예약 내역 페이지이므로 activeMenu는 비워둠) -->
-	<header th:replace="layout/header_fragment :: common-header(activeMenu='')"></header>
+	<!-- 공통 헤더 적용 (예약 내역 페이지이므로 activeMenu는 비워둠) -->
+	<header
+		th:replace="layout/header_fragment :: common-header(activeMenu='')"></header>
 
 	<main class="main-container">
 
@@ -466,17 +470,24 @@
 						<span>총 결제 금액</span> <strong
 							th:text="${#numbers.formatInteger(booking.totalPrice, 0, 'COMMA')} + '원'">183,579원</strong>
 					</div>
-					
-					<div class="action-buttons" style="display: flex; gap: 8px;">
+
+					<div class="action-buttons"
+						style="display: flex; gap: 8px; align-items: center;">
+
 						<button class="btn-cancel"
-							th:if="${booking.bookingStatus == 'RESERVED'}"
+							th:if="${booking.bookingStatus == 'RESERVED' and booking.departureTime.isAfter(T(java.time.LocalDateTime).now())}"
 							th:onclick="openCancelModal([[${booking.id}]])">예약 취소</button>
-						
+
+						<span
+							th:if="${booking.bookingStatus == 'RESERVED' and !booking.departureTime.isAfter(T(java.time.LocalDateTime).now())}"
+							style="color: #999; font-size: 13px; font-weight: 600; margin-right: 5px;">
+							이용 완료 </span>
+
 						<button type="button" class="btn-rebook"
-							th:onclick="showNearbyHotels([[${booking.departureDestinationCode}]])">근처 호텔</button>
+							th:onclick="showNearbyHotels([[${booking.departureDestinationCode}]])">근처
+							호텔</button>
 					</div>
 				</th:block>
-
 				<th:block th:if="${viewType == 'cancelled'}">
 					<div class="total-price">
 						<span>(취소된 결제 금액)</span> <strong
@@ -529,15 +540,15 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<div id="spinnerModal" class="modal-overlay" style="display: none;">
-		
+
 		<div class="spinner-container">
-			
+
 			<div class="spinner"></div>
-			
+
 			<p class="spinner-text">근처 호텔 찾는 중...</p>
-			
+
 		</div>
 	</div>
 
@@ -563,7 +574,7 @@
 		function closeModal(modalId) {
 			document.getElementById(modalId).style.display = 'none';
 		}
-		
+
 		function showSpinner() {
 			document.getElementById('spinnerModal').style.display = 'flex';
 		}
@@ -577,14 +588,16 @@
 		 * '근처 호텔' 버튼 클릭 시 실행되는 비동기 함수
 		 * @param {string} destinationCode - 도착지 IATA 코드 (예: 'KIX')
 		 */
-		async function showNearbyHotels(destinationCode) {
-			
+		
+		 async function showNearbyHotels(destinationCode) {
+
 			// 1. 스피너 표시
 			showSpinner();
 
 			try {
 				// 2. API 요청 (fetch 사용)
-				const response = await fetch('/hotel/List?destination=' + destinationCode);
+				const response = await
+				fetch('/hotel/List?destination=' + destinationCode);
 
 				// 3. 응답 확인
 				if (!response.ok) {
@@ -594,15 +607,16 @@
 
 				// 4. 요청 성공
 				console.log('API 요청 성공. 호텔 페이지로 이동합니다.');
-				
+
 				// 5. 페이지 이동
-				window.location.href = '/hotel/List?destination=' + destinationCode;
+				window.location.href = '/hotel/List?destination='
+						+ destinationCode;
 
 			} catch (error) {
 				// 6. 에러 처리
 				console.error('호텔 정보 요청 중 오류 발생:', error);
 				alert('페이지를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.');
-				
+
 				// 7. 실패 시에는 스피너 숨김
 				hideSpinner();
 			}

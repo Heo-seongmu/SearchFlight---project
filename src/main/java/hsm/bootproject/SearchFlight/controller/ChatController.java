@@ -1,74 +1,56 @@
-package hsm.bootproject.SearchFlight.controller; // 패키지명은 그대로 둡니다.
+package hsm.bootproject.SearchFlight.controller;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired; 
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor; 
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties; 
-import com.fasterxml.jackson.databind.ObjectMapper; 
-
 import hsm.bootproject.SearchFlight.Service.ChatService;
-import hsm.bootproject.SearchFlight.domain.Member; 
+import hsm.bootproject.SearchFlight.domain.Member;
 import hsm.bootproject.SearchFlight.dto.chatMessageDto;
 import lombok.Getter;
 import lombok.Setter;
 
 @Controller
 public class ChatController {
-	
-	
-	@Autowired
-	private ChatService chatService; 
-	
-	@Autowired
-	private ObjectMapper objectMapper; 
 
-	@Autowired // 생성자 주입 방식
-	public ChatController(ChatService chatService, ObjectMapper objectMapper) {
-		this.chatService = chatService;
-		this.objectMapper = objectMapper;
-	}
-	
-	@Getter @Setter
+    @Autowired
+    private ChatService chatService;
+
+    // === DTO 정의 (Inner Class) ===
+    
+    @Getter
+    @Setter
     public static class InboundChatPayload {
-        private String type; // [수정됨] 'recommend' or 'follow-up'
-        private String content; 
-        private List<chatMessageDto> history;
+        private Long roomId;          // 현재 채팅방 ID (없으면 null)
+        private String type;          // 'recommend' 또는 'follow-up'
+        private String content;       // 사용자 질문 내용
+        private List<chatMessageDto> history; // 비로그인 유저를 위한 대화 기록
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
     public static class OutboundChatPayload {
-        private String content;
-        private String sender;
-        public OutboundChatPayload(String content, String sender) {
+        private Long roomId;          // 처리된 채팅방 ID (새로 생성되었을 수 있음)
+        private String content;       // AI 응답 내용
+        private String sender;        // "AI"
+
+        public OutboundChatPayload(Long roomId, String content, String sender) {
+            this.roomId = roomId;
             this.content = content;
             this.sender = sender;
         }
     }
 
-	@Getter @Setter
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class GeminiJsonResponse {
-        // (이 DTO는 참고용으로 유지)
-        private String city;
-        private String country;
-        private String reason;
-        private List<String> activities;
-        private String chat_response;
-        
-        public GeminiJsonResponse() {} // 기본 생성자
-    }
-
-
     @MessageMapping("/sendMessage")
     @SendToUser("/queue/reply")
     public OutboundChatPayload sendMessage(@Payload InboundChatPayload payload, SimpMessageHeaderAccessor headerAccessor) throws Exception {
         
-        // 1. WebSocket 세션에서 사용자 ID 가져오기 (기존 로직 유지)
+        // 1. 세션에서 로그인한 사용자 정보 가져오기
         String userId = null;
         try {
             Member loginUser = (Member) headerAccessor.getSessionAttributes().get("loginUser");
@@ -80,22 +62,27 @@ public class ChatController {
         }
 
         try {
-            // 2. [수정됨] ChatService 호출 시 payload.getType() 전달
-            String geminiRawResponse = chatService.processMessage(
-                userId, 
-                payload.getContent(), 
-                payload.getHistory(),
-                payload.getType() // <-- [수정] type 전달
+            // 2. 서비스 호출
+            // ChatService.processMessage 메서드의 파라미터 순서: 
+            // (userId, content, clientHistory, roomId, type)
+            // 여기서 payload.getHistory()가 빠져서 오류가 났었습니다. 추가했습니다.
+            ChatService.ProcessedChatResult result = chatService.processMessage(
+                userId,                 // 사용자 ID (String)
+                payload.getContent(),   // 메시지 내용 (String)
+                payload.getHistory(),   // 클라이언트 측 대화 내역 (List<chatMessageDto>) -> 비로그인 시 사용
+                payload.getRoomId(),    // 채팅방 번호 (Long)
+                payload.getType()       // 질문 타입 (String)
             );
 
-            // 3. JSON 원본 문자열을 그대로 클라이언트로 전송 (기존 로직 유지)
-            return new OutboundChatPayload(geminiRawResponse, "AI");
+            // 3. 결과 반환
+            // 서비스가 반환한 roomId(새로 생성되었거나 기존 ID)를 프론트로 다시 보내줍니다.
+            return new OutboundChatPayload(result.getRoomId(), result.getAiResponse(), "AI");
 
         } catch (Exception e) {
             e.printStackTrace();
-            // 5. 컨트롤러 레벨의 에러 발생 시 (기존 로직 유지)
+            // 에러 발생 시 처리
             String errorJson = "{\"chat_response\": \"죄송합니다, 서버 내부 오류가 발생했습니다.\"}";
-            return new OutboundChatPayload(errorJson, "AI");
+            return new OutboundChatPayload(null, errorJson, "AI");
         }
     }
 }

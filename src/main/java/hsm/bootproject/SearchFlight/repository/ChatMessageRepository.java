@@ -8,4 +8,6 @@ import java.util.List;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
     // 특정 회원의 채팅 내역을 시간순으로 정렬하여 모두 조회
     List<ChatMessage> findByMemberOrderByCreatedAtAsc(Member member);
+    
+    
 }

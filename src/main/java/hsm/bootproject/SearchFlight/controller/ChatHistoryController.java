@@ -5,44 +5,38 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import hsm.bootproject.SearchFlight.Service.ChatService;
-import hsm.bootproject.SearchFlight.domain.Member; // [추가] Member 도메인
+import hsm.bootproject.SearchFlight.domain.Member;
+import hsm.bootproject.SearchFlight.dto.ChatRoomDto;
 import hsm.bootproject.SearchFlight.dto.chatMessageDto;
-import jakarta.servlet.http.HttpSession; // [추가] HttpSession
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 public class ChatHistoryController {
 
-	@Autowired
-	private ChatService chatService;
+    @Autowired
+    private ChatService chatService;
     
     @Autowired
-    private HttpSession session; 
+    private HttpSession session;
 
-	@GetMapping("/chat/history")
-    public List<chatMessageDto> getChatHistory() {
-        
+    // 1. 채팅방 목록 조회
+    @GetMapping("/chat/rooms")
+    public List<ChatRoomDto> getChatRooms() {
         Member loginUser = (Member) session.getAttribute("loginUser");
-
-        // 1. (비로그인) loginUser가 세션에 없으면 비로그인 메시지 반환
         if (loginUser == null) {
-            return Collections.singletonList(
-                new chatMessageDto("안녕하세요! '무성의 여행'입니다. 어떤 여행 스타일을 원하시나요?", "AI")
-            );
+            return Collections.emptyList();
         }
+        return chatService.getChatRooms(loginUser.getLoginId());
+    }
 
-        // 2. (로그인) DB에서 내역 조회 (loginUser의 userId 사용)
-        List<chatMessageDto> history = chatService.getChatHistory(loginUser.getLoginId());
-
-        // 3. (로그인) 내역이 없다면, 환영 메시지 반환
-        if (history.isEmpty()) { 
-             return Collections.singletonList(
-                new chatMessageDto("안녕하세요! '무성의 여행'입니다. 다시 찾아주셨네요. 무엇을 도와드릴까요?", "AI")
-            );
-        }
-
-        return history;
+    // 2. 특정 채팅방 메시지 내역 조회
+    // [중요] 여기 @RequestParam("roomId") 부분이 수정되었습니다.
+    @GetMapping("/chat/messages")
+    public List<chatMessageDto> getRoomMessages(@RequestParam("roomId") Long roomId) {
+        return chatService.getMessagesByRoomId(roomId);
     }
 }
