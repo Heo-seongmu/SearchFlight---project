@@ -134,14 +134,6 @@ public class HotelService {
         }
     }
     
-    /**
-     * [삭제] getHotelSentiments 메서드 전체가 삭제되었습니다.
-     */
-    // private List<HotelSentimentData> getHotelSentiments(String hotelIds) throws IOException { ... }
-
-    /**
-     * (translation 메서드는 수정 없음)
-     */
     public String translation(String text) {
     	 try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
            ClassicHttpRequest httpPost = ClassicRequestBuilder.post("https://papago.apigw.ntruss.com/nmt/v1/translation")
