@@ -46,8 +46,8 @@ public class HotelService {
 	                                        .setEntity(
 	                                        new UrlEncodedFormEntity(Arrays.asList(
 	                                        		new BasicNameValuePair("grant_type", "client_credentials"),
-	                                        		new BasicNameValuePair("client_id", "yTD8zuGsfrzLTuR3i7WO89rNKMyb1xQP"),
-	                                        		new BasicNameValuePair("client_secret", "lokWISGS8IVtXJai")
+	                                        		new BasicNameValuePair("client_id", "your_id"),
+	                                        		new BasicNameValuePair("client_secret", "your_key")
 	                                        		)
 	                                        	 )			
 	                                        	)
@@ -144,8 +144,8 @@ public class HotelService {
                       ), StandardCharsets.UTF_8))
                       .build();
 
-           httpPost.addHeader("x-ncp-apigw-api-key-id", "b3ledegk8h"); 
-           httpPost.addHeader("x-ncp-apigw-api-key", "VdEN5oguqSgTezFnDBMaP1pbYK2YEjCPsvflM8KC");   
+           httpPost.addHeader("x-ncp-apigw-api-key-id", "your_key"); 
+           httpPost.addHeader("x-ncp-apigw-api-key", "your_key");   
 
            String data = httpclient.execute(httpPost, response -> {
               

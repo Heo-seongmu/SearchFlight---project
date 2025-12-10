@@ -70,8 +70,8 @@ public class AirService {
 					.build();
 
 			// 3. 올바른 헤더 추가 방식으로 수정
-			httpPost.addHeader("x-ncp-apigw-api-key-id", "b3ledegk8h"); // 실제 Client ID로 교체하세요
-			httpPost.addHeader("x-ncp-apigw-api-key", "VdEN5oguqSgTezFnDBMaP1pbYK2YEjCPsvflM8KC"); // 실제 Client Secret으로 교체하세요
+			httpPost.addHeader("x-ncp-apigw-api-key-id", "your_key"); // 실제 Client ID로 교체하세요
+			httpPost.addHeader("x-ncp-apigw-api-key", "your_key"); // 실제 Client Secret으로 교체하세요
 
 			String data = httpclient.execute(httpPost, response -> {
 
@@ -109,8 +109,8 @@ public class AirService {
 					.build();
 
 			// 3. 올바른 헤더 추가 방식으로 수정
-			httpPost.addHeader("x-ncp-apigw-api-key-id", "b3ledegk8h"); // 실제 Client ID로 교체하세요
-			httpPost.addHeader("x-ncp-apigw-api-key", "VdEN5oguqSgTezFnDBMaP1pbYK2YEjCPsvflM8KC"); // 실제 Client Secret으로 교체하세요
+			httpPost.addHeader("x-ncp-apigw-api-key-id", "your_key"); // 실제 Client ID로 교체하세요
+			httpPost.addHeader("x-ncp-apigw-api-key", "your_key"); // 실제 Client Secret으로 교체하세요
 
 			String data = httpclient.execute(httpPost, response -> {
 
@@ -141,8 +141,8 @@ public class AirService {
 					.post("https://test.api.amadeus.com/v1/security/oauth2/token")
 					.setEntity(new UrlEncodedFormEntity(
 							Arrays.asList(new BasicNameValuePair("grant_type", "client_credentials"),
-									new BasicNameValuePair("client_id", "yTD8zuGsfrzLTuR3i7WO89rNKMyb1xQP"),
-									new BasicNameValuePair("client_secret", "lokWISGS8IVtXJai"))))
+									new BasicNameValuePair("client_id", "your_id"),
+									new BasicNameValuePair("client_secret", "your_key"))))
 					.build();
 
 			// header
